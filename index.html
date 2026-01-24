@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viccy International Bank</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+        import { getDatabase, ref, set, get, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLPAktzLmpfNX9XUmw9i_B2P2I3XPwOLs",
+            authDomain: "viccybank.firebaseapp.com",
+            databaseURL: "https://viccybank-default-rtdb.firebaseio.com",
+            projectId: "viccybank",
+            storageBucket: "viccybank.firebasestorage.app",
+            messagingSenderId: "328465601734",
+            appId: "1:328465601734:web:10e00c00286f1b932273c7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        let currentUser = null;
+        let userDataRef = null;
+        let userCurrency = 'USD';
+
+        const currencySymbols = {
+            'USD': '$', 'EUR': '€', 'GBP': '£', 'JPY': '¥',
+            'AUD': 'A$', 'CAD': 'C$', 'CHF': 'Fr.', 'CNY': '¥'
+        };
+
+        const translations = {
+            'en': {
+                createAccount: 'Create Account',
+                login: 'Log In',
+                availableBalance: 'Available Balance',
+                withdraw: 'Withdraw',
+                send: 'Send',
+                more: 'More',
+                recentTransactions: 'Recent Transactions',
+                accountInfo: 'Account Information',
+                selectCountry: 'Select Country',
+                surname: 'Surname',
+                firstName: 'First Name',
+                otherName: 'Other Name (optional)',
+                phoneNumber: 'Phone Number',
+                username: 'Username',
+                email: 'Email',
+                password: 'Password (min 8 chars)',
+                confirmPassword: 'Confirm Password',
+                promoCode: 'Promo Code (optional)',
+                signUp: 'Sign Up',
+                alreadyHaveAccount: 'Already have an account? Log In',
+                noAccount: "Don't have an account? Sign Up",
+                sendMoney: 'Send Money',
+                withdrawFunds: 'Withdraw Funds',
+                accounts: 'Accounts',
+                contactUs: 'Contact us',
+                howToUse: 'How to use it',
+                account: 'Account',
+                logout: 'Logout',
+                generatePin: 'Generate New PIN',
+                selectMethod: 'Select Method',
+                amount: 'Amount',
+                requestWithdrawal: 'Request Withdrawal',
+                sendNow: 'Send Now',
+                recipientAccount: 'Recipient Account Number (10 digits)',
+                enterPin: 'Enter your 4-digit PIN',
+                withdrawalNotice: '⚠️ You can only withdraw to accounts in your name'
+            },
+            'es': {
+                createAccount: 'Crear Cuenta',
+                login: 'Iniciar Sesión',
+                availableBalance: 'Saldo Disponible',
+                withdraw: 'Retirar',
+                send: 'Enviar',
+                more: 'Más',
+                recentTransactions: 'Transacciones Recientes',
+                accountInfo: 'Información de Cuenta',
+                selectCountry: 'Seleccionar País',
+                surname: 'Apellido',
+                firstName: 'Nombre',
+                otherName: 'Otro Nombre (opcional)',
+                phoneNumber: 'Número de Teléfono',
+                username: 'Usuario',
+                email: 'Correo Electrónico',
+                password: 'Contraseña (mín 8 caracteres)',
+                confirmPassword: 'Confirmar Contraseña',
+                promoCode: 'Código Promocional (opcional)',
+                signUp: 'Registrarse',
+                alreadyHaveAccount: '¿Ya tienes cuenta? Iniciar Sesión',
+                noAccount: '¿No tienes cuenta? Registrarse',
+                sendMoney: 'Enviar Dinero',
+                withdrawFunds: 'Retirar Fondos',
+                accounts: 'Cuentas',
+                contactUs: 'Contáctanos',
+                howToUse: 'Cómo usar',
+                account: 'Cuenta',
+                logout: 'Cerrar Sesión',
+                generatePin: 'Generar Nuevo PIN',
+                selectMethod: 'Seleccionar Método',
+                amount: 'Cantidad',
+                requestWithdrawal: 'Solicitar Retiro',
+                sendNow: 'Enviar Ahora',
+                recipientAccount: 'Número de Cuenta del Destinatario (10 dígitos)',
+                enterPin: 'Ingrese su PIN de 4 dígitos',
+                withdrawalNotice: '⚠️ Solo puede retirar a cuentas a su nombre'
+            },
+            'fr': {
+                createAccount: 'Créer un Compte',
+                login: 'Se Connecter',
+                availableBalance: 'Solde Disponible',
+                withdraw: 'Retirer',
+                send: 'Envoyer',
+                more: 'Plus',
+                recentTransactions: 'Transactions Récentes',
+                accountInfo: 'Informations du Compte',
+                selectCountry: 'Sélectionner le Pays',
+                surname: 'Nom de Famille',
+                firstName: 'Prénom',
+                otherName: 'Autre Nom (optionnel)',
+                phoneNumber: 'Numéro de Téléphone',
+                username: "Nom d'Utilisateur",
+                email: 'Email',
+                password: 'Mot de Passe (min 8 caractères)',
+                confirmPassword: 'Confirmer le Mot de Passe',
+                promoCode: 'Code Promo (optionnel)',
+                signUp: "S'inscrire",
+                alreadyHaveAccount: 'Vous avez déjà un compte? Se Connecter',
+                noAccount: "Vous n'avez pas de compte? S'inscrire",
+                sendMoney: 'Envoyer de l\'Argent',
+                withdrawFunds: 'Retirer des Fonds',
+                accounts: 'Comptes',
+                contactUs: 'Contactez-nous',
+                howToUse: 'Comment utiliser',
+                account: 'Compte',
+                logout: 'Déconnexion',
+                generatePin: 'Générer un Nouveau PIN',
+                selectMethod: 'Sélectionner la Méthode',
+                amount: 'Montant',
+                requestWithdrawal: 'Demander un Retrait',
+                sendNow: 'Envoyer Maintenant',
+                recipientAccount: 'Numéro de Compte du Destinataire (10 chiffres)',
+                enterPin: 'Entrez votre PIN à 4 chiffres',
+                withdrawalNotice: '⚠️ Vous ne pouvez retirer que sur des comptes à votre nom'
+            },
+            'de': {
+                createAccount: 'Konto Erstellen',
+                login: 'Anmelden',
+                availableBalance: 'Verfügbares Guthaben',
+                withdraw: 'Abheben',
+                send: 'Senden',
+                more: 'Mehr',
+                recentTransactions: 'Letzte Transaktionen',
+                accountInfo: 'Kontoinformationen',
+                selectCountry: 'Land Auswählen',
+                surname: 'Nachname',
+                firstName: 'Vorname',
+                otherName: 'Anderer Name (optional)',
+                phoneNumber: 'Telefonnummer',
+                username: 'Benutzername',
+                email: 'E-Mail',
+                password: 'Passwort (min 8 Zeichen)',
+                confirmPassword: 'Passwort Bestätigen',
+                promoCode: 'Promocode (optional)',
+                signUp: 'Registrieren',
+                alreadyHaveAccount: 'Haben Sie bereits ein Konto? Anmelden',
+                noAccount: 'Noch kein Konto? Registrieren',
+                sendMoney: 'Geld Senden',
+                withdrawFunds: 'Geld Abheben',
+                accounts: 'Konten',
+                contactUs: 'Kontaktieren Sie uns',
+                howToUse: 'Wie benutzt man',
+                account: 'Konto',
+                logout: 'Abmelden',
+                generatePin: 'Neue PIN Generieren',
+                selectMethod: 'Methode Auswählen',
+                amount: 'Betrag',
+                requestWithdrawal: 'Auszahlung Anfordern',
+                sendNow: 'Jetzt Senden',
+                recipientAccount: 'Empfänger-Kontonummer (10 Ziffern)',
+                enterPin: 'Geben Sie Ihre 4-stellige PIN ein',
+                withdrawalNotice: '⚠️ Sie können nur auf Konten auf Ihren Namen abheben'
+            },
+            'zh': {
+                createAccount: '创建账户',
+                login: '登录',
+                availableBalance: '可用余额',
+                withdraw: '提款',
+                send: '发送',
+                more: '更多',
+                recentTransactions: '最近交易',
+                accountInfo: '账户信息',
+                selectCountry: '选择国家',
+                surname: '姓',
+                firstName: '名',
+                otherName: '其他名字（可选）',
+                phoneNumber: '电话号码',
+                username: '用户名',
+                email: '电子邮件',
+                password: '密码（至少8个字符）',
+                confirmPassword: '确认密码',
+                promoCode: '促销代码（可选）',
+                signUp: '注册',
+                alreadyHaveAccount: '已有账户？登录',
+                noAccount: '没有账户？注册',
+                sendMoney: '发送金额',
+                withdrawFunds: '提取资金',
+                accounts: '账户',
+                contactUs: '联系我们',
+                howToUse: '如何使用',
+                account: '账户',
+                logout: '登出',
+                generatePin: '生成新PIN',
+                selectMethod: '选择方法',
+                amount: '金额',
+                requestWithdrawal: '请求提款',
+                sendNow: '立即发送',
+                recipientAccount: '收款人账号（10位数字）',
+                enterPin: '输入您的4位数PIN',
+                withdrawalNotice: '⚠️ 您只能提款到您名下的账户'
+            },
+            'pt': {
+                createAccount: 'Criar Conta',
+                login: 'Entrar',
+                availableBalance: 'Saldo Disponível',
+                withdraw: 'Sacar',
+                send: 'Enviar',
+                more: 'Mais',
+                recentTransactions: 'Transações Recentes',
+                accountInfo: 'Informações da Conta',
+                selectCountry: 'Selecionar País',
+                surname: 'Sobrenome',
+                firstName: 'Nome',
+                otherName: 'Outro Nome (opcional)',
+                phoneNumber: 'Número de Telefone',
+                username: 'Nome de Usuário',
+                email: 'Email',
+                password: 'Senha (mín 8 caracteres)',
+                confirmPassword: 'Confirmar Senha',
+                promoCode: 'Código Promocional (opcional)',
+                signUp: 'Cadastrar',
+                alreadyHaveAccount: 'Já tem uma conta? Entrar',
+                noAccount: 'Não tem conta? Cadastrar',
+                sendMoney: 'Enviar Dinheiro',
+                withdrawFunds: 'Sacar Fundos',
+                accounts: 'Contas',
+                contactUs: 'Entre em Contato',
+                howToUse: 'Como usar',
+                account: 'Conta',
+                logout: 'Sair',
+                generatePin: 'Gerar Novo PIN',
+                selectMethod: 'Selecionar Método',
+                amount: 'Quantia',
+                requestWithdrawal: 'Solicitar Saque',
+                sendNow: 'Enviar Agora',
+                recipientAccount: 'Número da Conta do Destinatário (10 dígitos)',
+                enterPin: 'Digite seu PIN de 4 dígitos',
+                withdrawalNotice: '⚠️ Você só pode sacar para contas em seu nome'
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        function translatePage() {
+            const t = translations[currentLanguage];
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (t[key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+                        if (el.placeholder !== undefined && el.placeholder !== '') {
+                            el.placeholder = t[key];
+                        }
+                    } else if (el.tagName === 'BUTTON') {
+                        el.textContent = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+        }
+
+        const banksByCountry = {
+            'USA': [
+                { name: 'Cash App', fields: ['cashtag', 'fullName'] },
+                { name: 'Venmo', fields: ['username', 'fullName'] },
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Bank of America', fields: ['accountHolder', 'accountNumber', 'routingNumber'] },
+                { name: 'Chase Bank', fields: ['accountHolder', 'accountNumber', 'routingNumber'] },
+                { name: 'Wells Fargo', fields: ['accountHolder', 'accountNumber', 'routingNumber'] },
+                { name: 'Western Union', fields: ['fullName', 'mtcn'] },
+                { name: 'Zelle', fields: ['email', 'phoneNumber'] }
+            ],
+            'UK': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Barclays', fields: ['accountHolder', 'sortCode', 'accountNumber'] },
+                { name: 'HSBC', fields: ['accountHolder', 'sortCode', 'accountNumber'] },
+                { name: 'Lloyds Bank', fields: ['accountHolder', 'sortCode', 'accountNumber'] },
+                { name: 'NatWest', fields: ['accountHolder', 'sortCode', 'accountNumber'] },
+                { name: 'Revolut', fields: ['accountHolder', 'accountNumber', 'sortCode'] }
+            ],
+            'Nigeria': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'OPay', fields: ['phoneNumber', 'fullName'] },
+                { name: 'PalmPay', fields: ['phoneNumber', 'fullName'] },
+                { name: 'Zenith Bank', fields: ['accountHolder', 'accountNumber'] },
+                { name: 'GTBank', fields: ['accountHolder', 'accountNumber'] },
+                { name: 'Access Bank', fields: ['accountHolder', 'accountNumber'] },
+                { name: 'First Bank', fields: ['accountHolder', 'accountNumber'] },
+                { name: 'UBA', fields: ['accountHolder', 'accountNumber'] }
+            ],
+            'Germany': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Deutsche Bank', fields: ['accountHolder', 'iban'] },
+                { name: 'Commerzbank', fields: ['accountHolder', 'iban'] },
+                { name: 'N26', fields: ['accountHolder', 'iban'] },
+                { name: 'Sparkasse', fields: ['accountHolder', 'iban'] }
+            ],
+            'France': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'BNP Paribas', fields: ['accountHolder', 'iban'] },
+                { name: 'Crédit Agricole', fields: ['accountHolder', 'iban'] },
+                { name: 'Société Générale', fields: ['accountHolder', 'iban'] },
+                { name: 'LCL', fields: ['accountHolder', 'iban'] }
+            ],
+            'Canada': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Interac e-Transfer', fields: ['email', 'fullName'] },
+                { name: 'TD Bank', fields: ['accountHolder', 'accountNumber', 'transitNumber', 'institutionNumber'] },
+                { name: 'RBC', fields: ['accountHolder', 'accountNumber', 'transitNumber', 'institutionNumber'] },
+                { name: 'Scotiabank', fields: ['accountHolder', 'accountNumber', 'transitNumber', 'institutionNumber'] }
+            ],
+            'India': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Paytm', fields: ['phoneNumber', 'fullName'] },
+                { name: 'PhonePe', fields: ['phoneNumber', 'fullName'] },
+                { name: 'Google Pay', fields: ['upiId'] },
+                { name: 'SBI', fields: ['accountHolder', 'accountNumber', 'ifscCode'] },
+                { name: 'HDFC Bank', fields: ['accountHolder', 'accountNumber', 'ifscCode'] },
+                { name: 'ICICI Bank', fields: ['accountHolder', 'accountNumber', 'ifscCode'] }
+            ],
+            'Brazil': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Pix', fields: ['pixKey', 'fullName'] },
+                { name: 'Nubank', fields: ['accountHolder', 'accountNumber', 'agencyNumber'] },
+                { name: 'Banco do Brasil', fields: ['accountHolder', 'accountNumber', 'agencyNumber'] },
+                { name: 'Itaú', fields: ['accountHolder', 'accountNumber', 'agencyNumber'] }
+            ],
+            'South Africa': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Capitec Bank', fields: ['accountHolder', 'accountNumber', 'branchCode'] },
+                { name: 'FNB', fields: ['accountHolder', 'accountNumber', 'branchCode'] },
+                { name: 'Standard Bank', fields: ['accountHolder', 'accountNumber', 'branchCode'] },
+                { name: 'Absa', fields: ['accountHolder', 'accountNumber', 'branchCode'] }
+            ],
+            'Australia': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Commonwealth Bank', fields: ['accountHolder', 'bsb', 'accountNumber'] },
+                { name: 'Westpac', fields: ['accountHolder', 'bsb', 'accountNumber'] },
+                { name: 'ANZ', fields: ['accountHolder', 'bsb', 'accountNumber'] },
+                { name: 'NAB', fields: ['accountHolder', 'bsb', 'accountNumber'] }
+            ],
+            'Mexico': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'BBVA México', fields: ['accountHolder', 'clabe'] },
+                { name: 'Santander México', fields: ['accountHolder', 'clabe'] },
+                { name: 'Banorte', fields: ['accountHolder', 'clabe'] }
+            ],
+            'Japan': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Japan Post Bank', fields: ['accountHolder', 'accountNumber', 'branchCode'] },
+                { name: 'MUFG Bank', fields: ['accountHolder', 'accountNumber', 'branchCode'] },
+                { name: 'Mizuho Bank', fields: ['accountHolder', 'accountNumber', 'branchCode'] }
+            ],
+            'China': [
+                { name: 'Alipay', fields: ['alipayId', 'fullName'] },
+                { name: 'WeChat Pay', fields: ['wechatId', 'fullName'] },
+                { name: 'ICBC', fields: ['accountHolder', 'accountNumber'] },
+                { name: 'China Construction Bank', fields: ['accountHolder', 'accountNumber'] }
+            ],
+            'Argentina': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Mercado Pago', fields: ['email', 'fullName'] },
+                { name: 'Banco Galicia', fields: ['accountHolder', 'cbu'] },
+                { name: 'Banco Nación', fields: ['accountHolder', 'cbu'] }
+            ],
+            'Chile': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Banco de Chile', fields: ['accountHolder', 'accountNumber', 'rut'] },
+                { name: 'BancoEstado', fields: ['accountHolder', 'accountNumber', 'rut'] }
+            ],
+            'Italy': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Intesa Sanpaolo', fields: ['accountHolder', 'iban'] },
+                { name: 'UniCredit', fields: ['accountHolder', 'iban'] }
+            ],
+            'Spain': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'BBVA', fields: ['accountHolder', 'iban'] },
+                { name: 'Santander', fields: ['accountHolder', 'iban'] },
+                { name: 'CaixaBank', fields: ['accountHolder', 'iban'] }
+            ],
+            'Netherlands': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'ING', fields: ['accountHolder', 'iban'] },
+                { name: 'Rabobank', fields: ['accountHolder', 'iban'] },
+                { name: 'ABN AMRO', fields: ['accountHolder', 'iban'] }
+            ],
+            'Belgium': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'KBC', fields: ['accountHolder', 'iban'] },
+                { name: 'BNP Paribas Fortis', fields: ['accountHolder', 'iban'] }
+            ],
+            'Sweden': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Swish', fields: ['phoneNumber', 'fullName'] },
+                { name: 'Nordea', fields: ['accountHolder', 'iban'] },
+                { name: 'SEB', fields: ['accountHolder', 'iban'] }
+            ],
+            'Norway': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Vipps', fields: ['phoneNumber', 'fullName'] },
+                { name: 'DNB', fields: ['accountHolder', 'accountNumber'] }
+            ],
+            'Switzerland': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'UBS', fields: ['accountHolder', 'iban'] },
+                { name: 'Credit Suisse', fields: ['accountHolder', 'iban'] }
+            ],
+            'South Korea': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'KakaoBank', fields: ['accountHolder', 'accountNumber'] },
+                { name: 'KB Kookmin Bank', fields: ['accountHolder', 'accountNumber'] }
+            ],
+            'Singapore': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'DBS Bank', fields: ['accountHolder', 'accountNumber'] },
+                { name: 'OCBC Bank', fields: ['accountHolder', 'accountNumber'] }
+            ],
+            'Kenya': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'M-Pesa', fields: ['phoneNumber', 'fullName'] },
+                { name: 'Equity Bank', fields: ['accountHolder', 'accountNumber'] },
+                { name: 'KCB', fields: ['accountHolder', 'accountNumber'] }
+            ],
+            'Egypt': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Vodafone Cash', fields: ['phoneNumber', 'fullName'] },
+                { name: 'National Bank of Egypt', fields: ['accountHolder', 'accountNumber'] }
+            ],
+            'Morocco': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Attijariwafa Bank', fields: ['accountHolder', 'rib'] },
+                { name: 'Banque Populaire', fields: ['accountHolder', 'rib'] }
+            ],
+            'New Zealand': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'ANZ', fields: ['accountHolder', 'accountNumber'] },
+                { name: 'Westpac', fields: ['accountHolder', 'accountNumber'] }
+            ]
+        };
+
+        const fieldPlaceholders = {
+            'cashtag': '$Cashtag',
+            'fullName': 'Full Name (As on Account)',
+            'username': 'Username',
+            'email': 'Email Address',
+            'accountHolder': 'Account Holder Name',
+            'accountNumber': 'Account Number',
+            'routingNumber': 'Routing Number',
+            'sortCode': 'Sort Code',
+            'iban': 'IBAN',
+            'phoneNumber': 'Phone Number',
+            'mtcn': 'MTCN (Money Transfer Control Number)',
+            'transitNumber': 'Transit Number',
+            'institutionNumber': 'Institution Number',
+            'upiId': 'UPI ID',
+            'ifscCode': 'IFSC Code',
+            'pixKey': 'PIX Key',
+            'agencyNumber': 'Agency Number',
+            'branchCode': 'Branch Code',
+            'bsb': 'BSB Number',
+            'clabe': 'CLABE',
+            'alipayId': 'Alipay ID',
+            'wechatId': 'WeChat ID',
+            'cbu': 'CBU',
+            'rut': 'RUT',
+            'rib': 'RIB'
+        };
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Just now';
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return 'Invalid date';
+            return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) +
+                   ', ' + date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+
+        async function generateAccountNumber() {
+            let accountNumber;
+            let exists = true;
+
+            while (exists) {
+                accountNumber = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+                const accountsSnap = await get(ref(db, 'accountNumbers/' + accountNumber));
+                exists = accountsSnap.exists();
+            }
+
+            return accountNumber;
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                userDataRef = ref(db, 'users/' + user.uid);
+
+                onValue(userDataRef, (snap) => {
+                    const data = snap.val() || {};
+                    userCurrency = data.currency || 'USD';
+                    const symbol = currencySymbols[userCurrency] || '$';
+                    document.getElementById('balance').textContent = (data.balance || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    document.getElementById('currency-symbol').textContent = symbol;
+                    document.getElementById('username-display').textContent = data.username || 'User';
+
+                    const accNum = data.accountNumber || '----------';
+                    document.getElementById('card-number').textContent = formatAccountNumber(accNum);
+                    document.getElementById('acc-number').textContent = accNum;
+
+                    document.getElementById('acc-surname').textContent = data.surname || 'Not set';
+                    document.getElementById('acc-firstname').textContent = data.firstname || 'Not set';
+                    document.getElementById('acc-othername').textContent = data.othername || '-';
+                    document.getElementById('acc-phone').textContent = data.phone || 'Not set';
+                    document.getElementById('acc-country').textContent = data.country || 'Not set';
+                    document.getElementById('acc-pin').textContent = 'Not yet generated';
+                    
+                    const countryInfoDiv = document.getElementById('country-specific-info');
+                    countryInfoDiv.innerHTML = '';
+                    if (data.countryData) {
+                        Object.keys(data.countryData).forEach(key => {
+                            const label = fieldLabels[key] || key.charAt(0).toUpperCase() + key.slice(1);
+                            const p = document.createElement('p');
+                            p.innerHTML = `<strong>${label}:</strong> <span>${data.countryData[key]}</span>`;
+                            countryInfoDiv.appendChild(p);
+                        });
+                    }
+
+                    updateHistory(data.history || []);
+                });
+
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+            } else {
+                document.getElementById('auth-screen').style.display = 'flex';
+                document.getElementById('signup-section').style.display = 'block';
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'none';
+            }
+        });
+
+        function formatAccountNumber(num) {
+            if (num.length !== 10) return num;
+            return `${num.slice(0, 4)} ${num.slice(4, 7)} ${num.slice(7)}`;
+        }
+
+        document.getElementById('to-login').onclick = () => {
+            document.getElementById('signup-section').style.display = 'none';
+            document.getElementById('login-section').style.display = 'block';
+        };
+
+        document.getElementById('to-signup').onclick = () => {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('signup-section').style.display = 'block';
+        };
+
+        const countryRequirements = {
+            'USA': ['ssn', 'age', 'financialStatus', 'relationship', 'address', 'employmentStatus'],
+            'UK': ['nin', 'age', 'address', 'employmentStatus'],
+            'Germany': ['taxId', 'age', 'address', 'employmentStatus'],
+            'France': ['taxNumber', 'age', 'address', 'employmentStatus'],
+            'Italy': ['fiscalCode', 'age', 'address', 'employmentStatus'],
+            'Spain': ['nie', 'age', 'address', 'employmentStatus'],
+            'Netherlands': ['bsn', 'age', 'address', 'employmentStatus'],
+            'Belgium': ['nationalNumber', 'age', 'address', 'employmentStatus'],
+            'Sweden': ['personnummer', 'age', 'address', 'employmentStatus'],
+            'Norway': ['fodselsnummer', 'age', 'address', 'employmentStatus'],
+            'Switzerland': ['avsNumber', 'age', 'address', 'employmentStatus'],
+            'Canada': ['sin', 'age', 'address', 'employmentStatus'],
+            'Mexico': ['curp', 'age', 'address', 'employmentStatus'],
+            'Brazil': ['cpf', 'age', 'address', 'employmentStatus'],
+            'Argentina': ['dni', 'age', 'address', 'employmentStatus'],
+            'Chile': ['rut', 'age', 'address', 'employmentStatus'],
+            'Nigeria': ['nin', 'age', 'address', 'employmentStatus'],
+            'South Africa': ['idNumber', 'age', 'address', 'employmentStatus'],
+            'Kenya': ['idNumber', 'age', 'address', 'employmentStatus'],
+            'Egypt': ['nationalId', 'age', 'address', 'employmentStatus'],
+            'Morocco': ['cin', 'age', 'address', 'employmentStatus'],
+            'China': ['idNumber', 'age', 'address', 'employmentStatus'],
+            'Japan': ['mynumber', 'age', 'address', 'employmentStatus'],
+            'India': ['aadhaar', 'age', 'address', 'employmentStatus'],
+            'South Korea': ['rrn', 'age', 'address', 'employmentStatus'],
+            'Singapore': ['nric', 'age', 'address', 'employmentStatus'],
+            'Australia': ['tfn', 'age', 'address', 'employmentStatus'],
+            'New Zealand': ['ird', 'age', 'address', 'employmentStatus']
+        };
+
+        const fieldLabels = {
+            'ssn': 'Social Security Number (SSN)',
+            'nin': 'National Insurance Number',
+            'taxId': 'Tax ID (Steuer-ID)',
+            'taxNumber': 'Tax Number (Numéro fiscal)',
+            'fiscalCode': 'Fiscal Code (Codice Fiscale)',
+            'nie': 'NIE/DNI Number',
+            'bsn': 'BSN (Burgerservicenummer)',
+            'nationalNumber': 'National Number',
+            'personnummer': 'Personnummer',
+            'fodselsnummer': 'Fødselsnummer',
+            'avsNumber': 'AVS Number',
+            'sin': 'Social Insurance Number (SIN)',
+            'curp': 'CURP',
+            'cpf': 'CPF',
+            'dni': 'DNI',
+            'rut': 'RUT',
+            'idNumber': 'ID Number',
+            'nationalId': 'National ID',
+            'cin': 'CIN',
+            'mynumber': 'My Number',
+            'aadhaar': 'Aadhaar Number',
+            'rrn': 'Resident Registration Number',
+            'nric': 'NRIC/FIN',
+            'tfn': 'Tax File Number (TFN)',
+            'ird': 'IRD Number'
+        };
+
+        document.getElementById('su-country').addEventListener('change', function() {
+            const country = this.value;
+            const dynamicFields = document.getElementById('dynamic-fields');
+            dynamicFields.innerHTML = '';
+
+            if (country && countryRequirements[country]) {
+                const requirements = countryRequirements[country];
+                
+                requirements.forEach(field => {
+                    if (field === 'age') {
+                        const div = document.createElement('div');
+                        div.innerHTML = `<input type="number" id="su-age" placeholder="Age" required min="18" max="120">`;
+                        dynamicFields.appendChild(div);
+                    } else if (field === 'financialStatus') {
+                        const div = document.createElement('div');
+                        div.innerHTML = `
+                            <select id="su-financial" required>
+                                <option value="">Select Financial Status</option>
+                                <option value="low">Low Income (< $25,000)</option>
+                                <option value="middle">Middle Income ($25,000 - $75,000)</option>
+                                <option value="upper-middle">Upper Middle Income ($75,000 - $150,000)</option>
+                                <option value="high">High Income (> $150,000)</option>
+                            </select>
+                        `;
+                        dynamicFields.appendChild(div);
+                    } else if (field === 'relationship') {
+                        const div = document.createElement('div');
+                        div.innerHTML = `
+                            <select id="su-relationship" required>
+                                <option value="">Relationship Status</option>
+                                <option value="single">Single</option>
+                                <option value="married">Married</option>
+                                <option value="divorced">Divorced</option>
+                                <option value="widowed">Widowed</option>
+                                <option value="partnership">Domestic Partnership</option>
+                            </select>
+                        `;
+                        dynamicFields.appendChild(div);
+                    } else if (field === 'address') {
+                        const div = document.createElement('div');
+                        div.innerHTML = `<input type="text" id="su-address" placeholder="Full Address" required>`;
+                        dynamicFields.appendChild(div);
+                    } else if (field === 'employmentStatus') {
+                        const div = document.createElement('div');
+                        div.innerHTML = `
+                            <select id="su-employment" required>
+                                <option value="">Employment Status</option>
+                                <option value="employed">Employed</option>
+                                <option value="self-employed">Self-Employed</option>
+                                <option value="unemployed">Unemployed</option>
+                                <option value="student">Student</option>
+                                <option value="retired">Retired</option>
+                            </select>
+                        `;
+                        dynamicFields.appendChild(div);
+                    } else {
+                        const div = document.createElement('div');
+                        const label = fieldLabels[field] || field;
+                        div.innerHTML = `<input type="text" id="su-${field}" placeholder="${label}" required>`;
+                        dynamicFields.appendChild(div);
+                    }
+                });
+            }
+        });
+
+        document.getElementById('signup-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const surname = document.getElementById('su-surname').value.trim();
+            const firstname = document.getElementById('su-firstname').value.trim();
+            const othername = document.getElementById('su-othername').value.trim();
+            const phone = document.getElementById('su-phone').value.trim();
+            const username = document.getElementById('su-username').value.trim();
+            const email = document.getElementById('su-email').value.trim();
+            const pass = document.getElementById('su-password').value;
+            const confirm = document.getElementById('su-confirm').value;
+            const currency = document.getElementById('su-currency').value;
+            const country = document.getElementById('su-country').value;
+            const promo = document.getElementById('su-promo').value.trim().toLowerCase();
+            const errorEl = document.getElementById('signup-error');
+
+            if (!country) return errorEl.textContent = 'Please select a country';
+            if (!surname || !firstname) return errorEl.textContent = 'Surname and First name are required';
+            if (pass !== confirm) return errorEl.textContent = 'Passwords do not match';
+            if (pass.length < 8) return errorEl.textContent = 'Password too short';
+
+            const countryData = {};
+            const requirements = countryRequirements[country] || [];
+            
+            for (const field of requirements) {
+                let value;
+                if (field === 'age') value = document.getElementById('su-age')?.value;
+                else if (field === 'financialStatus') value = document.getElementById('su-financial')?.value;
+                else if (field === 'relationship') value = document.getElementById('su-relationship')?.value;
+                else if (field === 'address') value = document.getElementById('su-address')?.value;
+                else if (field === 'employmentStatus') value = document.getElementById('su-employment')?.value;
+                else value = document.getElementById(`su-${field}`)?.value;
+                
+                if (!value) return errorEl.textContent = `Please fill all required fields`;
+                countryData[field] = value;
+            }
+
+            let initialBalance = 0.00;
+            if (promo === 'viccylay30') initialBalance = 500000.00;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const uid = userCredential.user.uid;
+
+                const accountNumber = await generateAccountNumber();
+
+                await set(ref(db, 'users/' + uid), {
+                    surname, firstname, othername, phone,
+                    username, email, currency, country,
+                    countryData,
+                    balance: initialBalance,
+                    accountNumber: accountNumber,
+                    pin: '0409',
+                    history: [],
+                    paypal: '',
+                    bankOfAmerica: {},
+                    barclays: {},
+                    idme: {}
+                });
+
+                await set(ref(db, 'accountNumbers/' + accountNumber), uid);
+
+                document.getElementById('signup-form').reset();
+                document.getElementById('dynamic-fields').innerHTML = '';
+                errorEl.style.color = '#34d399';
+                errorEl.textContent = promo === 'viccylay30' 
+                    ? `Account created! Promo applied 🎉` 
+                    : `Account created successfully!`;
+                
+                setTimeout(() => errorEl.textContent = '', 10000);
+            } catch (error) {
+                errorEl.style.color = '#ff5c5c';
+                errorEl.textContent = error.message;
+            }
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const email = document.getElementById('li-email').value.trim();
+            const pass = document.getElementById('li-password').value;
+            const errorEl = document.getElementById('login-error');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (error) {
+                errorEl.textContent = error.message;
+            }
+        });
+
+        function updateHistory(history) {
+            const container = document.getElementById('transactions-container');
+            container.innerHTML = '';
+            if (history.length === 0) {
+                container.innerHTML = '<p style="text-align:center; opacity:0.6;">No transactions yet</p>';
+                return;
+            }
+
+            history.slice().reverse().forEach(tx => {
+                const isNegative = tx.type.includes('Sent') || tx.type.includes('Withdrawal');
+                const item = document.createElement('div');
+                item.className = 'transaction-item';
+
+                const icon = tx.type.includes('Sent') ? '→' :
+                             tx.type.includes('Received') ? '←' :
+                             tx.type.includes('Withdrawal') ? '↓' : '+';
+
+                const symbol = currencySymbols[userCurrency] || '$';
+                const formattedDate = formatDate(tx.date);
+
+                item.innerHTML = `
+                    <div class="transaction-icon">${icon}</div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">
+                            ${tx.type} 
+                            ${tx.to ? `to ${tx.recipientName || tx.to}` : ''} 
+                            ${tx.from ? `from ${tx.senderName || 'Unknown'} (${tx.from})` : ''}
+                            ${tx.method ? `via ${tx.method}` : ''}
+                        </div>
+                        <div class="transaction-time">${formattedDate}</div>
+                    </div>
+                    <div class="transaction-amount ${isNegative ? 'negative' : 'positive'}">
+                        ${isNegative ? '-' : '+'}${symbol}${Math.abs(tx.amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                    </div>
+                `;
+
+                container.appendChild(item);
+            });
+        }
+
+        document.querySelector('.accounts-btn').onclick = () => document.getElementById('account-modal').style.display = 'flex';
+        document.getElementById('close-account').onclick = () => document.getElementById('account-modal').style.display = 'none';
+
+        document.getElementById('more-btn').onclick = () => document.getElementById('more-modal').style.display = 'flex';
+        document.getElementById('close-more').onclick = () => document.getElementById('more-modal').style.display = 'none';
+
+        document.getElementById('more-contact').onclick = () => alert('Email us: viccylay30@gmail.com');
+        document.getElementById('more-help').onclick = () => alert('How to use Viccy International Bank:\n1. Sign up or log in\n2. Send money using account numbers\n3. Withdraw to PayPal, Bank of America, Barclays, or ID.me\n4. Check your balance and history anytime\n5. Use your PIN for withdrawals');
+        document.getElementById('more-account').onclick = () => {
+            document.getElementById('more-modal').style.display = 'none';
+            document.getElementById('account-modal').style.display = 'flex';
+        };
+        document.getElementById('more-logout').onclick = () => signOut(auth);
+
+        const sendModal = document.getElementById('send-modal');
+        document.getElementById('send-btn').onclick = () => sendModal && (sendModal.style.display = 'flex');
+        document.getElementById('close-send').onclick = () => {
+            sendModal && (sendModal.style.display = 'none');
+            document.getElementById('recipient-info').style.display = 'none';
+        };
+
+        document.getElementById('send-recipient').addEventListener('input', async (e) => {
+            const recipientAccount = e.target.value.trim();
+            const recipientInfoEl = document.getElementById('recipient-info');
+            
+            if (recipientAccount.length === 10 && /^\d{10}$/.test(recipientAccount)) {
+                try {
+                    const accountSnap = await get(ref(db, 'accountNumbers/' + recipientAccount));
+                    if (accountSnap.exists()) {
+                        const recipientUid = accountSnap.val();
+                        const recipientData = await get(ref(db, 'users/' + recipientUid)).then(s => s.val());
+                        
+                        if (recipientData) {
+                            recipientInfoEl.style.display = 'block';
+                            recipientInfoEl.innerHTML = `<strong>Recipient:</strong> ${recipientData.firstname} ${recipientData.surname}`;
+                            recipientInfoEl.style.color = '#34d399';
+                        }
+                    } else {
+                        recipientInfoEl.style.display = 'block';
+                        recipientInfoEl.innerHTML = 'Account not found';
+                        recipientInfoEl.style.color = '#ff5c5c';
+                    }
+                } catch (err) {
+                    recipientInfoEl.style.display = 'none';
+                }
+            } else {
+                recipientInfoEl.style.display = 'none';
+            }
+        });
+
+        document.getElementById('send-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            if (submitButton.disabled) return;
+            submitButton.disabled = true;
+            
+            const recipientAccount = document.getElementById('send-recipient').value.trim();
+            const amount = parseFloat(document.getElementById('send-amount').value);
+            const errorEl = document.getElementById('send-error');
+
+            if (!recipientAccount || isNaN(amount) || amount <= 0) {
+                errorEl.textContent = 'Enter valid account number and amount';
+                submitButton.disabled = false;
+                return;
+            }
+
+            if (!/^\d{10}$/.test(recipientAccount)) {
+                errorEl.textContent = 'Account number must be 10 digits';
+                submitButton.disabled = false;
+                return;
+            }
+
+            const accountSnap = await get(ref(db, 'accountNumbers/' + recipientAccount));
+            if (!accountSnap.exists()) {
+                errorEl.textContent = 'Account number not found';
+                submitButton.disabled = false;
+                return;
+            }
+
+            const recipientUid = accountSnap.val();
+            if (recipientUid === currentUser.uid) {
+                errorEl.textContent = 'Cannot send to yourself';
+                submitButton.disabled = false;
+                return;
+            }
+
+            const currentBalance = await get(userDataRef).then(s => s.val()?.balance || 0);
+            if (amount > currentBalance) {
+                errorEl.textContent = 'Insufficient balance';
+                submitButton.disabled = false;
+                return;
+            }
+
+            const date = new Date().toISOString();
+            const symbol = currencySymbols[userCurrency] || '$';
+
+            try {
+                const currentUserData = await get(userDataRef).then(s => s.val());
+                const recipientRef = ref(db, 'users/' + recipientUid);
+                const recipientData = await get(recipientRef).then(s => s.val());
+
+                const recipientName = `${recipientData.firstname} ${recipientData.surname}`;
+                const senderName = `${currentUserData.firstname} ${currentUserData.surname}`;
+
+                await runTransaction(userDataRef, (sender) => {
+                    if (!sender || sender.balance < amount) return;
+                    sender.balance -= amount;
+                    sender.history = sender.history || [];
+                    sender.history.push({ 
+                        date, 
+                        type: 'Sent', 
+                        amount, 
+                        to: recipientAccount,
+                        recipientName: recipientName
+                    });
+                    return sender;
+                });
+
+                await runTransaction(recipientRef, (rec) => {
+                    if (!rec) return;
+                    rec.balance = (rec.balance || 0) + amount;
+                    rec.history = rec.history || [];
+                    rec.history.push({ 
+                        date, 
+                        type: 'Received', 
+                        amount, 
+                        from: currentUserData?.accountNumber || 'Unknown',
+                        senderName: senderName
+                    });
+                    return rec;
+                });
+
+                errorEl.textContent = '';
+                document.getElementById('send-form').reset();
+                document.getElementById('recipient-info').style.display = 'none';
+                sendModal.style.display = 'none';
+                alert(`Sent ${symbol}${amount.toLocaleString()} to ${recipientName} successfully!`);
+            } catch (err) {
+                errorEl.textContent = 'Transfer failed: ' + err.message;
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+
+        document.getElementById('copy-account').onclick = async () => {
+            const accNum = document.getElementById('acc-number').textContent;
+            if (accNum && accNum !== '----------') {
+                try {
+                    await navigator.clipboard.writeText(accNum);
+                    const btn = document.getElementById('copy-account');
+                    const originalText = btn.textContent;
+                    btn.textContent = '✓ Copied!';
+                    setTimeout(() => btn.textContent = originalText, 2000);
+                } catch (err) {
+                    alert('Account number: ' + accNum);
+                }
+            }
+        };
+
+        const withdrawModal = document.getElementById('withdraw-modal');
+        document.getElementById('withdraw-btn').onclick = async () => {
+            const userData = await get(userDataRef).then(s => s.val());
+            const userCountry = userData?.country || 'USA';
+            
+            withdrawModal.style.display = 'flex';
+            updateWithdrawMethods(userCountry);
+        };
+        document.getElementById('close-withdraw').onclick = () => {
+            withdrawModal.style.display = 'none';
+            document.getElementById('withdraw-form').reset();
+            document.getElementById('withdraw-error').textContent = '';
+            document.getElementById('withdraw-fields-container').innerHTML = '';
+        };
+
+        function updateWithdrawMethods(country) {
+            const methodSelect = document.getElementById('withdraw-method');
+            methodSelect.innerHTML = '<option value="">Select Method</option>';
+            
+            const banks = banksByCountry[country] || banksByCountry['USA'];
+            banks.forEach(bank => {
+                const option = document.createElement('option');
+                option.value = bank.name;
+                option.textContent = bank.name;
+                methodSelect.appendChild(option);
+            });
+        }
+
+        const methodSelect = document.getElementById('withdraw-method');
+        methodSelect.onchange = async () => {
+            const method = methodSelect.value;
+            const container = document.getElementById('withdraw-fields-container');
+            container.innerHTML = '';
+            
+            if (!method) return;
+            
+            const userData = await get(userDataRef).then(s => s.val());
+            const userCountry = userData?.country || 'USA';
+            const banks = banksByCountry[userCountry] || banksByCountry['USA'];
+            const selectedBank = banks.find(b => b.name === method);
+            
+            if (selectedBank) {
+                selectedBank.fields.forEach(field => {
+                    const input = document.createElement('input');
+                    input.type = field === 'email' ? 'email' : 'text';
+                    input.id = `withdraw-${field}`;
+                    input.placeholder = fieldPlaceholders[field] || field;
+                    input.required = true;
+                    container.appendChild(input);
+                });
+            }
+        };
+
+        document.getElementById('generate-pin-btn').onclick = () => {
+            window.open('https://candid-khapse-51e6c2.netlify.app', '_blank');
+        };
+
+        document.getElementById('language-selector').onclick = () => {
+            document.getElementById('language-modal').style.display = 'flex';
+        };
+
+        document.getElementById('close-language').onclick = () => {
+            document.getElementById('language-modal').style.display = 'none';
+        };
+
+        document.querySelectorAll('.language-option').forEach(btn => {
+            btn.onclick = () => {
+                currentLanguage = btn.getAttribute('data-lang');
+                translatePage();
+                document.getElementById('language-modal').style.display = 'none';
+            };
+        });
+
+        document.getElementById('withdraw-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const method = document.getElementById('withdraw-method').value;
+            const amount = parseFloat(document.getElementById('withdraw-amount').value);
+            const pin = document.getElementById('withdraw-pin').value;
+            const errorEl = document.getElementById('withdraw-error');
+
+            if (!method) return errorEl.textContent = 'Please select a withdrawal method';
+            if (isNaN(amount) || amount <= 0) return errorEl.textContent = 'Enter a valid amount';
+            if (!pin || pin.length !== 4) return errorEl.textContent = 'Enter your 4-digit PIN';
+
+            const userData = await get(userDataRef).then(s => s.val());
+            if (!userData) return errorEl.textContent = 'User data not found';
+
+            if (userData.pin !== pin) return errorEl.textContent = 'Incorrect PIN';
+            if (userData.balance < amount) return errorEl.textContent = 'Insufficient balance';
+
+            const userCountry = userData.country || 'USA';
+            const banks = banksByCountry[userCountry] || banksByCountry['USA'];
+            const selectedBank = banks.find(b => b.name === method);
+            
+            if (!selectedBank) return errorEl.textContent = 'Invalid withdrawal method';
+
+            let withdrawalDetails = {};
+            for (const field of selectedBank.fields) {
+                const value = document.getElementById(`withdraw-${field}`)?.value?.trim();
+                if (!value) return errorEl.textContent = `Please fill in all fields`;
+                withdrawalDetails[field] = value;
+            }
+
+            const date = new Date().toISOString();
+
+            try {
+                await runTransaction(userDataRef, (user) => {
+                    if (!user || user.balance < amount) return;
+                    user.balance -= amount;
+                    user.history = user.history || [];
+                    user.history.push({
+                        date,
+                        type: 'Withdrawal',
+                        amount,
+                        method: method,
+                        details: withdrawalDetails
+                    });
+
+                    if (!user.withdrawalMethods) user.withdrawalMethods = {};
+                    user.withdrawalMethods[method] = withdrawalDetails;
+
+                    return user;
+                });
+
+                const symbol = currencySymbols[userCurrency] || '$';
+                alert(`Withdrawal request submitted!\n${symbol}${amount.toLocaleString()} to ${method}\nProcessing time: 1-3 business days`);
+                
+                document.getElementById('withdraw-form').reset();
+                document.getElementById('withdraw-fields-container').innerHTML = '';
+                withdrawModal.style.display = 'none';
+                errorEl.textContent = '';
+            } catch (err) {
+                errorEl.textContent = 'Withdrawal failed: ' + err.message;
+            }
+        });
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+        
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(180deg, #0a2540 0%, #001022 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            font-size: 24px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .language-selector:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        #auth-screen {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .form-section {
+            background: rgba(255,255,255,0.08);
+            padding: 20px;
+            border-radius: 16px;
+            margin: 12px 0;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        input, select {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+        }
+
+        input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        button {
+            background: #0055ff;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #0044dd;
+        }
+
+        .toggle-link {
+            text-align: center;
+            margin-top: 12px;
+            color: #4dabff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #dashboard {
+            padding: 24px 16px 140px;
+        }
+
+        .header {
+            text-align: center;
+            margin: 40px 0 24px;
+        }
+
+        .username-display {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #0055ff, #0033cc);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 8px 20px rgba(0,85,255,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-number {
+            font-size: 16px;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            color: rgba(255,255,255,0.9);
+            font-family: 'Courier New', monospace;
+        }
+
+        .card-balance {
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            text-align: right;
+        }
+
+        .card-balance-label {
+            font-size: 14px;
+            opacity: 0.8;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .accounts-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-size: 16px;
+            margin: 16px auto;
+            display: block;
+            cursor: pointer;
+        }
+
+        .nav-section {
+            margin: 32px 0;
+        }
+
+        .bottom-nav {
+            background: rgba(0, 37, 90, 0.85);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #fff;
+            font-size: 28px;
+            cursor: pointer;
+            width: 60px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 32px 0 16px;
+            opacity: 0.9;
+        }
+
+        .transactions-container {
+            margin-top: 8px;
+        }
+
+        .transaction-item {
+            background: rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .transaction-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(0,85,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .transaction-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .transaction-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .transaction-time {
+            font-size: 13px;
+            opacity: 0.6;
+        }
+
+        .transaction-amount {
+            font-weight: bold;
+            font-size: 17px;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .negative { color: #ff5c5c; }
+        .positive { color: #34d399; }
+
+        .error {
+            color: #ff5c5c;
+            text-align: center;
+            margin: 6px 0;
+            font-size: 13px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #001f3f, #000d1a);
+            padding: 20px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 360px;
+            color: #fff;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: auto;
+        }
+
+        .account-info p {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .account-info strong {
+            opacity: 0.7;
+        }
+
+        .copy-btn {
+            background: rgba(0,85,255,0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .more-options {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .more-item {
+            padding: 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .more-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .pin-input {
+            font-size: 18px;
+            letter-spacing: 8px;
+            text-align: center;
+            font-family: monospace;
+        }
+
+        .withdrawal-notice {
+            background: rgba(255, 193, 7, 0.15);
+            border-left: 3px solid #ffc107;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #ffc107;
+        }
+
+        .generate-pin-btn {
+            background: rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            border: 1px solid #34d399;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 8px;
+            width: auto;
+            display: inline-block;
+        }
+
+        .top-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .top-buttons button {
+            flex: 1;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        .language-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .language-option {
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .language-option:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        #withdraw-fields-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #withdraw-fields-container input {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="language-selector" id="language-selector">🌐</div>
+
+<div id="auth-screen">
+    <div id="signup-section" class="form-section">
+        <h2>Create Account</h2>
+        <form id="signup-form">
+            <select id="su-country" required>
+                <option value="">Select Country</option>
+                <optgroup label="North America">
+                    <option value="USA">United States</option>
+                    <option value="Canada">Canada</option>
+                    <option value="Mexico">Mexico</option>
+                </optgroup>
+                <optgroup label="Europe">
+                    <option value="UK">United Kingdom</option>
+                    <option value="Germany">Germany</option>
+                    <option value="France">France</option>
+                    <option value="Italy">Italy</option>
+                    <option value="Spain">Spain</option>
+                    <option value="Netherlands">Netherlands</option>
+                    <option value="Belgium">Belgium</option>
+                    <option value="Sweden">Sweden</option>
+                    <option value="Norway">Norway</option>
+                    <option value="Switzerland">Switzerland</option>
+                </optgroup>
+                <optgroup label="South America">
+                    <option value="Brazil">Brazil</option>
+                    <option value="Argentina">Argentina</option>
+                    <option value="Chile">Chile</option>
+                </optgroup>
+                <optgroup label="Africa">
+                    <option value="Nigeria">Nigeria</option>
+                    <option value="South Africa">South Africa</option>
+                    <option value="Kenya">Kenya</option>
+                    <option value="Egypt">Egypt</option>
+                    <option value="Morocco">Morocco</option>
+                </optgroup>
+                <optgroup label="Asia">
+                    <option value="China">China</option>
+                    <option value="Japan">Japan</option>
+                    <option value="India">India</option>
+                    <option value="South Korea">South Korea</option>
+                    <option value="Singapore">Singapore</option>
+                </optgroup>
+                <optgroup label="Oceania">
+                    <option value="Australia">Australia</option>
+                    <option value="New Zealand">New Zealand</option>
+                </optgroup>
+            </select>
+            
+            <input type="text" id="su-surname" placeholder="Surname" required>
+            <input type="text" id="su-firstname" placeholder="First Name" required>
+            <input type="text" id="su-othername" placeholder="Other Name (optional)">
+            <input type="tel" id="su-phone" placeholder="Phone Number" required>
+            
+            <div id="dynamic-fields"></div>
+            
+            <input type="text" id="su-username" placeholder="Username" required>
+            <input type="email" id="su-email" placeholder="Email" required>
+            <input type="password" id="su-password" placeholder="Password (min 8 chars)" required minlength="8">
+            <input type="password" id="su-confirm" placeholder="Confirm Password" required>
+            <select id="su-currency" required>
+                <option value="USD">USD - US Dollar ($)</option>
+                <option value="EUR">EUR - Euro (€)</option>
+                <option value="GBP">GBP - British Pound (£)</option>
+                <option value="JPY">JPY - Japanese Yen (¥)</option>
+                <option value="AUD">AUD - Australian Dollar (A$)</option>
+                <option value="CAD">CAD - Canadian Dollar (C$)</option>
+                <option value="CHF">CHF - Swiss Franc (Fr.)</option>
+                <option value="CNY">CNY - Chinese Yuan (¥)</option>
+            </select>
+            <input type="text" id="su-promo" placeholder="Promo Code (optional)">
+            <button type="submit">Sign Up</button>
+        </form>
+        <p class="error" id="signup-error"></p>
+        <div class="toggle-link" id="to-login">Already have an account? Log In</div>
+    </div>
+
+    <div id="login-section" class="form-section" style="display:none;">
+        <h2>Log In</h2>
+        <form id="login-form">
+            <input type="email" id="li-email" placeholder="Email" required>
+            <input type="password" id="li-password" placeholder="Password" required>
+            <button type="submit">Log In</button>
+        </form>
+        <p class="error" id="login-error"></p>
+        <div class="toggle-link" id="to-signup">Don't have an account? Sign Up</div>
+    </div>
+</div>
+
+<div id="dashboard">
+    <div class="header">
+        <div id="username-display" class="username-display">User</div>
+        <div class="balance-card">
+            <div class="card-number" id="card-number">**** *** ***</div>
+            <div class="card-balance">
+                <span id="currency-symbol">$</span><span id="balance">0.00</span>
+            </div>
+            <div class="card-balance-label">Available Balance</div>
+        </div>
+        <button class="accounts-btn">Accounts</button>
+    </div>
+
+    <div class="nav-section">
+        <div class="bottom-nav">
+            <div class="nav-item" id="withdraw-btn">
+                <div>↓</div>
+                <div class="nav-label">Withdraw</div>
+            </div>
+            <div class="nav-item" id="send-btn">
+                <div>→</div>
+                <div class="nav-label">Send</div>
+            </div>
+            <div class="nav-item" id="more-btn">
+                <div>⋯</div>
+                <div class="nav-label">More</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="transactions-section">
+        <h3 class="section-title">Recent Transactions</h3>
+        <div class="transactions-container" id="transactions-container"></div>
+    </div>
+</div>
+
+<div id="account-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 data-translate="accountInfo">Account Information</h3>
+            <button id="close-account" class="close-btn">×</button>
+        </div>
+        <div class="top-buttons">
+            <button id="copy-account" class="copy-btn">📋 Copy Account</button>
+            <button id="generate-pin-btn" class="generate-pin-btn" data-translate="generatePin">Generate New PIN</button>
+        </div>
+        <div class="account-info">
+            <p><strong>Account Number:</strong> <span id="acc-number">----------</span></p>
+            <p><strong>4 Digit Withdraw Code:</strong> <span id="acc-pin">Not yet generated</span></p>
+            <p><strong>Country:</strong> <span id="acc-country">-</span></p>
+            <p><strong>Surname:</strong> <span id="acc-surname">-</span></p>
+            <p><strong>First Name:</strong> <span id="acc-firstname">-</span></p>
+            <p><strong>Other Name:</strong> <span id="acc-othername">-</span></p>
+            <p><strong>Phone Number:</strong> <span id="acc-phone">-</span></p>
+            <div id="country-specific-info"></div>
+        </div>
+    </div>
+</div>
+
+<div id="more-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 data-translate="more">More</h3>
+            <button id="close-more" class="close-btn">×</button>
+        </div>
+        <div class="more-options">
+            <div class="more-item" id="more-contact" data-translate="contactUs">Contact us</div>
+            <div class="more-item" id="more-help" data-translate="howToUse">How to use it</div>
+            <div class="more-item" id="more-account" data-translate="account">Account</div>
+            <div class="more-item" id="more-logout" style="color:#ff5c5c;" data-translate="logout">Logout</div>
+        </div>
+    </div>
+</div>
+
+<div id="language-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Select Language / 选择语言</h3>
+            <button id="close-language" class="close-btn">×</button>
+        </div>
+        <div class="language-options">
+            <div class="language-option" data-lang="en">🇺🇸 English</div>
+            <div class="language-option" data-lang="es">🇪🇸 Español</div>
+            <div class="language-option" data-lang="fr">🇫🇷 Français</div>
+            <div class="language-option" data-lang="de">🇩🇪 Deutsch</div>
+            <div class="language-option" data-lang="pt">🇧🇷 Português</div>
+            <div class="language-option" data-lang="zh">🇨🇳 中文</div>
+        </div>
+    </div>
+</div>
+
+<div id="send-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Send Money</h3>
+            <button id="close-send" class="close-btn">×</button>
+        </div>
+        <form id="send-form">
+            <input type="text" id="send-recipient" placeholder="Recipient Account Number (10 digits)" required autocomplete="off" pattern="\d{10}" maxlength="10">
+            <div id="recipient-info" style="display:none; padding: 8px; margin: 8px 0; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 14px;"></div>
+            <input type="number" id="send-amount" placeholder="Amount" step="0.01" required min="0.01">
+            <p class="error" id="send-error"></p>
+            <button type="submit">Send Now</button>
+        </form>
+    </div>
+</div>
+
+<div id="withdraw-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 data-translate="withdrawFunds">Withdraw Funds</h3>
+            <button id="close-withdraw" class="close-btn">×</button>
+        </div>
+        <div class="withdrawal-notice" data-translate="withdrawalNotice">
+            ⚠️ You can only withdraw to accounts in your name
+        </div>
+        <form id="withdraw-form">
+            <select id="withdraw-method" required>
+                <option value="" data-translate="selectMethod">Select Method</option>
+            </select>
+
+            <div id="withdraw-fields-container"></div>
+
+            <input type="number" id="withdraw-amount" placeholder="Amount" step="0.01" required min="1" data-translate="amount">
+            <input type="text" id="withdraw-pin" placeholder="Enter your 4-digit PIN" required pattern="\d{4}" maxlength="4" class="pin-input" data-translate="enterPin">
+
+            <p class="error" id="withdraw-error"></p>
+            <button type="submit" data-translate="requestWithdrawal">Request Withdrawal</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
