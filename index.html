@@ -947,16 +947,18 @@
                 });
 
                 await runTransaction(recipientRef, (rec) => {
-                    if (!rec) return;
-                    rec.balance = (rec.balance || 0) + amount;
-                    rec.history = rec.history || [];
-                    rec.history.push({ 
-                        date, 
-                        type: 'Received', 
-                        amount, 
-                        from: currentUserData?.accountNumber || 'Unknown',
-                        senderName: senderName
-                    });
+                    if (rec) {
+                        rec.balance = (rec.balance || 0) + amount;
+                        rec.history = rec.history || [];
+                        rec.history.push({ 
+                            date, 
+                            type: 'Received', 
+                            amount, 
+                            from: currentUserData?.accountNumber || 'Unknown',
+                            senderName: senderName
+                        });
+                        return rec;
+                    }
                     return rec;
                 });
 
