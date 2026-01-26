@@ -403,6 +403,13 @@
                 { name: 'Santander', fields: ['accountHolder', 'iban'] },
                 { name: 'CaixaBank', fields: ['accountHolder', 'iban'] }
             ],
+            'Portugal': [
+                { name: 'PayPal', fields: ['email'] },
+                { name: 'Millennium BCP', fields: ['accountHolder', 'iban'] },
+                { name: 'CGD', fields: ['accountHolder', 'iban'] },
+                { name: 'Santander Totta', fields: ['accountHolder', 'iban'] },
+                { name: 'Novobanco', fields: ['accountHolder', 'iban'] }
+            ],
             'Netherlands': [
                 { name: 'PayPal', fields: ['email'] },
                 { name: 'ING', fields: ['accountHolder', 'iban'] },
@@ -576,12 +583,13 @@
         };
 
         const countryRequirements = {
-            'USA': ['ssn', 'age', 'financialStatus', 'relationship', 'address', 'employmentStatus'],
+            'USA': ['age', 'address', 'financialStatus', 'relationship', 'employmentStatus'],
             'UK': ['nin', 'age', 'address', 'employmentStatus'],
             'Germany': ['taxId', 'age', 'address', 'employmentStatus'],
             'France': ['taxNumber', 'age', 'address', 'employmentStatus'],
             'Italy': ['fiscalCode', 'age', 'address', 'employmentStatus'],
             'Spain': ['nie', 'age', 'address', 'employmentStatus'],
+            'Portugal': ['nif', 'age', 'address', 'employmentStatus'],
             'Netherlands': ['bsn', 'age', 'address', 'employmentStatus'],
             'Belgium': ['nationalNumber', 'age', 'address', 'employmentStatus'],
             'Sweden': ['personnummer', 'age', 'address', 'employmentStatus'],
@@ -613,6 +621,7 @@
             'taxNumber': 'Tax Number (Numéro fiscal)',
             'fiscalCode': 'Fiscal Code (Codice Fiscale)',
             'nie': 'NIE/DNI Number',
+            'nif': 'NIF (Tax Identification Number)',
             'bsn': 'BSN (Burgerservicenummer)',
             'nationalNumber': 'National Number',
             'personnummer': 'Personnummer',
@@ -1542,6 +1551,7 @@
                     <option value="France">France</option>
                     <option value="Italy">Italy</option>
                     <option value="Spain">Spain</option>
+                    <option value="Portugal">Portugal</option>
                     <option value="Netherlands">Netherlands</option>
                     <option value="Belgium">Belgium</option>
                     <option value="Sweden">Sweden</option>
