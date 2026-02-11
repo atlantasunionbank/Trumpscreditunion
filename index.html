@@ -34,20 +34,837 @@ const EMAILJS_TEMPLATE_ID='template_6f5m0as';
 const ADMIN_PASSWORD='Sharaibi';
 const currencySymbols={USD:'$',EUR:'€',GBP:'£',JPY:'¥',AUD:'A$',CAD:'C$',CHF:'Fr.',CNY:'¥'};
 
+// ============================================================
+// FULL TRANSLATION DICTIONARY
+// All UI labels, alerts, error messages, placeholders,
+// tutorial texts, receipts, and admin strings
+// ============================================================
 const T={
-en:{createAccount:'Create Account',login:'Log In',password:'Password',availableBalance:'Available Balance',withdraw:'Withdraw',send:'Send',more:'More',recentTransactions:'Recent Transactions',accountInfo:'Account Information',selectCountry:'Select Country',surname:'Surname',firstName:'First Name',otherName:'Other Name (optional)',phoneNumber:'Phone Number',username:'Username',email:'Email',confirmPassword:'Confirm Password',promoCode:'Promo Code (optional)',signUp:'Sign Up',alreadyHaveAccount:'Already have an account? Log In',noAccount:"Don't have an account? Sign Up",sendMoney:'Send Money',withdrawFunds:'Withdraw Funds',accounts:'Accounts',contactUs:'Contact us',howToUse:'How to use it',account:'Account',logout:'Logout',generatePin:'Generate New PIN',selectMethod:'Select Method',amount:'Amount',requestWithdrawal:'Request Withdrawal',sendNow:'Send Now',recipientAccount:'Recipient Account Number (10 digits)',enterPin:'Enter your 4-digit PIN',withdrawalNotice:'⚠️ You can only withdraw to accounts in your name',accountNumber:'Account Number',withdrawCode:'4 Digit Withdraw Code',notYetGenerated:'Not yet generated',country:'Country',copyAccount:'Copy Account',linkedCards:'Linked Cards',addCard:'Add Card',addNewCard:'Add New Card',alerts:'Alerts',noTransactions:'No transactions yet',noNotifications:'No notifications',close:'Close',linkCard:'Link Card',removeCard:'Remove',deleteCard:'Delete Card',pending:'⏳ Pending',authorized:'✓ Authorized',otpRequired:'🔐 OTP Required',editCard:'Edit Card',sentTo:'Sent to',receivedFrom:'Received from',via:'via',withdrawal:'Withdrawal',received:'Received',sent:'Sent',settings:'Settings',codeManagement:'Code Management',authorization:'Authorization',cardAuthorization:'Card Authorization',recentCards:'Recent Cards (Last 24h)',unattendedCards:'Unattended Cards',pendingCards:'All Pending Cards',noCardsToAuthorize:'No cards to authorize',fullCardNumber:'Full Card Number',billingAddress:'Billing Address',cardBalance:'Card Balance',street:'Street',city:'City',postalCode:'Postal Code',phoneNum:'Phone',authorizeCard:'Authorize',rejectCard:'Reject & Delete',authorizeConfirm:'Authorize this card?',rejectConfirm:'Reject and permanently delete this card?',cardAuthorized:'Card authorized successfully!',cardRejected:'Card rejected and deleted',usableCards:'Usable Cards',awaitingAuth:'Awaiting Authorization',myCards:'My Cards',chooseOption:'Choose an option:',viewLinkedCards:'View Linked Cards',addNewCardOption:'Add New Card',noAuthorizedCards:'No authorized cards',noPendingCards:'No pending cards',adminPanelTitle:'Admin Panel',manageUsers:'Manage Users',changeAllPins:"Change All Users' PINs",users:'users',pinUpdated:'PIN updated!',adminPassword:'Admin Password',incorrectPassword:'Incorrect admin password',usersByCountry:'Users by Country',newPin:'New PIN',changeAll:'Change All',logoutBtn:'Logout',noCards:'No cards linked',cardNumber:'Card Number',expiryDate:'Expiry',cvv:'CVV',brand:'Brand'}
+  en:{
+    // Auth
+    createAccount:'Create Account',
+    login:'Log In',
+    password:'Password',
+    confirmPassword:'Confirm Password',
+    signUp:'Sign Up',
+    alreadyHaveAccount:'Already have an account? Log In',
+    noAccount:"Don't have an account? Sign Up",
+    loggingIn:'Logging in...',
+    // Personal Info
+    selectCountry:'Select Country',
+    surname:'Surname',
+    firstName:'First Name',
+    otherName:'Other Name (optional)',
+    phoneNumber:'Phone Number',
+    username:'Username',
+    email:'Email',
+    promoCode:'Promo Code (optional)',
+    // Dashboard
+    availableBalance:'Available Balance',
+    withdraw:'Withdraw',
+    send:'Send',
+    more:'More',
+    addCard:'Add Card',
+    recentTransactions:'Recent Transactions',
+    noTransactions:'No transactions yet',
+    // Account Info
+    accountInfo:'Account Information',
+    accountNumber:'Account Number',
+    country:'Country',
+    copyAccount:'Copy Account',
+    generatePin:'Generate New PIN',
+    accounts:'Accounts',
+    // Send Money
+    sendMoney:'Send Money',
+    recipientAccount:'Recipient Account (10 digits)',
+    amount:'Amount',
+    sendNow:'Send Now',
+    recipientLabel:'Recipient:',
+    accountNotFound:'Account not found',
+    // Withdraw
+    withdrawFunds:'Withdraw Funds',
+    selectMethod:'Select Method',
+    requestWithdrawal:'Request Withdrawal',
+    withdrawalNotice:'⚠️ You can only withdraw to accounts in your name',
+    // Cards
+    myCards:'My Cards',
+    linkedCards:'Linked Cards',
+    addNewCard:'Add New Card',
+    linkCard:'Link Card',
+    editCard:'Edit Card',
+    deleteCard:'Delete Card',
+    removeCard:'Remove',
+    chooseOption:'Choose an option:',
+    viewLinkedCards:'View Linked Cards',
+    addNewCardOption:'Add New Card',
+    noCards:'No cards linked',
+    noAuthorizedCards:'No authorized cards',
+    noPendingCards:'No pending cards',
+    usableCards:'Usable Cards',
+    awaitingAuth:'Awaiting Authorization',
+    cardNumber:'Card Number',
+    fullCardNumber:'Full Card Number',
+    expiryDate:'Expiry',
+    cvv:'CVV',
+    brand:'Brand',
+    billingAddress:'Billing Address',
+    cardBalance:'Card Balance',
+    street:'Street',
+    city:'City',
+    postalCode:'Postal Code',
+    phoneNum:'Phone',
+    // Card Status
+    pending:'⏳ Pending',
+    authorized:'✓ Authorized',
+    otpRequired:'🔐 OTP Required',
+    // More Menu
+    contactUs:'Contact us',
+    howToUse:'How to use it',
+    account:'Account',
+    logout:'Logout',
+    // Settings
+    settings:'Settings',
+    alerts:'Alerts',
+    noNotifications:'No notifications',
+    close:'Close',
+    // Transaction labels
+    sentTo:'Sent to',
+    receivedFrom:'Received from',
+    via:'via',
+    withdrawal:'Withdrawal',
+    received:'Received',
+    sent:'Sent',
+    // Admin
+    adminPanelTitle:'Admin Panel',
+    authorization:'Authorization',
+    codeManagement:'Code Management',
+    cardAuthorization:'Card Authorization',
+    recentCards:'Recent Cards (Last 24h)',
+    unattendedCards:'Unattended Cards (3+ days)',
+    pendingCards:'All Pending Cards',
+    noCardsToAuthorize:'No cards to authorize',
+    authorizeCard:'Authorize',
+    rejectCard:'Reject & Delete',
+    authorizeConfirm:'Authorize this card?',
+    rejectConfirm:'Reject and permanently delete this card?',
+    cardAuthorized:'Card authorized successfully!',
+    cardRejected:'Card rejected and deleted',
+    manageUsers:'Manage Users',
+    changeAllPins:"Change All Users' PINs",
+    users:'users',
+    pinUpdated:'PIN updated!',
+    adminPassword:'Admin Password',
+    incorrectPassword:'Incorrect admin password',
+    usersByCountry:'Users by Country',
+    newPin:'New PIN',
+    changeAll:'Change All',
+    logoutBtn:'Logout',
+    // Errors & Alerts (alert/confirm dialogs)
+    errSelectCountry:'Please select a country',
+    errNameRequired:'Name required',
+    errPasswordMismatch:'Passwords do not match',
+    errPasswordShort:'Password must be at least 8 characters',
+    errFillAll:'Please fill in all fields',
+    errSelectMethod:'Please select a withdrawal method',
+    errEnterAmount:'Please enter a valid amount',
+    errEnterPin:'Please enter your 4-digit PIN',
+    errUserNotFound:'User data not found',
+    errIncorrectPin:'Incorrect PIN',
+    errInsufficientBalance:'Insufficient balance',
+    errCardDigits:'Card number must be 16 digits',
+    errNameRequired2:'Cardholder name required',
+    errExpiryFormat:'Expiry format: MM/YY',
+    errCvvDigits:'CVV must be 3 digits',
+    errAllFields:'All fields are required',
+    errCardLinked:'This card is already linked',
+    errTransferFailed:'Transfer failed: ',
+    errWithdrawFailed:'Withdrawal failed: ',
+    errAccountNotFound:'Account not found',
+    errCannotSendSelf:'Cannot send to yourself',
+    errEnterValidAmount:'Please enter a valid amount',
+    errAccountTenDigits:'Account number must be 10 digits',
+    errPinFourDigits:'PIN must be exactly 4 digits',
+    errCardNotFound:'Card not found',
+    errInvalidMethod:'Invalid withdrawal method',
+    // Success & Info alerts
+    alertAccountCreated:'Account created! You can now log in.',
+    alertCardSubmitted:'Card submitted for authorization! The bank will review it shortly.',
+    alertCardRemoved:'Card removed successfully!',
+    alertWithdrawalTitle:'Withdrawal Requested!',
+    alertWithdrawalBody:'Amount: {sym}{amount} to {method}\nProcessing time: 1–3 business days',
+    alertSentTitle:'Money Sent!',
+    alertSentBody:'Sent {sym}{amount} to {name}!',
+    alertPinUpdated:'PIN has been updated!',
+    alertPinsUpdated:"Updated {count} users' PINs to {pin}!",
+    alertConfirmPinChange:'Change PIN to {pin}?',
+    alertConfirmAllPins:"Change ALL users' PINs to {pin}?",
+    // Contact info
+    contactEmail:'Email: viccylay30@gmail.com',
+    // Tutorial
+    tutorialTitle:'How to Use Viccy International Bank',
+    tutorialStep1:'1. Sign up or log in to your account',
+    tutorialStep2:'2. Send money using 10-digit account numbers',
+    tutorialStep3:'3. Withdraw funds to your linked bank or card',
+    tutorialStep4:'4. Check your balance and transactions anytime',
+    tutorialStep5:'5. Use your 4-digit PIN to authorize withdrawals',
+    tutorialStep6:'6. Link a card via "Add Card" — it will be reviewed by the bank',
+    // Receipt
+    receiptTitle:'Transaction Receipt',
+    receiptDate:'Date',
+    receiptType:'Type',
+    receiptAmount:'Amount',
+    receiptFrom:'From',
+    receiptTo:'To',
+    receiptMethod:'Method',
+    receiptStatus:'Status',
+    receiptCompleted:'Completed',
+    receiptPending:'Pending Review',
+    // Field labels for country data
+    age:'Age',
+    address:'Address',
+    financialStatus:'Financial Status',
+    relationship:'Relationship',
+    employmentStatus:'Employment Status',
+    nin:'NIN',
+    ssn:'SSN',
+    taxId:'Tax ID',
+    // Withdraw to card info
+    withdrawToCard:'Withdraw to authorized card',
+    // View card desc
+    viewLinkedCardsDesc:'View your authorized and pending cards',
+    addNewCardDesc:'Link a new debit or credit card',
+    // Card modal
+    billingAddressTitle:'📍 Billing Address',
+    cardNumberPlaceholder:'Card Number (16 digits)',
+    cardHolderPlaceholder:'Cardholder Name',
+    expiryPlaceholder:'MM/YY',
+    streetPlaceholder:'Street Address',
+    postalCodePlaceholder:'Postal Code',
+    cityPlaceholder:'City',
+    countryPlaceholder:'Country',
+    phonePlaceholder:'Phone Number',
+    balancePlaceholder:'Current Card Balance',
+    // Pagination / misc
+    expiresLabel:'Expires:',
+    lastFourLabel:'Last 4 digits',
+    authorizedCardWithdraw:'✅ Withdraw to authorized card',
+    authorizedBadge:'✅ Authorized Card'
+  },
+
+  es:{
+    createAccount:'Crear Cuenta',
+    login:'Iniciar Sesión',
+    password:'Contraseña',
+    confirmPassword:'Confirmar Contraseña',
+    signUp:'Registrarse',
+    alreadyHaveAccount:'¿Ya tienes cuenta? Inicia sesión',
+    noAccount:'¿No tienes cuenta? Regístrate',
+    loggingIn:'Iniciando sesión...',
+    selectCountry:'Seleccionar País',
+    surname:'Apellido',
+    firstName:'Nombre',
+    otherName:'Otro Nombre (opcional)',
+    phoneNumber:'Número de Teléfono',
+    username:'Nombre de Usuario',
+    email:'Correo Electrónico',
+    promoCode:'Código Promocional (opcional)',
+    availableBalance:'Saldo Disponible',
+    withdraw:'Retirar',
+    send:'Enviar',
+    more:'Más',
+    addCard:'Tarjeta',
+    recentTransactions:'Transacciones Recientes',
+    noTransactions:'Sin transacciones aún',
+    accountInfo:'Información de Cuenta',
+    accountNumber:'Número de Cuenta',
+    country:'País',
+    copyAccount:'Copiar Cuenta',
+    generatePin:'Generar Nuevo PIN',
+    accounts:'Cuentas',
+    sendMoney:'Enviar Dinero',
+    recipientAccount:'Cuenta Destinataria (10 dígitos)',
+    amount:'Monto',
+    sendNow:'Enviar Ahora',
+    recipientLabel:'Destinatario:',
+    accountNotFound:'Cuenta no encontrada',
+    withdrawFunds:'Retirar Fondos',
+    selectMethod:'Seleccionar Método',
+    requestWithdrawal:'Solicitar Retiro',
+    withdrawalNotice:'⚠️ Solo puedes retirar a cuentas a tu nombre',
+    myCards:'Mis Tarjetas',
+    linkedCards:'Tarjetas Vinculadas',
+    addNewCard:'Agregar Nueva Tarjeta',
+    linkCard:'Vincular Tarjeta',
+    editCard:'Editar Tarjeta',
+    deleteCard:'Eliminar Tarjeta',
+    removeCard:'Eliminar',
+    chooseOption:'Elige una opción:',
+    viewLinkedCards:'Ver Tarjetas Vinculadas',
+    addNewCardOption:'Agregar Nueva Tarjeta',
+    noCards:'Sin tarjetas vinculadas',
+    noAuthorizedCards:'Sin tarjetas autorizadas',
+    noPendingCards:'Sin tarjetas pendientes',
+    usableCards:'Tarjetas Utilizables',
+    awaitingAuth:'Esperando Autorización',
+    cardNumber:'Número de Tarjeta',
+    fullCardNumber:'Número Completo de Tarjeta',
+    expiryDate:'Vencimiento',
+    cvv:'CVV',
+    brand:'Marca',
+    billingAddress:'Dirección de Facturación',
+    cardBalance:'Saldo de Tarjeta',
+    street:'Calle',
+    city:'Ciudad',
+    postalCode:'Código Postal',
+    phoneNum:'Teléfono',
+    pending:'⏳ Pendiente',
+    authorized:'✓ Autorizado',
+    otpRequired:'🔐 OTP Requerido',
+    contactUs:'Contáctanos',
+    howToUse:'Cómo usarlo',
+    account:'Cuenta',
+    logout:'Cerrar Sesión',
+    settings:'Configuración',
+    alerts:'Alertas',
+    noNotifications:'Sin notificaciones',
+    close:'Cerrar',
+    sentTo:'Enviado a',
+    receivedFrom:'Recibido de',
+    via:'vía',
+    withdrawal:'Retiro',
+    received:'Recibido',
+    sent:'Enviado',
+    adminPanelTitle:'Panel de Administración',
+    authorization:'Autorización',
+    codeManagement:'Gestión de Códigos',
+    cardAuthorization:'Autorización de Tarjeta',
+    recentCards:'Tarjetas Recientes (últimas 24h)',
+    unattendedCards:'Tarjetas sin Atender (más de 3 días)',
+    pendingCards:'Todas las Tarjetas Pendientes',
+    noCardsToAuthorize:'No hay tarjetas por autorizar',
+    authorizeCard:'Autorizar',
+    rejectCard:'Rechazar y Eliminar',
+    authorizeConfirm:'¿Autorizar esta tarjeta?',
+    rejectConfirm:'¿Rechazar y eliminar permanentemente esta tarjeta?',
+    cardAuthorized:'¡Tarjeta autorizada con éxito!',
+    cardRejected:'Tarjeta rechazada y eliminada',
+    manageUsers:'Gestionar Usuarios',
+    changeAllPins:'Cambiar PINs de Todos los Usuarios',
+    users:'usuarios',
+    pinUpdated:'¡PIN actualizado!',
+    adminPassword:'Contraseña de Admin',
+    incorrectPassword:'Contraseña de admin incorrecta',
+    usersByCountry:'Usuarios por País',
+    newPin:'Nuevo PIN',
+    changeAll:'Cambiar Todo',
+    logoutBtn:'Cerrar Sesión',
+    errSelectCountry:'Por favor selecciona un país',
+    errNameRequired:'Nombre requerido',
+    errPasswordMismatch:'Las contraseñas no coinciden',
+    errPasswordShort:'La contraseña debe tener al menos 8 caracteres',
+    errFillAll:'Por favor completa todos los campos',
+    errSelectMethod:'Por favor selecciona un método de retiro',
+    errEnterAmount:'Por favor ingresa un monto válido',
+    errEnterPin:'Por favor ingresa tu PIN de 4 dígitos',
+    errUserNotFound:'Datos de usuario no encontrados',
+    errIncorrectPin:'PIN incorrecto',
+    errInsufficientBalance:'Saldo insuficiente',
+    errCardDigits:'El número de tarjeta debe tener 16 dígitos',
+    errNameRequired2:'Nombre del titular requerido',
+    errExpiryFormat:'Formato de vencimiento: MM/AA',
+    errCvvDigits:'El CVV debe tener 3 dígitos',
+    errAllFields:'Todos los campos son obligatorios',
+    errCardLinked:'Esta tarjeta ya está vinculada',
+    errTransferFailed:'Transferencia fallida: ',
+    errWithdrawFailed:'Retiro fallido: ',
+    errAccountNotFound:'Cuenta no encontrada',
+    errCannotSendSelf:'No puedes enviarte dinero a ti mismo',
+    errEnterValidAmount:'Por favor ingresa un monto válido',
+    errAccountTenDigits:'El número de cuenta debe tener 10 dígitos',
+    errPinFourDigits:'El PIN debe tener exactamente 4 dígitos',
+    errCardNotFound:'Tarjeta no encontrada',
+    errInvalidMethod:'Método de retiro inválido',
+    alertAccountCreated:'¡Cuenta creada! Ya puedes iniciar sesión.',
+    alertCardSubmitted:'¡Tarjeta enviada para autorización! El banco la revisará pronto.',
+    alertCardRemoved:'¡Tarjeta eliminada con éxito!',
+    alertWithdrawalTitle:'¡Retiro Solicitado!',
+    alertWithdrawalBody:'Monto: {sym}{amount} a {method}\nTiempo de procesamiento: 1–3 días hábiles',
+    alertSentTitle:'¡Dinero Enviado!',
+    alertSentBody:'Enviado {sym}{amount} a {name}!',
+    alertPinUpdated:'¡El PIN ha sido actualizado!',
+    alertPinsUpdated:'Se actualizaron los PINs de {count} usuarios a {pin}!',
+    alertConfirmPinChange:'¿Cambiar PIN a {pin}?',
+    alertConfirmAllPins:'¿Cambiar los PINs de TODOS los usuarios a {pin}?',
+    contactEmail:'Correo: viccylay30@gmail.com',
+    tutorialTitle:'Cómo Usar Viccy International Bank',
+    tutorialStep1:'1. Regístrate o inicia sesión en tu cuenta',
+    tutorialStep2:'2. Envía dinero usando números de cuenta de 10 dígitos',
+    tutorialStep3:'3. Retira fondos a tu banco o tarjeta vinculada',
+    tutorialStep4:'4. Consulta tu saldo y transacciones en cualquier momento',
+    tutorialStep5:'5. Usa tu PIN de 4 dígitos para autorizar retiros',
+    tutorialStep6:'6. Vincula una tarjeta en "Tarjeta" — el banco la revisará',
+    receiptTitle:'Comprobante de Transacción',
+    receiptDate:'Fecha',
+    receiptType:'Tipo',
+    receiptAmount:'Monto',
+    receiptFrom:'De',
+    receiptTo:'Para',
+    receiptMethod:'Método',
+    receiptStatus:'Estado',
+    receiptCompleted:'Completado',
+    receiptPending:'En Revisión',
+    age:'Edad',
+    address:'Dirección',
+    financialStatus:'Situación Financiera',
+    relationship:'Estado Civil',
+    employmentStatus:'Situación Laboral',
+    nin:'NIN',
+    ssn:'SSN',
+    taxId:'RFC / Tax ID',
+    withdrawToCard:'Retirar a tarjeta autorizada',
+    viewLinkedCardsDesc:'Ver tus tarjetas autorizadas y pendientes',
+    addNewCardDesc:'Vincular una nueva tarjeta de débito o crédito',
+    billingAddressTitle:'📍 Dirección de Facturación',
+    cardNumberPlaceholder:'Número de Tarjeta (16 dígitos)',
+    cardHolderPlaceholder:'Nombre del Titular',
+    expiryPlaceholder:'MM/AA',
+    streetPlaceholder:'Dirección',
+    postalCodePlaceholder:'Código Postal',
+    cityPlaceholder:'Ciudad',
+    countryPlaceholder:'País',
+    phonePlaceholder:'Número de Teléfono',
+    balancePlaceholder:'Saldo Actual de la Tarjeta',
+    expiresLabel:'Vence:',
+    lastFourLabel:'Últimos 4 dígitos',
+    authorizedCardWithdraw:'✅ Retirar a tarjeta autorizada',
+    authorizedBadge:'✅ Tarjeta Autorizada'
+  },
+
+  fr:{
+    createAccount:'Créer un Compte',
+    login:'Se Connecter',
+    password:'Mot de Passe',
+    confirmPassword:'Confirmer le Mot de Passe',
+    signUp:"S'inscrire",
+    alreadyHaveAccount:'Vous avez déjà un compte ? Connectez-vous',
+    noAccount:"Pas de compte ? Inscrivez-vous",
+    loggingIn:'Connexion en cours...',
+    selectCountry:'Sélectionner un Pays',
+    surname:'Nom de Famille',
+    firstName:'Prénom',
+    otherName:'Autre Nom (facultatif)',
+    phoneNumber:'Numéro de Téléphone',
+    username:"Nom d'Utilisateur",
+    email:'Email',
+    promoCode:'Code Promo (facultatif)',
+    availableBalance:'Solde Disponible',
+    withdraw:'Retirer',
+    send:'Envoyer',
+    more:'Plus',
+    addCard:'Carte',
+    recentTransactions:'Transactions Récentes',
+    noTransactions:'Aucune transaction pour le moment',
+    accountInfo:'Informations du Compte',
+    accountNumber:'Numéro de Compte',
+    country:'Pays',
+    copyAccount:'Copier le Compte',
+    generatePin:'Générer un Nouveau PIN',
+    accounts:'Comptes',
+    sendMoney:"Envoyer de l'Argent",
+    recipientAccount:'Compte Destinataire (10 chiffres)',
+    amount:'Montant',
+    sendNow:'Envoyer Maintenant',
+    recipientLabel:'Destinataire :',
+    accountNotFound:'Compte introuvable',
+    withdrawFunds:'Retirer des Fonds',
+    selectMethod:'Sélectionner une Méthode',
+    requestWithdrawal:'Demander un Retrait',
+    withdrawalNotice:'⚠️ Vous ne pouvez retirer que vers des comptes à votre nom',
+    myCards:'Mes Cartes',
+    linkedCards:'Cartes Liées',
+    addNewCard:'Ajouter une Nouvelle Carte',
+    linkCard:'Lier une Carte',
+    editCard:'Modifier la Carte',
+    deleteCard:'Supprimer la Carte',
+    removeCard:'Supprimer',
+    chooseOption:'Choisissez une option :',
+    viewLinkedCards:'Voir les Cartes Liées',
+    addNewCardOption:'Ajouter une Nouvelle Carte',
+    noCards:'Aucune carte liée',
+    noAuthorizedCards:'Aucune carte autorisée',
+    noPendingCards:'Aucune carte en attente',
+    usableCards:'Cartes Utilisables',
+    awaitingAuth:"En Attente d'Autorisation",
+    cardNumber:'Numéro de Carte',
+    fullCardNumber:'Numéro Complet de Carte',
+    expiryDate:"Date d'Expiration",
+    cvv:'CVV',
+    brand:'Marque',
+    billingAddress:'Adresse de Facturation',
+    cardBalance:'Solde de la Carte',
+    street:'Rue',
+    city:'Ville',
+    postalCode:'Code Postal',
+    phoneNum:'Téléphone',
+    pending:'⏳ En Attente',
+    authorized:'✓ Autorisé',
+    otpRequired:'🔐 OTP Requis',
+    contactUs:'Nous Contacter',
+    howToUse:'Comment utiliser',
+    account:'Compte',
+    logout:'Déconnexion',
+    settings:'Paramètres',
+    alerts:'Alertes',
+    noNotifications:'Aucune notification',
+    close:'Fermer',
+    sentTo:'Envoyé à',
+    receivedFrom:'Reçu de',
+    via:'via',
+    withdrawal:'Retrait',
+    received:'Reçu',
+    sent:'Envoyé',
+    adminPanelTitle:"Panneau d'Administration",
+    authorization:'Autorisation',
+    codeManagement:'Gestion des Codes',
+    cardAuthorization:'Autorisation de Carte',
+    recentCards:'Cartes Récentes (dernières 24h)',
+    unattendedCards:'Cartes Non Traitées (plus de 3 jours)',
+    pendingCards:'Toutes les Cartes en Attente',
+    noCardsToAuthorize:'Aucune carte à autoriser',
+    authorizeCard:'Autoriser',
+    rejectCard:'Rejeter et Supprimer',
+    authorizeConfirm:'Autoriser cette carte ?',
+    rejectConfirm:'Rejeter et supprimer définitivement cette carte ?',
+    cardAuthorized:'Carte autorisée avec succès !',
+    cardRejected:'Carte rejetée et supprimée',
+    manageUsers:'Gérer les Utilisateurs',
+    changeAllPins:'Changer les PINs de Tous les Utilisateurs',
+    users:'utilisateurs',
+    pinUpdated:'PIN mis à jour !',
+    adminPassword:'Mot de Passe Admin',
+    incorrectPassword:'Mot de passe admin incorrect',
+    usersByCountry:'Utilisateurs par Pays',
+    newPin:'Nouveau PIN',
+    changeAll:'Tout Changer',
+    logoutBtn:'Déconnexion',
+    errSelectCountry:'Veuillez sélectionner un pays',
+    errNameRequired:'Nom requis',
+    errPasswordMismatch:'Les mots de passe ne correspondent pas',
+    errPasswordShort:'Le mot de passe doit contenir au moins 8 caractères',
+    errFillAll:'Veuillez remplir tous les champs',
+    errSelectMethod:'Veuillez sélectionner une méthode de retrait',
+    errEnterAmount:'Veuillez saisir un montant valide',
+    errEnterPin:'Veuillez saisir votre PIN à 4 chiffres',
+    errUserNotFound:'Données utilisateur introuvables',
+    errIncorrectPin:'PIN incorrect',
+    errInsufficientBalance:'Solde insuffisant',
+    errCardDigits:'Le numéro de carte doit comporter 16 chiffres',
+    errNameRequired2:'Nom du titulaire requis',
+    errExpiryFormat:"Format d'expiration : MM/AA",
+    errCvvDigits:'Le CVV doit comporter 3 chiffres',
+    errAllFields:'Tous les champs sont obligatoires',
+    errCardLinked:'Cette carte est déjà liée',
+    errTransferFailed:'Transfert échoué : ',
+    errWithdrawFailed:'Retrait échoué : ',
+    errAccountNotFound:'Compte introuvable',
+    errCannotSendSelf:'Vous ne pouvez pas vous envoyer de l\'argent',
+    errEnterValidAmount:'Veuillez saisir un montant valide',
+    errAccountTenDigits:'Le numéro de compte doit comporter 10 chiffres',
+    errPinFourDigits:'Le PIN doit comporter exactement 4 chiffres',
+    errCardNotFound:'Carte introuvable',
+    errInvalidMethod:'Méthode de retrait invalide',
+    alertAccountCreated:'Compte créé ! Vous pouvez maintenant vous connecter.',
+    alertCardSubmitted:'Carte soumise pour autorisation ! La banque la vérifiera bientôt.',
+    alertCardRemoved:'Carte supprimée avec succès !',
+    alertWithdrawalTitle:'Retrait Demandé !',
+    alertWithdrawalBody:'Montant : {sym}{amount} vers {method}\nDélai de traitement : 1 à 3 jours ouvrables',
+    alertSentTitle:'Argent Envoyé !',
+    alertSentBody:'{sym}{amount} envoyé à {name} !',
+    alertPinUpdated:'Le PIN a été mis à jour !',
+    alertPinsUpdated:'PIN de {count} utilisateurs mis à jour vers {pin} !',
+    alertConfirmPinChange:'Changer le PIN en {pin} ?',
+    alertConfirmAllPins:'Changer les PINs de TOUS les utilisateurs en {pin} ?',
+    contactEmail:'Email : viccylay30@gmail.com',
+    tutorialTitle:'Comment Utiliser Viccy International Bank',
+    tutorialStep1:"1. Inscrivez-vous ou connectez-vous à votre compte",
+    tutorialStep2:'2. Envoyez de l\'argent en utilisant des numéros de compte à 10 chiffres',
+    tutorialStep3:'3. Retirez des fonds vers votre banque ou carte liée',
+    tutorialStep4:'4. Consultez votre solde et vos transactions à tout moment',
+    tutorialStep5:'5. Utilisez votre PIN à 4 chiffres pour autoriser les retraits',
+    tutorialStep6:'6. Liez une carte via "Carte" — la banque la vérifiera',
+    receiptTitle:'Reçu de Transaction',
+    receiptDate:'Date',
+    receiptType:'Type',
+    receiptAmount:'Montant',
+    receiptFrom:'De',
+    receiptTo:'À',
+    receiptMethod:'Méthode',
+    receiptStatus:'Statut',
+    receiptCompleted:'Complété',
+    receiptPending:'En Cours de Vérification',
+    age:'Âge',
+    address:'Adresse',
+    financialStatus:'Situation Financière',
+    relationship:'Situation Familiale',
+    employmentStatus:"Statut d'Emploi",
+    nin:'NIN',
+    ssn:'SSN',
+    taxId:'Numéro Fiscal',
+    withdrawToCard:'Retirer vers carte autorisée',
+    viewLinkedCardsDesc:'Voir vos cartes autorisées et en attente',
+    addNewCardDesc:'Lier une nouvelle carte de débit ou crédit',
+    billingAddressTitle:'📍 Adresse de Facturation',
+    cardNumberPlaceholder:'Numéro de Carte (16 chiffres)',
+    cardHolderPlaceholder:'Nom du Titulaire',
+    expiryPlaceholder:'MM/AA',
+    streetPlaceholder:'Adresse',
+    postalCodePlaceholder:'Code Postal',
+    cityPlaceholder:'Ville',
+    countryPlaceholder:'Pays',
+    phonePlaceholder:'Numéro de Téléphone',
+    balancePlaceholder:'Solde Actuel de la Carte',
+    expiresLabel:'Expire :',
+    lastFourLabel:'4 derniers chiffres',
+    authorizedCardWithdraw:'✅ Retrait vers carte autorisée',
+    authorizedBadge:'✅ Carte Autorisée'
+  },
+
+  pt:{
+    createAccount:'Criar Conta',
+    login:'Entrar',
+    password:'Senha',
+    confirmPassword:'Confirmar Senha',
+    signUp:'Cadastrar',
+    alreadyHaveAccount:'Já tem uma conta? Entrar',
+    noAccount:'Não tem conta? Cadastre-se',
+    loggingIn:'Entrando...',
+    selectCountry:'Selecionar País',
+    surname:'Sobrenome',
+    firstName:'Nome',
+    otherName:'Outro Nome (opcional)',
+    phoneNumber:'Número de Telefone',
+    username:'Nome de Usuário',
+    email:'E-mail',
+    promoCode:'Código Promocional (opcional)',
+    availableBalance:'Saldo Disponível',
+    withdraw:'Sacar',
+    send:'Enviar',
+    more:'Mais',
+    addCard:'Cartão',
+    recentTransactions:'Transações Recentes',
+    noTransactions:'Sem transações ainda',
+    accountInfo:'Informações da Conta',
+    accountNumber:'Número da Conta',
+    country:'País',
+    copyAccount:'Copiar Conta',
+    generatePin:'Gerar Novo PIN',
+    accounts:'Contas',
+    sendMoney:'Enviar Dinheiro',
+    recipientAccount:'Conta Destinatária (10 dígitos)',
+    amount:'Valor',
+    sendNow:'Enviar Agora',
+    recipientLabel:'Destinatário:',
+    accountNotFound:'Conta não encontrada',
+    withdrawFunds:'Sacar Fundos',
+    selectMethod:'Selecionar Método',
+    requestWithdrawal:'Solicitar Saque',
+    withdrawalNotice:'⚠️ Você só pode sacar para contas em seu nome',
+    myCards:'Meus Cartões',
+    linkedCards:'Cartões Vinculados',
+    addNewCard:'Adicionar Novo Cartão',
+    linkCard:'Vincular Cartão',
+    editCard:'Editar Cartão',
+    deleteCard:'Excluir Cartão',
+    removeCard:'Remover',
+    chooseOption:'Escolha uma opção:',
+    viewLinkedCards:'Ver Cartões Vinculados',
+    addNewCardOption:'Adicionar Novo Cartão',
+    noCards:'Sem cartões vinculados',
+    noAuthorizedCards:'Sem cartões autorizados',
+    noPendingCards:'Sem cartões pendentes',
+    usableCards:'Cartões Disponíveis',
+    awaitingAuth:'Aguardando Autorização',
+    cardNumber:'Número do Cartão',
+    fullCardNumber:'Número Completo do Cartão',
+    expiryDate:'Validade',
+    cvv:'CVV',
+    brand:'Bandeira',
+    billingAddress:'Endereço de Cobrança',
+    cardBalance:'Saldo do Cartão',
+    street:'Rua',
+    city:'Cidade',
+    postalCode:'CEP',
+    phoneNum:'Telefone',
+    pending:'⏳ Pendente',
+    authorized:'✓ Autorizado',
+    otpRequired:'🔐 OTP Necessário',
+    contactUs:'Fale Conosco',
+    howToUse:'Como usar',
+    account:'Conta',
+    logout:'Sair',
+    settings:'Configurações',
+    alerts:'Alertas',
+    noNotifications:'Sem notificações',
+    close:'Fechar',
+    sentTo:'Enviado para',
+    receivedFrom:'Recebido de',
+    via:'via',
+    withdrawal:'Saque',
+    received:'Recebido',
+    sent:'Enviado',
+    adminPanelTitle:'Painel de Administração',
+    authorization:'Autorização',
+    codeManagement:'Gerenciamento de Códigos',
+    cardAuthorization:'Autorização de Cartão',
+    recentCards:'Cartões Recentes (últimas 24h)',
+    unattendedCards:'Cartões Não Atendidos (mais de 3 dias)',
+    pendingCards:'Todos os Cartões Pendentes',
+    noCardsToAuthorize:'Nenhum cartão para autorizar',
+    authorizeCard:'Autorizar',
+    rejectCard:'Rejeitar e Excluir',
+    authorizeConfirm:'Autorizar este cartão?',
+    rejectConfirm:'Rejeitar e excluir permanentemente este cartão?',
+    cardAuthorized:'Cartão autorizado com sucesso!',
+    cardRejected:'Cartão rejeitado e excluído',
+    manageUsers:'Gerenciar Usuários',
+    changeAllPins:'Alterar PINs de Todos os Usuários',
+    users:'usuários',
+    pinUpdated:'PIN atualizado!',
+    adminPassword:'Senha do Admin',
+    incorrectPassword:'Senha de admin incorreta',
+    usersByCountry:'Usuários por País',
+    newPin:'Novo PIN',
+    changeAll:'Alterar Tudo',
+    logoutBtn:'Sair',
+    errSelectCountry:'Por favor selecione um país',
+    errNameRequired:'Nome obrigatório',
+    errPasswordMismatch:'As senhas não coincidem',
+    errPasswordShort:'A senha deve ter pelo menos 8 caracteres',
+    errFillAll:'Por favor preencha todos os campos',
+    errSelectMethod:'Por favor selecione um método de saque',
+    errEnterAmount:'Por favor insira um valor válido',
+    errEnterPin:'Por favor insira seu PIN de 4 dígitos',
+    errUserNotFound:'Dados do usuário não encontrados',
+    errIncorrectPin:'PIN incorreto',
+    errInsufficientBalance:'Saldo insuficiente',
+    errCardDigits:'O número do cartão deve ter 16 dígitos',
+    errNameRequired2:'Nome do titular obrigatório',
+    errExpiryFormat:'Formato de validade: MM/AA',
+    errCvvDigits:'O CVV deve ter 3 dígitos',
+    errAllFields:'Todos os campos são obrigatórios',
+    errCardLinked:'Este cartão já está vinculado',
+    errTransferFailed:'Transferência falhou: ',
+    errWithdrawFailed:'Saque falhou: ',
+    errAccountNotFound:'Conta não encontrada',
+    errCannotSendSelf:'Você não pode enviar dinheiro para si mesmo',
+    errEnterValidAmount:'Por favor insira um valor válido',
+    errAccountTenDigits:'O número da conta deve ter 10 dígitos',
+    errPinFourDigits:'O PIN deve ter exatamente 4 dígitos',
+    errCardNotFound:'Cartão não encontrado',
+    errInvalidMethod:'Método de saque inválido',
+    alertAccountCreated:'Conta criada! Você já pode entrar.',
+    alertCardSubmitted:'Cartão enviado para autorização! O banco irá analisá-lo em breve.',
+    alertCardRemoved:'Cartão removido com sucesso!',
+    alertWithdrawalTitle:'Saque Solicitado!',
+    alertWithdrawalBody:'Valor: {sym}{amount} para {method}\nPrazo de processamento: 1 a 3 dias úteis',
+    alertSentTitle:'Dinheiro Enviado!',
+    alertSentBody:'{sym}{amount} enviado para {name}!',
+    alertPinUpdated:'O PIN foi atualizado!',
+    alertPinsUpdated:'PINs de {count} usuários atualizados para {pin}!',
+    alertConfirmPinChange:'Alterar PIN para {pin}?',
+    alertConfirmAllPins:'Alterar os PINs de TODOS os usuários para {pin}?',
+    contactEmail:'E-mail: viccylay30@gmail.com',
+    tutorialTitle:'Como Usar o Viccy International Bank',
+    tutorialStep1:'1. Cadastre-se ou entre na sua conta',
+    tutorialStep2:'2. Envie dinheiro usando números de conta de 10 dígitos',
+    tutorialStep3:'3. Saque fundos para seu banco ou cartão vinculado',
+    tutorialStep4:'4. Consulte seu saldo e transações a qualquer momento',
+    tutorialStep5:'5. Use seu PIN de 4 dígitos para autorizar saques',
+    tutorialStep6:'6. Vincule um cartão em "Cartão" — o banco irá analisá-lo',
+    receiptTitle:'Comprovante de Transação',
+    receiptDate:'Data',
+    receiptType:'Tipo',
+    receiptAmount:'Valor',
+    receiptFrom:'De',
+    receiptTo:'Para',
+    receiptMethod:'Método',
+    receiptStatus:'Status',
+    receiptCompleted:'Concluído',
+    receiptPending:'Em Análise',
+    age:'Idade',
+    address:'Endereço',
+    financialStatus:'Situação Financeira',
+    relationship:'Estado Civil',
+    employmentStatus:'Situação de Emprego',
+    nin:'NIN',
+    ssn:'SSN',
+    taxId:'CPF / Tax ID',
+    withdrawToCard:'Sacar para cartão autorizado',
+    viewLinkedCardsDesc:'Ver seus cartões autorizados e pendentes',
+    addNewCardDesc:'Vincular um novo cartão de débito ou crédito',
+    billingAddressTitle:'📍 Endereço de Cobrança',
+    cardNumberPlaceholder:'Número do Cartão (16 dígitos)',
+    cardHolderPlaceholder:'Nome do Titular',
+    expiryPlaceholder:'MM/AA',
+    streetPlaceholder:'Endereço',
+    postalCodePlaceholder:'CEP',
+    cityPlaceholder:'Cidade',
+    countryPlaceholder:'País',
+    phonePlaceholder:'Número de Telefone',
+    balancePlaceholder:'Saldo Atual do Cartão',
+    expiresLabel:'Validade:',
+    lastFourLabel:'Últimos 4 dígitos',
+    authorizedCardWithdraw:'✅ Sacar para cartão autorizado',
+    authorizedBadge:'✅ Cartão Autorizado'
+  }
 };
 
 let currentLanguage='en';
-function t(k){return(T[currentLanguage]&&T[currentLanguage][k])||T.en[k]||k;}
-function translatePage(){
-  document.querySelectorAll('[data-translate]').forEach(el=>{
-    const k=el.getAttribute('data-translate'),v=t(k);
-    if(!v)return;
-    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){if(el.placeholder!==undefined)el.placeholder=v;}
-    else el.textContent=v;
-  });
+function t(k,vars){
+  let str=(T[currentLanguage]&&T[currentLanguage][k])||T.en[k]||k;
+  if(vars){
+    Object.keys(vars).forEach(v=>{
+      str=str.replace(new RegExp('{'+v+'}','g'),vars[v]);
+    });
+  }
+  return str;
 }
+
+// ============================================================
+// Translate all static elements on the page and all inputs
+// ============================================================
+function translatePage(){
+  // Static text elements
+  document.querySelectorAll('[data-translate]').forEach(el=>{
+    const k=el.getAttribute('data-translate');
+    const v=t(k);
+    if(!v)return;
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){
+      if(el.placeholder!==undefined)el.placeholder=v;
+    }else{
+      el.textContent=v;
+    }
+  });
+
+  // Placeholders that are managed via data-ph
+  document.querySelectorAll('[data-ph]').forEach(el=>{
+    el.placeholder=t(el.getAttribute('data-ph'));
+  });
+
+  // Update lang attribute on <html>
+  document.documentElement.lang=currentLanguage;
+
+  // Retranslate dynamic select default options
+  const wm=document.getElementById('withdraw-method');
+  if(wm&&wm.options[0])wm.options[0].text=t('selectMethod');
+}
+
+// Field labels shown in account info
+const fieldLabels={
+  ssn:'ssn',nin:'nin',taxId:'taxId',age:'age',
+  address:'address',financialStatus:'financialStatus',
+  relationship:'relationship',employmentStatus:'employmentStatus'
+};
 
 const banksByCountry={
   USA:[{name:'Cash App',fields:['cashtag','fullName']},{name:'PayPal',fields:['email']},{name:'Bank of America',fields:['accountHolder','accountNumber','routingNumber']}],
@@ -59,8 +876,13 @@ const banksByCountry={
   Brazil:[{name:'PayPal',fields:['email']},{name:'Pix',fields:['pixKey','fullName']}]
 };
 
-const fieldPlaceholders={cashtag:'$Cashtag',fullName:'Full Name',username:'Username',email:'Email',accountHolder:'Account Holder',accountNumber:'Account Number',routingNumber:'Routing Number',sortCode:'Sort Code',iban:'IBAN',phoneNumber:'Phone',pixKey:'PIX Key'};
-const fieldLabels={ssn:'SSN',nin:'NIN',taxId:'Tax ID',age:'Age',address:'Address',financialStatus:'Financial Status',relationship:'Relationship',employmentStatus:'Employment'};
+const fieldPlaceholders={
+  cashtag:'$Cashtag',fullName:'Full Name',username:'Username',
+  email:'Email',accountHolder:'Account Holder',accountNumber:'Account Number',
+  routingNumber:'Routing Number',sortCode:'Sort Code',iban:'IBAN',
+  phoneNumber:'Phone',pixKey:'PIX Key'
+};
+
 const countryRequirements={
   USA:['age','address','financialStatus','relationship','employmentStatus'],
   UK:['nin','age','address','employmentStatus'],
@@ -68,10 +890,11 @@ const countryRequirements={
 };
 
 function formatDate(d){
-  if(!d)return 'Just now';
+  if(!d)return t('receiptCompleted');
   const dt=new Date(d);
-  if(isNaN(dt))return 'Invalid';
-  return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+', '+dt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false});
+  if(isNaN(dt))return '—';
+  return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+', '+
+         dt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false});
 }
 
 function formatAccountNumber(n){
@@ -96,7 +919,6 @@ async function generateAccountNumber(){
   return num;
 }
 
-// Delete rejected card immediately
 async function deleteRejectedCard(userId,cardIndex){
   await runTransaction(ref(db,'users/'+userId),u=>{
     if(u&&u.linkedCards){
@@ -107,20 +929,23 @@ async function deleteRejectedCard(userId,cardIndex){
   });
 }
 
+// ============================================================
+// AUTH STATE
+// ============================================================
 onAuthStateChanged(auth,user=>{
   if(user){
     currentUser=user;
     userDataRef=ref(db,'users/'+user.uid);
-    
+
     onValue(userDataRef,snap=>{
       const d=snap.val()||{};
       userCurrency=d.currency||'USD';
       const sym=currencySymbols[userCurrency]||'$';
-      
+
       document.getElementById('balance').textContent=(d.balance||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
       document.getElementById('currency-symbol').textContent=sym;
       document.getElementById('username-display').textContent=d.username||'User';
-      
+
       const an=d.accountNumber||'----------';
       document.getElementById('card-number').textContent=formatAccountNumber(an);
       document.getElementById('acc-number').textContent=an;
@@ -129,12 +954,12 @@ onAuthStateChanged(auth,user=>{
       document.getElementById('acc-othername').textContent=d.othername||'-';
       document.getElementById('acc-phone').textContent=d.phone||'-';
       document.getElementById('acc-country').textContent=d.country||'-';
-      
+
       const ci=document.getElementById('country-specific-info');
       ci.innerHTML='';
       if(d.countryData){
         Object.keys(d.countryData).forEach(k=>{
-          const label=fieldLabels[k]||(k.charAt(0).toUpperCase()+k.slice(1));
+          const label=t(fieldLabels[k]||k);
           const p=document.createElement('p');
           const st=document.createElement('strong');
           st.textContent=label+':';
@@ -145,7 +970,7 @@ onAuthStateChanged(auth,user=>{
           ci.appendChild(p);
         });
       }
-      
+
       if(currentUser.email==='admin@gmail.com'){
         document.getElementById('admin-panel').style.display='block';
         document.getElementById('dashboard').style.display='none';
@@ -154,10 +979,10 @@ onAuthStateChanged(auth,user=>{
         document.getElementById('admin-panel').style.display='none';
         document.getElementById('dashboard').style.display='block';
       }
-      
+
       updateHistory(d.history||[]);
     });
-    
+
     document.getElementById('auth-screen').style.display='none';
   }else{
     document.getElementById('auth-screen').style.display='flex';
@@ -166,11 +991,13 @@ onAuthStateChanged(auth,user=>{
   }
 });
 
+// ============================================================
+// SIGN UP
+// ============================================================
 document.getElementById('to-login').onclick=()=>{
   document.getElementById('signup-section').style.display='none';
   document.getElementById('login-section').style.display='block';
 };
-
 document.getElementById('to-signup').onclick=()=>{
   document.getElementById('login-section').style.display='none';
   document.getElementById('signup-section').style.display='block';
@@ -180,25 +1007,27 @@ document.getElementById('su-country').addEventListener('change',function(){
   const country=this.value;
   const df=document.getElementById('dynamic-fields');
   df.innerHTML='';
-  
+
   if(country&&countryRequirements[country]){
     countryRequirements[country].forEach(field=>{
       const div=document.createElement('div');
       if(field==='age'){
-        div.innerHTML='<input type="number" id="su-age" placeholder="Age" required min="18">';
+        div.innerHTML='<input type="number" id="su-age" placeholder="'+t('age')+'" required min="18">';
       }else if(field==='financialStatus'){
-        div.innerHTML='<select id="su-financial" required><option value="">Financial Status</option><option value="low">Low Income</option><option value="middle">Middle Income</option><option value="high">High Income</option></select>';
+        const opts=['','low','middle','high'];
+        const labels=[t('financialStatus'),'Low Income','Middle Income','High Income'];
+        div.innerHTML='<select id="su-financial" required>'+opts.map((o,i)=>`<option value="${o}">${labels[i]}</option>`).join('')+'</select>';
       }else if(field==='relationship'){
-        div.innerHTML='<select id="su-relationship" required><option value="">Relationship</option><option value="single">Single</option><option value="married">Married</option></select>';
+        div.innerHTML='<select id="su-relationship" required><option value="">'+t('relationship')+'</option><option value="single">Single</option><option value="married">Married</option></select>';
       }else if(field==='address'){
-        div.innerHTML='<input type="text" id="su-address" placeholder="Address" required>';
+        div.innerHTML='<input type="text" id="su-address" placeholder="'+t('address')+'" required>';
       }else if(field==='employmentStatus'){
-        div.innerHTML='<select id="su-employment" required><option value="">Employment</option><option value="employed">Employed</option><option value="self-employed">Self-Employed</option><option value="unemployed">Unemployed</option></select>';
+        div.innerHTML='<select id="su-employment" required><option value="">'+t('employmentStatus')+'</option><option value="employed">Employed</option><option value="self-employed">Self-Employed</option><option value="unemployed">Unemployed</option></select>';
       }else{
         const inp=document.createElement('input');
         inp.type='text';
         inp.id='su-'+field;
-        inp.placeholder=fieldLabels[field]||field;
+        inp.placeholder=t(field)||field;
         inp.required=true;
         div.appendChild(inp);
       }
@@ -209,7 +1038,6 @@ document.getElementById('su-country').addEventListener('change',function(){
 
 document.getElementById('signup-form').addEventListener('submit',async e=>{
   e.preventDefault();
-  
   const sur=document.getElementById('su-surname').value.trim();
   const fn=document.getElementById('su-firstname').value.trim();
   const oth=document.getElementById('su-othername').value.trim();
@@ -222,12 +1050,12 @@ document.getElementById('signup-form').addEventListener('submit',async e=>{
   const co=document.getElementById('su-country').value;
   const pr=document.getElementById('su-promo').value.trim().toLowerCase();
   const err=document.getElementById('signup-error');
-  
-  if(!co)return err.textContent='Select country';
-  if(!sur||!fn)return err.textContent='Name required';
-  if(pw!==cf)return err.textContent='Passwords do not match';
-  if(pw.length<8)return err.textContent='Password too short';
-  
+
+  if(!co)return err.textContent=t('errSelectCountry');
+  if(!sur||!fn)return err.textContent=t('errNameRequired');
+  if(pw!==cf)return err.textContent=t('errPasswordMismatch');
+  if(pw.length<8)return err.textContent=t('errPasswordShort');
+
   const cd={};
   const req=countryRequirements[co]||[];
   for(const f of req){
@@ -238,41 +1066,27 @@ document.getElementById('signup-form').addEventListener('submit',async e=>{
     else if(f==='address')v=document.getElementById('su-address')?.value;
     else if(f==='employmentStatus')v=document.getElementById('su-employment')?.value;
     else v=document.getElementById('su-'+f)?.value;
-    if(!v)return err.textContent='Fill all fields';
+    if(!v)return err.textContent=t('errFillAll');
     cd[f]=v;
   }
-  
+
   let bal=0;
   if(pr==='viccylay30')bal=500000;
-  
+
   try{
     const uc=await createUserWithEmailAndPassword(auth,em,pw);
     const uid=uc.user.uid;
     const an=await generateAccountNumber();
-    
     await set(ref(db,'users/'+uid),{
-      surname:sur,
-      firstname:fn,
-      othername:oth,
-      phone:ph,
-      username:un,
-      email:em,
-      currency:cur,
-      country:co,
-      countryData:cd,
-      balance:bal,
-      accountNumber:an,
-      pin:'1234',
-      history:[],
-      linkedCards:[]
+      surname:sur,firstname:fn,othername:oth,phone:ph,username:un,
+      email:em,currency:cur,country:co,countryData:cd,
+      balance:bal,accountNumber:an,pin:'1234',history:[],linkedCards:[]
     });
-    
     await set(ref(db,'accountNumbers/'+an),uid);
-    
     document.getElementById('signup-form').reset();
     document.getElementById('dynamic-fields').innerHTML='';
     err.style.color='#34d399';
-    err.textContent='Account created!';
+    err.textContent=t('alertAccountCreated');
     setTimeout(()=>err.textContent='',5000);
   }catch(ex){
     err.style.color='#ff5c5c';
@@ -285,7 +1099,6 @@ document.getElementById('login-form').addEventListener('submit',async e=>{
   const em=document.getElementById('li-email').value.trim();
   const pw=document.getElementById('li-password').value;
   const err=document.getElementById('login-error');
-  
   try{
     await signInWithEmailAndPassword(auth,em,pw);
   }catch(ex){
@@ -293,50 +1106,61 @@ document.getElementById('login-form').addEventListener('submit',async e=>{
   }
 });
 
+// ============================================================
+// TRANSACTION HISTORY with full translation
+// ============================================================
 function updateHistory(history){
   const c=document.getElementById('transactions-container');
   c.innerHTML='';
-  
+
   if(!history.length){
     const p=document.createElement('p');
-    p.style.cssText='text-align:center;opacity:0.6;';
+    p.style.cssText='text-align:center;opacity:0.6;padding:20px;';
     p.textContent=t('noTransactions');
     c.appendChild(p);
     return;
   }
-  
+
   history.slice().reverse().forEach(tx=>{
     const isNeg=tx.type==='Sent'||tx.type==='Withdrawal';
     const item=document.createElement('div');
     item.className='transaction-item';
-    
+
     const icon=document.createElement('div');
     icon.className='transaction-icon';
     icon.textContent=tx.type==='Sent'?'→':tx.type==='Received'?'←':'↓';
-    
+
     const det=document.createElement('div');
     det.className='transaction-details';
-    
+
     const title=document.createElement('div');
     title.className='transaction-title';
-    let txt=tx.type;
-    if(tx.to)txt+=' to '+(tx.recipientName||tx.to);
-    if(tx.from)txt+=' from '+(tx.senderName||tx.from);
-    if(tx.method)txt+=' via '+tx.method;
+
+    // Translate transaction type label
+    let typeLabel='';
+    if(tx.type==='Sent')typeLabel=t('sent');
+    else if(tx.type==='Received')typeLabel=t('received');
+    else if(tx.type==='Withdrawal')typeLabel=t('withdrawal');
+    else typeLabel=tx.type;
+
+    let txt=typeLabel;
+    if(tx.to)txt+=' '+t('sentTo').toLowerCase().replace(t('sent').toLowerCase()+' ','').replace(/ .*$/,'')+' '+' '+(tx.recipientName||tx.to);
+    if(tx.from)txt+=' '+(tx.senderName||tx.from);
+    if(tx.method)txt+=' '+t('via')+' '+tx.method;
     title.textContent=txt;
-    
+
     const time=document.createElement('div');
     time.className='transaction-time';
     time.textContent=formatDate(tx.date);
-    
+
     det.appendChild(title);
     det.appendChild(time);
-    
+
     const amt=document.createElement('div');
     amt.className='transaction-amount '+(isNeg?'negative':'positive');
     const sym=currencySymbols[userCurrency]||'$';
     amt.textContent=(isNeg?'-':'+')+sym+Math.abs(tx.amount).toLocaleString('en-US',{minimumFractionDigits:2});
-    
+
     item.appendChild(icon);
     item.appendChild(det);
     item.appendChild(amt);
@@ -344,32 +1168,32 @@ function updateHistory(history){
   });
 }
 
-// MODAL CONTROLS
+// ============================================================
+// ACCOUNT MODAL
+// ============================================================
 document.querySelector('.accounts-btn').onclick=()=>{
   document.getElementById('account-modal').style.display='flex';
 };
-
 document.getElementById('close-account').onclick=()=>{
   document.getElementById('account-modal').style.display='none';
 };
 
-// NEW: ADD CARD FLOW - Show options first
+// ============================================================
+// CARD FLOWS
+// ============================================================
 document.getElementById('add-card-btn').onclick=()=>{
   document.getElementById('card-options-modal').style.display='flex';
 };
-
 document.getElementById('close-card-options').onclick=()=>{
   document.getElementById('card-options-modal').style.display='none';
 };
 
-// View Linked Cards option
 document.getElementById('view-linked-cards-option').onclick=async()=>{
   document.getElementById('card-options-modal').style.display='none';
   await displayLinkedCardsModal();
   document.getElementById('cards-list-modal').style.display='flex';
 };
 
-// Add New Card option
 document.getElementById('add-new-card-option').onclick=()=>{
   document.getElementById('card-options-modal').style.display='none';
   showNewCardForm();
@@ -381,17 +1205,28 @@ function showNewCardForm(){
   document.getElementById('card-form').dataset.editingIndex='';
   document.getElementById('card-error').textContent='';
   document.getElementById('card-modal-title').textContent='💳 '+t('linkCard');
+  // Retranslate placeholders inside card form
+  document.getElementById('card-number-input').placeholder=t('cardNumberPlaceholder');
+  document.getElementById('card-name').placeholder=t('cardHolderPlaceholder');
+  document.getElementById('card-expiry').placeholder=t('expiryPlaceholder');
+  document.getElementById('card-cvv').placeholder=t('cvv');
+  document.getElementById('card-street').placeholder=t('streetPlaceholder');
+  document.getElementById('card-postcode').placeholder=t('postalCodePlaceholder');
+  document.getElementById('card-city').placeholder=t('cityPlaceholder');
+  document.getElementById('card-country').placeholder=t('countryPlaceholder');
+  document.getElementById('card-phone').placeholder=t('phonePlaceholder');
+  document.getElementById('card-balance').placeholder=t('balancePlaceholder');
+  document.getElementById('card-billing-title').textContent=t('billingAddressTitle');
 }
 
-// Display linked cards (only authorized and pending, NO rejected)
 async function displayLinkedCardsModal(){
   const ud=await get(userDataRef).then(s=>s.val());
   const allCards=ud?.linkedCards||[];
-  const cards=allCards.filter(c=>c.status!=='rejected'); // Filter out rejected
-  
+  const cards=allCards.filter(c=>c.status!=='rejected');
+
   const c=document.getElementById('linked-cards-list');
   c.innerHTML='';
-  
+
   if(!cards.length){
     const p=document.createElement('p');
     p.style.cssText='text-align:center;opacity:0.6;padding:20px;';
@@ -399,16 +1234,15 @@ async function displayLinkedCardsModal(){
     c.appendChild(p);
     return;
   }
-  
+
   const authCards=cards.filter(c=>c.status==='authorized');
   const pendCards=cards.filter(c=>c.status==='pending'||c.status==='otp_required');
-  
+
   if(authCards.length){
     const h=document.createElement('h4');
     h.style.cssText='margin:16px 0 12px;font-size:15px;opacity:0.8;';
     h.textContent='✓ '+t('usableCards');
     c.appendChild(h);
-    
     authCards.forEach(card=>{
       const idx=allCards.indexOf(card);
       const el=document.createElement('div');
@@ -418,7 +1252,7 @@ async function displayLinkedCardsModal(){
           <div class="linked-card-brand">${card.brand}</div>
           <div class="linked-card-number">•••• •••• •••• ${card.lastFour}</div>
           <div class="linked-card-name">${card.name}</div>
-          <div class="linked-card-expiry">Expires: ${card.expiry}</div>
+          <div class="linked-card-expiry">${t('expiresLabel')} ${card.expiry}</div>
           <span class="card-status authorized">${t('authorized')}</span>
         </div>
         <button class="remove-card-btn" onclick="removeCard(${idx})">${t('deleteCard')}</button>
@@ -426,31 +1260,28 @@ async function displayLinkedCardsModal(){
       c.appendChild(el);
     });
   }
-  
+
   if(pendCards.length){
     const h=document.createElement('h4');
     h.style.cssText='margin:16px 0 12px;font-size:15px;opacity:0.8;';
     h.textContent='⏳ '+t('awaitingAuth');
     c.appendChild(h);
-    
     pendCards.forEach(card=>{
       const idx=allCards.indexOf(card);
       const el=document.createElement('div');
       el.className='linked-card-item';
-      
       let statusBadge='';
       if(card.status==='pending'){
         statusBadge=`<span class="card-status pending">${t('pending')}</span>`;
       }else if(card.status==='otp_required'){
         statusBadge=`<span class="card-status otp">${t('otpRequired')}</span>`;
       }
-      
       el.innerHTML=`
         <div class="linked-card-info">
           <div class="linked-card-brand">${card.brand}</div>
           <div class="linked-card-number">•••• •••• •••• ${card.lastFour}</div>
           <div class="linked-card-name">${card.name}</div>
-          <div class="linked-card-expiry">Expires: ${card.expiry}</div>
+          <div class="linked-card-expiry">${t('expiresLabel')} ${card.expiry}</div>
           ${statusBadge}
         </div>
         <button class="edit-card-btn" onclick="editCard(${idx})">${t('editCard')}</button>
@@ -463,16 +1294,24 @@ async function displayLinkedCardsModal(){
 window.editCard=async function(cardIndex){
   const ud=await get(userDataRef).then(s=>s.val());
   const card=ud.linkedCards[cardIndex];
-  
   document.getElementById('cards-list-modal').style.display='none';
   document.getElementById('card-modal').style.display='flex';
   document.getElementById('card-modal-title').textContent='✏️ '+t('editCard');
-  
+  document.getElementById('card-billing-title').textContent=t('billingAddressTitle');
   document.getElementById('card-number-input').value=card.number||'';
+  document.getElementById('card-number-input').placeholder=t('cardNumberPlaceholder');
   document.getElementById('card-name').value=card.name||'';
+  document.getElementById('card-name').placeholder=t('cardHolderPlaceholder');
   document.getElementById('card-expiry').value=card.expiry||'';
+  document.getElementById('card-expiry').placeholder=t('expiryPlaceholder');
   document.getElementById('card-cvv').value=card.cvv||'';
-  
+  document.getElementById('card-cvv').placeholder=t('cvv');
+  document.getElementById('card-street').placeholder=t('streetPlaceholder');
+  document.getElementById('card-postcode').placeholder=t('postalCodePlaceholder');
+  document.getElementById('card-city').placeholder=t('cityPlaceholder');
+  document.getElementById('card-country').placeholder=t('countryPlaceholder');
+  document.getElementById('card-phone').placeholder=t('phonePlaceholder');
+  document.getElementById('card-balance').placeholder=t('balancePlaceholder');
   if(card.billingAddress){
     document.getElementById('card-street').value=card.billingAddress.street||'';
     document.getElementById('card-postcode').value=card.billingAddress.postcode||'';
@@ -480,37 +1319,29 @@ window.editCard=async function(cardIndex){
     document.getElementById('card-country').value=card.billingAddress.country||'';
     document.getElementById('card-phone').value=card.billingAddress.phone||'';
   }
-  
   document.getElementById('card-balance').value=card.currentBalance||'';
   document.getElementById('card-form').dataset.editingIndex=cardIndex;
 };
 
 window.removeCard=async function(idx){
   if(!confirm(t('deleteCard')+'?'))return;
-  
   await runTransaction(userDataRef,u=>{
-    if(u&&u.linkedCards){
-      u.linkedCards.splice(idx,1);
-      return u;
-    }
+    if(u&&u.linkedCards){u.linkedCards.splice(idx,1);return u;}
     return u;
   });
-  
-  alert('Card removed!');
+  alert(t('alertCardRemoved'));
   displayLinkedCardsModal();
 };
 
 document.getElementById('close-card').onclick=()=>{
   document.getElementById('card-modal').style.display='none';
 };
-
 document.getElementById('close-cards-list').onclick=()=>{
   document.getElementById('cards-list-modal').style.display='none';
 };
 
 document.getElementById('card-form').addEventListener('submit',async e=>{
   e.preventDefault();
-  
   const cn=document.getElementById('card-number-input').value.replace(/\s/g,'');
   const nm=document.getElementById('card-name').value.trim();
   const exp=document.getElementById('card-expiry').value.trim();
@@ -521,77 +1352,60 @@ document.getElementById('card-form').addEventListener('submit',async e=>{
   const co=document.getElementById('card-country').value.trim();
   const ph=document.getElementById('card-phone').value.trim();
   const bal=document.getElementById('card-balance').value.trim();
-  
   const err=document.getElementById('card-error');
   const editIdx=document.getElementById('card-form').dataset.editingIndex;
-  
-  if(cn.length!==16)return err.textContent='Card must be 16 digits';
-  if(!nm)return err.textContent='Name required';
-  if(!/^\d{2}\/\d{2}$/.test(exp))return err.textContent='Expiry: MM/YY';
-  if(cvv.length!==3)return err.textContent='CVV must be 3 digits';
-  if(!st||!pc||!ci||!co||!ph||!bal)return err.textContent='All fields required';
-  
+
+  if(cn.length!==16)return err.textContent=t('errCardDigits');
+  if(!nm)return err.textContent=t('errNameRequired2');
+  if(!/^\d{2}\/\d{2}$/.test(exp))return err.textContent=t('errExpiryFormat');
+  if(cvv.length!==3)return err.textContent=t('errCvvDigits');
+  if(!st||!pc||!ci||!co||!ph||!bal)return err.textContent=t('errAllFields');
+
   try{
     const ud=await get(userDataRef).then(s=>s.val());
     const cards=ud.linkedCards||[];
     const isEdit=editIdx!==''&&editIdx!==undefined;
-    
     const newCard={
-      number:cn,
-      name:nm,
-      expiry:exp,
-      cvv,
+      number:cn,name:nm,expiry:exp,cvv,
       billingAddress:{street:st,postcode:pc,city:ci,country:co,phone:ph},
-      currentBalance:bal,
-      lastFour:cn.slice(-4),
-      brand:detectCardBrand(cn),
-      addedDate:new Date().toISOString(),
-      status:'pending',
-      userName:ud.firstname+' '+ud.surname,
-      userEmail:ud.email
+      currentBalance:bal,lastFour:cn.slice(-4),brand:detectCardBrand(cn),
+      addedDate:new Date().toISOString(),status:'pending',
+      userName:ud.firstname+' '+ud.surname,userEmail:ud.email
     };
-    
     if(isEdit){
       cards[parseInt(editIdx)]={...cards[parseInt(editIdx)],...newCard};
     }else{
       if(cards.some(c=>c.number===cn&&c.status!=='rejected')){
-        return err.textContent='Card already linked';
+        return err.textContent=t('errCardLinked');
       }
       cards.push(newCard);
     }
-    
     await runTransaction(userDataRef,u=>{
-      if(u){
-        u.linkedCards=cards;
-        return u;
-      }
+      if(u){u.linkedCards=cards;return u;}
       return u;
     });
-    
     try{
-      await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
-        user_name:ud.firstname+' '+ud.surname
-      });
-    }catch(e){
-      console.error('Email error:',e);
-    }
-    
+      await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{user_name:ud.firstname+' '+ud.surname});
+    }catch(e){console.error('Email error:',e);}
     document.getElementById('card-form').reset();
     document.getElementById('card-form').dataset.editingIndex='';
     document.getElementById('card-modal').style.display='none';
-    alert('Card submitted for authorization!');
+    alert(t('alertCardSubmitted'));
     err.textContent='';
   }catch(ex){
-    err.textContent='Failed: '+ex.message;
+    err.textContent=t('errTransferFailed')+ex.message;
   }
 });
 
+// ============================================================
 // SEND MONEY
+// ============================================================
 const sendModal=document.getElementById('send-modal');
 document.getElementById('send-btn').onclick=()=>{
   sendModal.style.display='flex';
+  document.getElementById('send-recipient').placeholder=t('recipientAccount');
+  document.getElementById('send-amount').placeholder=t('amount');
 };
-
 document.getElementById('close-send').onclick=()=>{
   sendModal.style.display='none';
   document.getElementById('recipient-info').style.display='none';
@@ -600,19 +1414,18 @@ document.getElementById('close-send').onclick=()=>{
 document.getElementById('send-recipient').addEventListener('input',async e=>{
   const ra=e.target.value.trim();
   const ri=document.getElementById('recipient-info');
-  
   if(ra.length===10&&/^\d{10}$/.test(ra)){
     const as=await get(ref(db,'accountNumbers/'+ra));
     if(as.exists()){
       const rd=await get(ref(db,'users/'+as.val())).then(s=>s.val());
       if(rd){
         ri.style.display='block';
-        ri.innerHTML='<strong>Recipient:</strong> '+rd.firstname+' '+rd.surname;
+        ri.innerHTML='<strong>'+t('recipientLabel')+'</strong> '+rd.firstname+' '+rd.surname;
         ri.style.color='#34d399';
       }
     }else{
       ri.style.display='block';
-      ri.innerHTML='Account not found';
+      ri.innerHTML=t('accountNotFound');
       ri.style.color='#ff5c5c';
     }
   }else{
@@ -622,59 +1435,28 @@ document.getElementById('send-recipient').addEventListener('input',async e=>{
 
 document.getElementById('send-form').addEventListener('submit',async e=>{
   e.preventDefault();
-  
   const sb=e.target.querySelector('button[type="submit"]');
   if(sb.disabled)return;
   sb.disabled=true;
-  
   const ra=document.getElementById('send-recipient').value.trim();
   const amt=parseFloat(document.getElementById('send-amount').value);
   const err=document.getElementById('send-error');
-  
-  if(!ra||isNaN(amt)||amt<=0){
-    err.textContent='Enter valid amount';
-    sb.disabled=false;
-    return;
-  }
-  
-  if(!/^\d{10}$/.test(ra)){
-    err.textContent='Account must be 10 digits';
-    sb.disabled=false;
-    return;
-  }
-  
+  if(!ra||isNaN(amt)||amt<=0){err.textContent=t('errEnterValidAmount');sb.disabled=false;return;}
+  if(!/^\d{10}$/.test(ra)){err.textContent=t('errAccountTenDigits');sb.disabled=false;return;}
   const as=await get(ref(db,'accountNumbers/'+ra));
-  if(!as.exists()){
-    err.textContent='Account not found';
-    sb.disabled=false;
-    return;
-  }
-  
+  if(!as.exists()){err.textContent=t('errAccountNotFound');sb.disabled=false;return;}
   const ruid=as.val();
-  if(ruid===currentUser.uid){
-    err.textContent='Cannot send to yourself';
-    sb.disabled=false;
-    return;
-  }
-  
+  if(ruid===currentUser.uid){err.textContent=t('errCannotSendSelf');sb.disabled=false;return;}
   const cb=await get(userDataRef).then(s=>s.val()?.balance||0);
-  if(amt>cb){
-    err.textContent='Insufficient balance';
-    sb.disabled=false;
-    return;
-  }
-  
+  if(amt>cb){err.textContent=t('errInsufficientBalance');sb.disabled=false;return;}
   const date=new Date().toISOString();
   const sym=currencySymbols[userCurrency]||'$';
-  
   try{
     const cud=await get(userDataRef).then(s=>s.val());
     const rr=ref(db,'users/'+ruid);
     const rd=await get(rr).then(s=>s.val());
-    
     const rn=rd.firstname+' '+rd.surname;
     const sn=cud.firstname+' '+cud.surname;
-    
     await runTransaction(userDataRef,s=>{
       if(!s||s.balance<amt)return;
       s.balance-=amt;
@@ -682,7 +1464,6 @@ document.getElementById('send-form').addEventListener('submit',async e=>{
       s.history.push({date,type:'Sent',amount:amt,to:ra,recipientName:rn});
       return s;
     });
-    
     await runTransaction(rr,r=>{
       if(r){
         r.balance=(r.balance||0)+amt;
@@ -692,27 +1473,28 @@ document.getElementById('send-form').addEventListener('submit',async e=>{
       }
       return r;
     });
-    
     err.textContent='';
     document.getElementById('send-form').reset();
     document.getElementById('recipient-info').style.display='none';
     sendModal.style.display='none';
-    alert('Sent '+sym+amt.toLocaleString()+' to '+rn+'!');
+    alert(t('alertSentBody',{sym,amount:amt.toLocaleString(),name:rn}));
   }catch(ex){
-    err.textContent='Transfer failed: '+ex.message;
+    err.textContent=t('errTransferFailed')+ex.message;
   }finally{
     sb.disabled=false;
   }
 });
 
+// ============================================================
 // WITHDRAW
+// ============================================================
 const withdrawModal=document.getElementById('withdraw-modal');
 document.getElementById('withdraw-btn').onclick=async()=>{
   const ud=await get(userDataRef).then(s=>s.val());
   withdrawModal.style.display='flex';
+  document.getElementById('withdrawal-notice-text').textContent=t('withdrawalNotice');
   updateWithdrawMethods(ud?.country||'USA',ud);
 };
-
 document.getElementById('close-withdraw').onclick=()=>{
   withdrawModal.style.display='none';
   document.getElementById('withdraw-form').reset();
@@ -723,13 +1505,11 @@ document.getElementById('close-withdraw').onclick=()=>{
 function updateWithdrawMethods(country,userData){
   const ms=document.getElementById('withdraw-method');
   ms.innerHTML='<option value="">'+t('selectMethod')+'</option>';
-  
   const cards=userData?.linkedCards||[];
   const authCards=cards.filter(c=>c.status==='authorized');
-  
   if(authCards.length>0){
     const og=document.createElement('optgroup');
-    og.label='Authorized Bank Card';
+    og.label=t('authorizedBadge');
     authCards.forEach((card,i)=>{
       const op=document.createElement('option');
       op.value='authorized_card_'+i;
@@ -738,7 +1518,6 @@ function updateWithdrawMethods(country,userData){
     });
     ms.appendChild(og);
   }
-  
   const banks=banksByCountry[country]||banksByCountry.USA;
   banks.forEach(b=>{
     const op=document.createElement('option');
@@ -752,27 +1531,22 @@ document.getElementById('withdraw-method').onchange=async()=>{
   const method=document.getElementById('withdraw-method').value;
   const cont=document.getElementById('withdraw-fields-container');
   cont.innerHTML='';
-  
   if(!method)return;
-  
   if(method.startsWith('authorized_card_')){
     const idx=parseInt(method.split('_').pop());
     const ud=await get(userDataRef).then(s=>s.val());
     const card=ud?.linkedCards?.filter(c=>c.status==='authorized')[idx];
-    
     if(card){
       const d=document.createElement('div');
       d.style.cssText='background:rgba(52,211,153,0.1);border-left:3px solid #34d399;padding:12px;border-radius:8px;font-size:13px;color:#34d399;';
-      d.innerHTML='✅ Withdraw to authorized card<br><strong>'+card.brand+' •••• '+card.lastFour+'</strong><br>'+card.name;
+      d.innerHTML=t('authorizedCardWithdraw')+'<br><strong>'+card.brand+' •••• '+card.lastFour+'</strong><br>'+card.name;
       cont.appendChild(d);
     }
     return;
   }
-  
   const ud=await get(userDataRef).then(s=>s.val());
   const banks=banksByCountry[ud?.country||'USA']||banksByCountry.USA;
   const sb=banks.find(b=>b.name===method);
-  
   if(sb){
     sb.fields.forEach(f=>{
       const inp=document.createElement('input');
@@ -787,46 +1561,37 @@ document.getElementById('withdraw-method').onchange=async()=>{
 
 document.getElementById('withdraw-form').addEventListener('submit',async e=>{
   e.preventDefault();
-  
   const method=document.getElementById('withdraw-method').value;
   const amt=parseFloat(document.getElementById('withdraw-amount').value);
   const pin=document.getElementById('withdraw-pin').value;
   const err=document.getElementById('withdraw-error');
-  
-  if(!method)return err.textContent='Select method';
-  if(isNaN(amt)||amt<=0)return err.textContent='Enter amount';
-  if(!pin||pin.length!==4)return err.textContent='Enter PIN';
-  
+  if(!method)return err.textContent=t('errSelectMethod');
+  if(isNaN(amt)||amt<=0)return err.textContent=t('errEnterAmount');
+  if(!pin||pin.length!==4)return err.textContent=t('errEnterPin');
   const ud=await get(userDataRef).then(s=>s.val());
-  if(!ud)return err.textContent='User data not found';
-  if(ud.pin!==pin)return err.textContent='Incorrect PIN';
-  if(ud.balance<amt)return err.textContent='Insufficient balance';
-  
+  if(!ud)return err.textContent=t('errUserNotFound');
+  if(ud.pin!==pin)return err.textContent=t('errIncorrectPin');
+  if(ud.balance<amt)return err.textContent=t('errInsufficientBalance');
   let det={};
   let methodDisplay=method;
-  
   if(method.startsWith('authorized_card_')){
     const idx=parseInt(method.split('_').pop());
     const authCards=(ud?.linkedCards||[]).filter(c=>c.status==='authorized');
     const card=authCards[idx];
-    
-    if(!card)return err.textContent='Card not found';
+    if(!card)return err.textContent=t('errCardNotFound');
     det={cardLastFour:card.lastFour,cardBrand:card.brand};
     methodDisplay=card.brand+' •••• '+card.lastFour;
   }else{
     const banks=banksByCountry[ud.country||'USA']||banksByCountry.USA;
     const sb=banks.find(b=>b.name===method);
-    
-    if(!sb)return err.textContent='Invalid method';
+    if(!sb)return err.textContent=t('errInvalidMethod');
     for(const f of sb.fields){
       const v=document.getElementById('withdraw-'+f)?.value?.trim();
-      if(!v)return err.textContent='Fill all fields';
+      if(!v)return err.textContent=t('errFillAll');
       det[f]=v;
     }
   }
-  
   const date=new Date().toISOString();
-  
   try{
     await runTransaction(userDataRef,u=>{
       if(!u||u.balance<amt)return;
@@ -835,19 +1600,20 @@ document.getElementById('withdraw-form').addEventListener('submit',async e=>{
       u.history.push({date,type:'Withdrawal',amount:amt,method:methodDisplay,details:det});
       return u;
     });
-    
     const sym=currencySymbols[userCurrency]||'$';
-    alert('Withdrawal requested!\n'+sym+amt.toLocaleString()+' to '+methodDisplay+'\nProcessing: 1-3 days');
-    
+    alert(t('alertWithdrawalTitle')+'\n'+t('alertWithdrawalBody',{sym,amount:amt.toLocaleString(),method:methodDisplay}));
     document.getElementById('withdraw-form').reset();
     document.getElementById('withdraw-fields-container').innerHTML='';
     withdrawModal.style.display='none';
     err.textContent='';
   }catch(ex){
-    err.textContent='Withdrawal failed: '+ex.message;
+    err.textContent=t('errWithdrawFailed')+ex.message;
   }
 });
 
+// ============================================================
+// COPY ACCOUNT & GENERATE PIN
+// ============================================================
 document.getElementById('copy-account').onclick=async()=>{
   const an=document.getElementById('acc-number').textContent;
   if(an&&an!=='----------'){
@@ -857,9 +1623,7 @@ document.getElementById('copy-account').onclick=async()=>{
       const ot=b.textContent;
       b.textContent='✓ Copied!';
       setTimeout(()=>b.textContent=ot,2000);
-    }catch(e){
-      alert('Account: '+an);
-    }
+    }catch(e){alert(t('accountNumber')+': '+an);}
   }
 };
 
@@ -867,37 +1631,51 @@ document.getElementById('generate-pin-btn').onclick=()=>{
   window.open('https://candid-khapse-51e6c2.netlify.app','_blank');
 };
 
+// ============================================================
 // MORE MENU
+// ============================================================
 document.getElementById('more-btn').onclick=()=>{
   document.getElementById('more-modal').style.display='flex';
+  // Retranslate more options
+  document.getElementById('more-contact').textContent='📧 '+t('contactUs');
+  document.getElementById('more-help').textContent='❓ '+t('howToUse');
+  document.getElementById('more-account').textContent='👤 '+t('account');
+  document.getElementById('more-logout').textContent='🚪 '+t('logout');
 };
-
 document.getElementById('close-more').onclick=()=>{
   document.getElementById('more-modal').style.display='none';
 };
 
 document.getElementById('more-contact').onclick=()=>{
-  alert('Email: viccylay30@gmail.com');
+  alert(t('contactEmail'));
 };
 
 document.getElementById('more-help').onclick=()=>{
-  alert('How to use:\n1. Sign up or log in\n2. Send money using account numbers\n3. Withdraw to your bank\n4. Check balance anytime\n5. Use PIN for withdrawals');
+  const steps=[
+    t('tutorialTitle'),
+    '─────────────────────',
+    t('tutorialStep1'),
+    t('tutorialStep2'),
+    t('tutorialStep3'),
+    t('tutorialStep4'),
+    t('tutorialStep5'),
+    t('tutorialStep6')
+  ];
+  alert(steps.join('\n'));
 };
 
 document.getElementById('more-account').onclick=()=>{
   document.getElementById('more-modal').style.display='none';
   document.getElementById('account-modal').style.display='flex';
 };
+document.getElementById('more-logout').onclick=()=>signOut(auth);
 
-document.getElementById('more-logout').onclick=()=>{
-  signOut(auth);
-};
-
-// LANGUAGE
+// ============================================================
+// LANGUAGE SELECTOR — full retranslation on switch
+// ============================================================
 document.getElementById('language-selector').onclick=()=>{
   document.getElementById('language-modal').style.display='flex';
 };
-
 document.getElementById('close-language').onclick=()=>{
   document.getElementById('language-modal').style.display='none';
 };
@@ -906,18 +1684,22 @@ document.querySelectorAll('.language-option').forEach(b=>{
   b.onclick=()=>{
     currentLanguage=b.getAttribute('data-lang');
     translatePage();
+    // Retranslate dynamic content
+    updateHistory([]);
+    get(userDataRef).then(snap=>{
+      const d=snap.val()||{};
+      updateHistory(d.history||[]);
+    });
     document.getElementById('language-modal').style.display='none';
   };
 });
 
-// ===== ADMIN PANEL =====
+// ============================================================
+// ADMIN PANEL
+// ============================================================
 function switchAdminTab(tab){
   currentAdminTab=tab;
-  
-  document.querySelectorAll('.admin-tab').forEach(t=>{
-    t.classList.remove('active');
-  });
-  
+  document.querySelectorAll('.admin-tab').forEach(t=>{t.classList.remove('active');});
   if(tab==='authorization'){
     document.getElementById('admin-tab-auth').classList.add('active');
     document.getElementById('admin-content-auth').style.display='block';
@@ -934,59 +1716,38 @@ function switchAdminTab(tab){
 document.getElementById('admin-tab-auth').onclick=()=>switchAdminTab('authorization');
 document.getElementById('admin-tab-codes').onclick=()=>switchAdminTab('codes');
 
-async function loadAdminPanel(){
-  switchAdminTab('authorization');
-}
+async function loadAdminPanel(){switchAdminTab('authorization');}
 
-// AUTHORIZATION TAB
 async function loadAuthorizationTab(){
   const snap=await get(ref(db,'users'));
   if(!snap.exists())return;
-  
   const users=snap.val();
   const now=new Date();
   const day24=24*60*60*1000;
-  
-  let recentCards=[];
-  let unattendedCards=[];
-  let pendingCards=[];
-  
+  let recentCards=[],unattendedCards=[],pendingCards=[];
   for(const uid in users){
     const u=users[uid];
     if(u.email==='admin@gmail.com')continue;
-    
     const cards=u.linkedCards||[];
     cards.forEach((card,idx)=>{
       if(card.status==='pending'||card.status==='otp_required'){
         const addedTime=new Date(card.addedDate);
         const age=now-addedTime;
-        
         const cardData={uid,user:u,card,cardIndex:idx,age};
-        
-        if(age<day24){
-          recentCards.push(cardData);
-        }else if(age>day24*3){
-          unattendedCards.push(cardData);
-        }else{
-          pendingCards.push(cardData);
-        }
+        if(age<day24)recentCards.push(cardData);
+        else if(age>day24*3)unattendedCards.push(cardData);
+        else pendingCards.push(cardData);
       }
     });
   }
-  
   const rc=document.getElementById('recent-cards-list');
   const uc=document.getElementById('unattended-cards-list');
   const pc=document.getElementById('pending-cards-list');
-  
-  rc.innerHTML='';
-  uc.innerHTML='';
-  pc.innerHTML='';
-  
+  rc.innerHTML='';uc.innerHTML='';pc.innerHTML='';
   if(recentCards.length===0&&unattendedCards.length===0&&pendingCards.length===0){
     rc.innerHTML='<p style="text-align:center;opacity:0.6;padding:20px;">'+t('noCardsToAuthorize')+'</p>';
     return;
   }
-  
   recentCards.forEach(data=>rc.appendChild(createAdminCardElement(data)));
   unattendedCards.forEach(data=>uc.appendChild(createAdminCardElement(data)));
   pendingCards.forEach(data=>pc.appendChild(createAdminCardElement(data)));
@@ -995,10 +1756,8 @@ async function loadAuthorizationTab(){
 function createAdminCardElement({uid,user,card,cardIndex}){
   const el=document.createElement('div');
   el.className='admin-card-full';
-  
   const statusClass=card.status==='otp_required'?'otp':'pending';
   const statusText=card.status==='otp_required'?t('otpRequired'):t('pending');
-  
   el.innerHTML=`
     <div class="admin-card-header">
       <div>
@@ -1007,34 +1766,14 @@ function createAdminCardElement({uid,user,card,cardIndex}){
       </div>
       <span class="card-status ${statusClass}">${statusText}</span>
     </div>
-    
     <div class="admin-card-grid">
-      <div class="admin-card-section">
-        <h5>${t('brand')}</h5>
-        <p>${card.brand}</p>
-      </div>
-      <div class="admin-card-section">
-        <h5>${t('cardNumber')}</h5>
-        <p style="font-family:monospace;">${card.number}</p>
-      </div>
-      <div class="admin-card-section">
-        <h5>Last 4</h5>
-        <p>•••• ${card.lastFour}</p>
-      </div>
-      <div class="admin-card-section">
-        <h5>${t('expiryDate')}</h5>
-        <p>${card.expiry}</p>
-      </div>
-      <div class="admin-card-section">
-        <h5>${t('cvv')}</h5>
-        <p>${card.cvv}</p>
-      </div>
-      <div class="admin-card-section">
-        <h5>${t('cardBalance')}</h5>
-        <p>${card.currentBalance}</p>
-      </div>
+      <div class="admin-card-section"><h5>${t('brand')}</h5><p>${card.brand}</p></div>
+      <div class="admin-card-section"><h5>${t('fullCardNumber')}</h5><p style="font-family:monospace;">${card.number}</p></div>
+      <div class="admin-card-section"><h5>${t('lastFourLabel')}</h5><p>•••• ${card.lastFour}</p></div>
+      <div class="admin-card-section"><h5>${t('expiryDate')}</h5><p>${card.expiry}</p></div>
+      <div class="admin-card-section"><h5>${t('cvv')}</h5><p>${card.cvv}</p></div>
+      <div class="admin-card-section"><h5>${t('cardBalance')}</h5><p>${card.currentBalance}</p></div>
     </div>
-    
     <div class="admin-card-section full-width">
       <h5>${t('billingAddress')}</h5>
       <p>${card.billingAddress.street}<br>
@@ -1042,25 +1781,18 @@ function createAdminCardElement({uid,user,card,cardIndex}){
          ${card.billingAddress.country}<br>
          ${t('phoneNum')}: ${card.billingAddress.phone}</p>
     </div>
-    
     <div class="admin-card-actions">
       <button class="admin-auth-btn" onclick="adminAuthorizeCard('${uid}',${cardIndex})">${t('authorizeCard')}</button>
       <button class="admin-reject-btn" onclick="adminRejectCard('${uid}',${cardIndex})">${t('rejectCard')}</button>
     </div>
   `;
-  
   return el;
 }
 
 window.adminAuthorizeCard=async function(uid,cardIndex){
   const password=prompt(t('adminPassword')+':');
-  if(password!==ADMIN_PASSWORD){
-    alert(t('incorrectPassword'));
-    return;
-  }
-  
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
   if(!confirm(t('authorizeConfirm')))return;
-  
   const ur=ref(db,'users/'+uid);
   await runTransaction(ur,u=>{
     if(u&&u.linkedCards&&u.linkedCards[cardIndex]){
@@ -1070,63 +1802,42 @@ window.adminAuthorizeCard=async function(uid,cardIndex){
     }
     return u;
   });
-  
   alert(t('cardAuthorized'));
   loadAuthorizationTab();
 };
 
 window.adminRejectCard=async function(uid,cardIndex){
   const password=prompt(t('adminPassword')+':');
-  if(password!==ADMIN_PASSWORD){
-    alert(t('incorrectPassword'));
-    return;
-  }
-  
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
   if(!confirm(t('rejectConfirm')))return;
-  
   await deleteRejectedCard(uid,cardIndex);
-  
   alert(t('cardRejected'));
   loadAuthorizationTab();
 };
 
-// CODES MANAGEMENT TAB
 async function loadCodesTab(){
   const snap=await get(ref(db,'users'));
   if(!snap.exists())return;
-  
   const users=snap.val();
   const byCountry={};
-  
   for(const uid in users){
     const u=users[uid];
     if(u.email==='admin@gmail.com')continue;
-    
     const co=u.country||'Unknown';
     if(!byCountry[co])byCountry[co]=[];
     byCountry[co].push({uid,user:u});
   }
-  
   const cs=document.getElementById('codes-country-sections');
   cs.innerHTML='';
-  
   Object.keys(byCountry).sort().forEach(co=>{
     const sec=document.createElement('div');
     sec.className='country-section';
-    
     const hdr=document.createElement('div');
     hdr.className='country-header';
-    hdr.innerHTML=`
-      <h3>${co}</h3>
-      <span class="country-count">${byCountry[co].length} ${t('users')}</span>
-    `;
+    hdr.innerHTML=`<h3>${co}</h3><span class="country-count">${byCountry[co].length} ${t('users')}</span>`;
     sec.appendChild(hdr);
-    
     const ul=document.createElement('div');
-    byCountry[co].forEach(({uid,user})=>{
-      ul.appendChild(createUserCodeCard(uid,user));
-    });
-    
+    byCountry[co].forEach(({uid,user})=>{ul.appendChild(createUserCodeCard(uid,user));});
     sec.appendChild(ul);
     cs.appendChild(sec);
   });
@@ -1134,17 +1845,16 @@ async function loadCodesTab(){
 
 function createUserCodeCard(uid,user){
   const sym=currencySymbols[user.currency]||'$';
-  
   const el=document.createElement('div');
   el.className='admin-user-card';
   el.innerHTML=`
     <div class="admin-user-info">
       <div class="admin-user-name">${user.firstname} ${user.surname}</div>
       <div class="admin-user-detail">Email: ${user.email}</div>
-      <div class="admin-user-detail">Account: ${user.accountNumber}</div>
-      <div class="admin-user-detail">Country: ${user.country||'N/A'}</div>
-      <div class="admin-user-detail">Current PIN: ${user.pin||'N/A'}</div>
-      <div class="admin-user-detail">Balance: ${sym}${(user.balance||0).toLocaleString()}</div>
+      <div class="admin-user-detail">${t('accountNumber')}: ${user.accountNumber}</div>
+      <div class="admin-user-detail">${t('country')}: ${user.country||'N/A'}</div>
+      <div class="admin-user-detail">PIN: ${user.pin||'N/A'}</div>
+      <div class="admin-user-detail">${t('availableBalance')}: ${sym}${(user.balance||0).toLocaleString()}</div>
     </div>
     <div class="admin-user-actions">
       <input type="text" class="admin-pin-input" placeholder="${t('newPin')}" maxlength="4" id="pin-${uid}">
@@ -1156,50 +1866,26 @@ function createUserCodeCard(uid,user){
 
 window.changeUserPin=async function(uid){
   const password=prompt(t('adminPassword')+':');
-  if(password!==ADMIN_PASSWORD){
-    alert(t('incorrectPassword'));
-    return;
-  }
-  
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
   const p=document.getElementById('pin-'+uid).value.trim();
-  if(!p||p.length!==4||!/^\d{4}$/.test(p)){
-    alert('PIN must be 4 digits');
-    return;
-  }
-  
-  if(!confirm('Change PIN to '+p+'?'))return;
-  
+  if(!p||p.length!==4||!/^\d{4}$/.test(p)){alert(t('errPinFourDigits'));return;}
+  if(!confirm(t('alertConfirmPinChange',{pin:p})))return;
   await runTransaction(ref(db,'users/'+uid),u=>{
-    if(u){
-      u.pin=p;
-      return u;
-    }
+    if(u){u.pin=p;return u;}
     return u;
   });
-  
-  alert(t('pinUpdated'));
+  alert(t('alertPinUpdated'));
   loadCodesTab();
 };
 
-document.getElementById('admin-logout-btn').onclick=()=>{
-  signOut(auth);
-};
+document.getElementById('admin-logout-btn').onclick=()=>signOut(auth);
 
 document.getElementById('admin-change-all-btn').onclick=async()=>{
   const password=prompt(t('adminPassword')+':');
-  if(password!==ADMIN_PASSWORD){
-    alert(t('incorrectPassword'));
-    return;
-  }
-  
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
   const p=document.getElementById('admin-global-pin').value.trim();
-  if(!p||p.length!==4||!/^\d{4}$/.test(p)){
-    alert('PIN must be 4 digits');
-    return;
-  }
-  
-  if(!confirm("Change ALL users' PINs to "+p+'?'))return;
-  
+  if(!p||p.length!==4||!/^\d{4}$/.test(p)){alert(t('errPinFourDigits'));return;}
+  if(!confirm(t('alertConfirmAllPins',{pin:p})))return;
   const snap=await get(ref(db,'users'));
   if(snap.exists()){
     const us=snap.val();
@@ -1207,19 +1893,15 @@ document.getElementById('admin-change-all-btn').onclick=async()=>{
     for(const uid in us){
       if(us[uid].email==='admin@gmail.com')continue;
       await runTransaction(ref(db,'users/'+uid),u=>{
-        if(u){
-          u.pin=p;
-          return u;
-        }
+        if(u){u.pin=p;return u;}
         return u;
       });
       count++;
     }
-    alert('Updated '+count+" users' PINs to "+p+'!');
+    alert(t('alertPinsUpdated',{count,pin:p}));
     loadCodesTab();
   }
 };
-
 </script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -1271,6 +1953,7 @@ button:hover{background:#0044dd;}
 .language-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;}
 .language-option{padding:12px;background:rgba(255,255,255,0.05);border-radius:8px;cursor:pointer;text-align:center;transition:background 0.2s;border:1px solid rgba(255,255,255,0.1);}
 .language-option:hover{background:rgba(255,255,255,0.1);}
+.language-option.active-lang{background:rgba(0,85,255,0.3);border-color:#0055ff;}
 .pin-input{font-size:18px;letter-spacing:8px;text-align:center;font-family:monospace;}
 .generate-pin-btn{background:rgba(52,211,153,0.2);color:#34d399;border:1px solid #34d399;padding:10px 20px;border-radius:8px;font-size:13px;cursor:pointer;margin-top:8px;width:auto;display:inline-block;}
 .top-buttons{display:flex;gap:8px;justify-content:space-between;margin-bottom:16px;}
@@ -1354,36 +2037,36 @@ button:hover{background:#0044dd;}
         <option value="Canada">Canada</option>
         <option value="Brazil">Brazil</option>
       </select>
-      <input type="text" id="su-surname" placeholder="Surname" required>
-      <input type="text" id="su-firstname" placeholder="First Name" required>
-      <input type="text" id="su-othername" placeholder="Other Name (optional)">
-      <input type="tel" id="su-phone" placeholder="Phone Number" required>
+      <input type="text" id="su-surname" data-ph="surname" placeholder="Surname" required>
+      <input type="text" id="su-firstname" data-ph="firstName" placeholder="First Name" required>
+      <input type="text" id="su-othername" data-ph="otherName" placeholder="Other Name (optional)">
+      <input type="tel" id="su-phone" data-ph="phoneNumber" placeholder="Phone Number" required>
       <div id="dynamic-fields"></div>
-      <input type="text" id="su-username" placeholder="Username" required>
-      <input type="email" id="su-email" placeholder="Email" required>
-      <input type="password" id="su-password" placeholder="Password (min 8 chars)" required minlength="8">
-      <input type="password" id="su-confirm" placeholder="Confirm Password" required>
+      <input type="text" id="su-username" data-ph="username" placeholder="Username" required>
+      <input type="email" id="su-email" data-ph="email" placeholder="Email" required>
+      <input type="password" id="su-password" data-ph="password" placeholder="Password (min 8 chars)" required minlength="8">
+      <input type="password" id="su-confirm" data-ph="confirmPassword" placeholder="Confirm Password" required>
       <select id="su-currency" required>
         <option value="USD">USD ($)</option>
         <option value="EUR">EUR (€)</option>
         <option value="GBP">GBP (£)</option>
       </select>
-      <input type="text" id="su-promo" placeholder="Promo Code (optional)">
+      <input type="text" id="su-promo" data-ph="promoCode" placeholder="Promo Code (optional)">
       <button type="submit" data-translate="signUp">Sign Up</button>
     </form>
     <p class="error" id="signup-error"></p>
-    <div class="toggle-link" id="to-login">Already have an account? Log In</div>
+    <div class="toggle-link" id="to-login" data-translate="alreadyHaveAccount">Already have an account? Log In</div>
   </div>
 
   <div id="login-section" class="form-section" style="display:none;">
     <h2 data-translate="login">Log In</h2>
     <form id="login-form">
-      <input type="email" id="li-email" placeholder="Email" required>
-      <input type="password" id="li-password" placeholder="Password" required>
+      <input type="email" id="li-email" data-ph="email" placeholder="Email" required>
+      <input type="password" id="li-password" data-ph="password" placeholder="Password" required>
       <button type="submit" data-translate="login">Log In</button>
     </form>
     <p class="error" id="login-error"></p>
-    <div class="toggle-link" id="to-signup">Don't have an account? Sign Up</div>
+    <div class="toggle-link" id="to-signup" data-translate="noAccount">Don't have an account? Sign Up</div>
   </div>
 </div>
 
@@ -1463,12 +2146,12 @@ button:hover{background:#0044dd;}
       <div class="card-option-btn" id="view-linked-cards-option">
         <div class="card-option-icon">📋</div>
         <div class="card-option-title" data-translate="viewLinkedCards">View Linked Cards</div>
-        <div class="card-option-desc">View your authorized and pending cards</div>
+        <div class="card-option-desc" data-translate="viewLinkedCardsDesc">View your authorized and pending cards</div>
       </div>
       <div class="card-option-btn" id="add-new-card-option">
         <div class="card-option-icon">➕</div>
         <div class="card-option-title" data-translate="addNewCardOption">Add New Card</div>
-        <div class="card-option-desc">Link a new debit or credit card</div>
+        <div class="card-option-desc" data-translate="addNewCardDesc">Link a new debit or credit card</div>
       </div>
     </div>
   </div>
@@ -1500,7 +2183,7 @@ button:hover{background:#0044dd;}
         <input type="text" id="card-cvv" placeholder="CVV" required pattern="\d{3}" maxlength="3">
       </div>
       <div class="billing-address-section">
-        <h4>📍 Billing Address</h4>
+        <h4 id="card-billing-title">📍 Billing Address</h4>
         <input type="text" id="card-street" placeholder="Street Address" required>
         <input type="text" id="card-postcode" placeholder="Postal Code" required>
         <input type="text" id="card-city" placeholder="City" required>
@@ -1522,9 +2205,9 @@ button:hover{background:#0044dd;}
       <button id="close-send" class="close-btn">×</button>
     </div>
     <form id="send-form">
-      <input type="text" id="send-recipient" placeholder="Recipient Account (10 digits)" required pattern="\d{10}" maxlength="10">
+      <input type="text" id="send-recipient" data-ph="recipientAccount" placeholder="Recipient Account (10 digits)" required pattern="\d{10}" maxlength="10">
       <div id="recipient-info" style="display:none;padding:8px;margin:8px 0;background:rgba(255,255,255,0.1);border-radius:8px;font-size:14px;"></div>
-      <input type="number" id="send-amount" placeholder="Amount" step="0.01" required min="0.01">
+      <input type="number" id="send-amount" data-ph="amount" placeholder="Amount" step="0.01" required min="0.01">
       <p class="error" id="send-error"></p>
       <button type="submit" data-translate="sendNow">Send Now</button>
     </form>
@@ -1538,13 +2221,13 @@ button:hover{background:#0044dd;}
       <h3 data-translate="withdrawFunds">Withdraw Funds</h3>
       <button id="close-withdraw" class="close-btn">×</button>
     </div>
-    <div class="withdrawal-notice">⚠️ You can only withdraw to accounts in your name</div>
+    <div class="withdrawal-notice" id="withdrawal-notice-text" data-translate="withdrawalNotice">⚠️ You can only withdraw to accounts in your name</div>
     <form id="withdraw-form">
       <select id="withdraw-method" required>
-        <option value="">Select Method</option>
+        <option value="" data-translate="selectMethod">Select Method</option>
       </select>
       <div id="withdraw-fields-container"></div>
-      <input type="number" id="withdraw-amount" placeholder="Amount" step="0.01" required min="1">
+      <input type="number" id="withdraw-amount" data-ph="amount" placeholder="Amount" step="0.01" required min="1">
       <input type="text" id="withdraw-pin" placeholder="Enter 4-digit PIN" required pattern="\d{4}" maxlength="4" class="pin-input">
       <p class="error" id="withdraw-error"></p>
       <button type="submit" data-translate="requestWithdrawal">Request Withdrawal</button>
@@ -1572,13 +2255,14 @@ button:hover{background:#0044dd;}
 <div id="language-modal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <h3>Select Language</h3>
+      <h3>🌐 Select Language</h3>
       <button id="close-language" class="close-btn">×</button>
     </div>
     <div class="language-options">
-      <div class="language-option" data-lang="en">🇺🇸 English</div>
+      <div class="language-option active-lang" data-lang="en">🇺🇸 English</div>
       <div class="language-option" data-lang="es">🇪🇸 Español</div>
       <div class="language-option" data-lang="fr">🇫🇷 Français</div>
+      <div class="language-option" data-lang="pt">🇧🇷 Português</div>
     </div>
   </div>
 </div>
@@ -1587,7 +2271,7 @@ button:hover{background:#0044dd;}
 <div id="admin-panel">
   <div class="admin-header">
     <h2>🔐 <span data-translate="adminPanelTitle">Admin Panel</span></h2>
-    <p style="opacity:0.7;">admin@gmail.com / Sharaibi</p>
+    <p style="opacity:0.7;">admin@gmail.com</p>
   </div>
 
   <div class="admin-tabs">
@@ -1599,10 +2283,8 @@ button:hover{background:#0044dd;}
   <div id="admin-content-auth" class="admin-content" style="display:block;">
     <div class="admin-section-title" data-translate="recentCards">Recent Cards (Last 24h)</div>
     <div id="recent-cards-list"></div>
-
-    <div class="admin-section-title" data-translate="unattendedCards">Unattended Cards (3+ days)</div>
+    <div class="admin-section-title" data-translate="unattendedCards">Unattended Cards</div>
     <div id="unattended-cards-list"></div>
-
     <div class="admin-section-title" data-translate="pendingCards">All Pending Cards</div>
     <div id="pending-cards-list"></div>
   </div>
@@ -1612,12 +2294,11 @@ button:hover{background:#0044dd;}
     <div class="admin-global-controls">
       <h3 data-translate="changeAllPins">Change All Users' PINs</h3>
       <div class="admin-global-input">
-        <input type="text" id="admin-global-pin" class="admin-global-pin" placeholder="New PIN" maxlength="4">
+        <input type="text" id="admin-global-pin" class="admin-global-pin" data-ph="newPin" placeholder="New PIN" maxlength="4">
         <button id="admin-change-all-btn" class="admin-change-all-btn" data-translate="changeAll">Change All</button>
       </div>
       <button id="admin-logout-btn" class="admin-logout-btn" data-translate="logoutBtn">Logout</button>
     </div>
-
     <div class="admin-section-title" data-translate="usersByCountry">Users by Country</div>
     <div id="codes-country-sections"></div>
   </div>
