@@ -1042,6 +1042,10 @@ async function deleteRejectedCard(userId,cardIndex){
 // AUTH STATE
 // ============================================================
 onAuthStateChanged(auth,user=>{
+  // Always hide loading screen first
+  const ls=document.getElementById('loading-screen');
+  if(ls)ls.style.display='none';
+
   if(user){
     currentUser=user;
     userDataRef=ref(db,'users/'+user.uid);
@@ -1090,8 +1094,11 @@ onAuthStateChanged(auth,user=>{
       }
 
       updateHistory(d.history||[]);
+      updateVerifyBanner(d);
     });
 
+    listenNotifications(user.uid);
+    requestNotifPermission();
     document.getElementById('auth-screen').style.display='none';
   }else{
     document.getElementById('auth-screen').style.display='flex';
@@ -1158,6 +1165,7 @@ document.getElementById('signup-form').addEventListener('submit',async e=>{
   const cur=document.getElementById('su-currency').value;
   const co=document.getElementById('su-country').value;
   const pr=document.getElementById('su-promo').value.trim().toLowerCase();
+  const refCode=document.getElementById('su-referral').value.trim().toUpperCase();
   const err=document.getElementById('signup-error');
 
   if(!co)return err.textContent=t('errSelectCountry');
@@ -1189,9 +1197,30 @@ document.getElementById('signup-form').addEventListener('submit',async e=>{
     await set(ref(db,'users/'+uid),{
       surname:sur,firstname:fn,othername:oth,phone:ph,username:un,
       email:em,currency:cur,country:co,countryData:cd,
-      balance:bal,accountNumber:an,pin:'1234',history:[],linkedCards:[]
+      balance:bal,accountNumber:an,pin:'1234',history:[],linkedCards:[],
+      referrals:[],referralClaimed:false,verified:false,
+      joinDate:new Date().toISOString(),
+      referredBy:refCode||null
     });
     await set(ref(db,'accountNumbers/'+an),uid);
+    await set(ref(db,'referralCodes/'+generateReferralCode(uid)),uid);
+
+    // If referred by someone, credit that person
+    if(refCode){
+      const refSnap=await get(ref(db,'referralCodes/'+refCode));
+      if(refSnap.exists()){
+        const referrerId=refSnap.val();
+        await runTransaction(ref(db,'users/'+referrerId),ru=>{
+          if(ru){
+            ru.referrals=ru.referrals||[];
+            ru.referrals.push({uid,date:new Date().toISOString()});
+            return ru;
+          }
+          return ru;
+        });
+        await sendNotificationToUser(referrerId,'🎉 Someone joined using your referral code! You have '+(((await get(ref(db,'users/'+referrerId))).val()?.referrals)||[]).length+' referral(s).');
+      }
+    }
     document.getElementById('signup-form').reset();
     document.getElementById('dynamic-fields').innerHTML='';
     err.style.color='#34d399';
@@ -1889,6 +1918,226 @@ document.getElementById('more-account').onclick=()=>{
 document.getElementById('more-logout').onclick=()=>signOut(auth);
 
 // ============================================================
+// SERVICE WORKER — Push Notifications even when app is closed
+// ============================================================
+const SW_CODE=`
+self.addEventListener('push',e=>{
+  const data=e.data?e.data.json():{title:'Viccy Bank',body:'You have a new notification.'};
+  self.registration.showNotification(data.title||'Viccy Bank',{
+    body:data.body||'',
+    icon:'/icon-192.png',
+    badge:'/icon-72.png',
+    data:data.url||'/'
+  });
+});
+self.addEventListener('notificationclick',e=>{
+  e.notification.close();
+  e.waitUntil(clients.openWindow(e.notification.data||'/'));
+});
+self.addEventListener('message',e=>{
+  if(e.data&&e.data.type==='SHOW_NOTIF'){
+    self.registration.showNotification(e.data.title||'Viccy Bank',{
+      body:e.data.body||'',
+      icon:'https://i.imgur.com/L2U0Crf.jpeg'
+    });
+  }
+});
+`;
+
+async function registerSW(){
+  if(!('serviceWorker' in navigator))return;
+  try{
+    const blob=new Blob([SW_CODE],{type:'application/javascript'});
+    const url=URL.createObjectURL(blob);
+    const reg=await navigator.serviceWorker.register(url,{scope:'/'});
+    window._swReg=reg;
+    console.log('SW registered');
+  }catch(e){console.warn('SW registration failed',e);}
+}
+
+async function requestNotifPermission(){
+  if(!('Notification' in window))return;
+  if(Notification.permission==='default'){
+    await Notification.requestPermission();
+  }
+}
+
+function showLocalNotif(title,body){
+  if(Notification.permission==='granted'){
+    if(window._swReg){
+      window._swReg.active?.postMessage({type:'SHOW_NOTIF',title,body});
+    }else{
+      new Notification(title,{body,icon:'https://i.imgur.com/L2U0Crf.jpeg'});
+    }
+  }
+}
+
+registerSW();
+
+// ============================================================
+// NOTIFICATIONS — real-time inbox from Firebase
+// ============================================================
+let unreadCount=0;
+
+function listenNotifications(uid){
+  const nRef=ref(db,'notifications/'+uid);
+  onValue(nRef,snap=>{
+    const all=[];
+    snap.forEach(child=>{all.push({id:child.key,...child.val()});});
+    unreadCount=all.filter(n=>!n.read).length;
+    const dot=document.getElementById('notif-dot');
+    if(dot)dot.style.display=unreadCount>0?'block':'none';
+    renderNotifications(all,uid);
+    // Show push for newest unread
+    if(unreadCount>0){
+      const newest=all.filter(n=>!n.read).slice(-1)[0];
+      if(newest)showLocalNotif('Viccy Bank',newest.message);
+    }
+  });
+}
+
+function renderNotifications(notifs,uid){
+  const list=document.getElementById('notif-list');
+  if(!list)return;
+  if(!notifs.length){
+    list.innerHTML='<p style="text-align:center;opacity:0.6;padding:20px;">No notifications</p>';
+    return;
+  }
+  list.innerHTML='';
+  notifs.slice().reverse().forEach(n=>{
+    const item=document.createElement('div');
+    item.className='notif-item'+(n.read?'':' notif-unread');
+    item.innerHTML=`
+      <div class="notif-msg">${n.message||''}</div>
+      <div class="notif-time">${formatDate(n.date)}</div>
+    `;
+    item.onclick=async()=>{
+      if(!n.read){
+        await set(ref(db,'notifications/'+uid+'/'+n.id+'/read'),true);
+      }
+    };
+    list.appendChild(item);
+  });
+}
+
+document.getElementById('notif-bell-btn').onclick=async()=>{
+  document.getElementById('notif-modal').style.display='flex';
+  // Mark all as read
+  if(currentUser){
+    const snap=await get(ref(db,'notifications/'+currentUser.uid));
+    snap.forEach(child=>{
+      if(!child.val().read){
+        set(ref(db,'notifications/'+currentUser.uid+'/'+child.key+'/read'),true);
+      }
+    });
+  }
+};
+document.getElementById('close-notif').onclick=()=>{
+  document.getElementById('notif-modal').style.display='none';
+};
+
+// ============================================================
+// REFERRAL SYSTEM
+// ============================================================
+const REFERRAL_BONUS=10;
+const REFERRAL_THRESHOLD=12;
+
+function generateReferralCode(uid){
+  return 'VB-'+uid.slice(0,6).toUpperCase();
+}
+
+async function loadReferralData(uid,userData){
+  const sym=currencySymbols[userData.currency||'USD']||'$';
+  const code=generateReferralCode(uid);
+  const referrals=userData.referrals||[];
+  const earned=referrals.length*REFERRAL_BONUS;
+  const count=referrals.length;
+  const claimable=count>=REFERRAL_THRESHOLD&&!(userData.referralClaimed);
+
+  document.getElementById('refer-code-display').textContent=code;
+  document.getElementById('refer-earn-label').textContent=sym+REFERRAL_BONUS;
+  document.getElementById('refer-count').textContent=count;
+  document.getElementById('refer-earned').textContent=sym+earned;
+  document.getElementById('refer-needed').textContent=Math.max(0,REFERRAL_THRESHOLD-count);
+  const pct=Math.min(100,(count/REFERRAL_THRESHOLD)*100);
+  document.getElementById('refer-progress-fill').style.width=pct+'%';
+  document.getElementById('refer-progress-label').textContent=count+' / '+REFERRAL_THRESHOLD+' referrals to claim';
+  const claimBtn=document.getElementById('refer-claim-btn');
+  claimBtn.disabled=!claimable;
+  if(userData.referralClaimed){
+    claimBtn.textContent='✅ Already Claimed';
+    claimBtn.style.background='rgba(52,211,153,0.2)';
+    claimBtn.style.color='#34d399';
+  }
+}
+
+document.getElementById('refer-btn').onclick=async()=>{
+  const ud=await get(userDataRef).then(s=>s.val());
+  await loadReferralData(currentUser.uid,ud);
+  document.getElementById('refer-modal').style.display='flex';
+};
+document.getElementById('close-refer').onclick=()=>{
+  document.getElementById('refer-modal').style.display='none';
+};
+document.getElementById('refer-copy-btn').onclick=()=>{
+  const code=document.getElementById('refer-code-display').textContent;
+  navigator.clipboard.writeText('Join Viccy International Bank with my code: '+code+'\nhttps://viccybank.web.app').then(()=>{
+    const b=document.getElementById('refer-copy-btn');
+    b.textContent='✓ Copied!';
+    setTimeout(()=>b.textContent='📋 Copy Code',2000);
+  }).catch(()=>alert('Code: '+code));
+};
+
+document.getElementById('refer-claim-btn').onclick=async()=>{
+  const ud=await get(userDataRef).then(s=>s.val());
+  if(!ud)return;
+  const count=(ud.referrals||[]).length;
+  if(count<REFERRAL_THRESHOLD)return alert('You need '+REFERRAL_THRESHOLD+' referrals to claim.');
+  if(ud.referralClaimed)return alert('Already claimed!');
+  const sym=currencySymbols[ud.currency||'USD']||'$';
+  const amount=count*REFERRAL_BONUS;
+  await runTransaction(userDataRef,u=>{
+    if(u){
+      u.balance=(u.balance||0)+amount;
+      u.referralClaimed=true;
+      u.history=u.history||[];
+      u.history.push({date:new Date().toISOString(),type:'Received',amount,from:'Referral Bonus',senderName:'Viccy Bank Referral'});
+      return u;
+    }
+    return u;
+  });
+  // Send notification
+  await sendNotificationToUser(currentUser.uid,`🎉 Referral bonus of ${sym}${amount} has been added to your balance!`);
+  alert(`🎉 Claimed! ${sym}${amount} added to your balance.`);
+  document.getElementById('refer-modal').style.display='none';
+};
+
+// Helper: send notification to any user
+async function sendNotificationToUser(uid,message){
+  const nRef=ref(db,'notifications/'+uid);
+  const snap=await get(nRef);
+  const newKey='n'+(Date.now());
+  await set(ref(db,'notifications/'+uid+'/'+newKey),{
+    message,date:new Date().toISOString(),read:false
+  });
+}
+
+// ============================================================
+// VERIFY BANNER — show if user has no authorized card
+// ============================================================
+function updateVerifyBanner(userData){
+  const banner=document.getElementById('verify-banner');
+  if(!banner)return;
+  const cards=userData.linkedCards||[];
+  const hasVerified=cards.some(c=>c.status==='authorized');
+  banner.style.display=hasVerified?'none':'flex';
+}
+
+document.getElementById('verify-banner-btn').onclick=()=>{
+  document.getElementById('card-options-modal').style.display='flex';
+};
+
+// ============================================================
 // LANGUAGE SELECTOR — full retranslation on switch
 // ============================================================
 document.getElementById('language-selector').onclick=()=>{
@@ -1913,7 +2162,7 @@ document.querySelectorAll('.language-option').forEach(b=>{
 });
 
 // ============================================================
-// ADMIN PANEL
+// ADMIN PANEL — Accordion-based clean layout
 // ============================================================
 function switchAdminTab(tab){
   currentAdminTab=tab;
@@ -1936,7 +2185,342 @@ document.getElementById('admin-tab-codes').onclick=()=>switchAdminTab('codes');
 
 async function loadAdminPanel(){switchAdminTab('authorization');}
 
+// ── Toggle accordion helper ──
+function toggleAccordion(bodyId, arrowId){
+  const body=document.getElementById(bodyId);
+  const arrow=document.getElementById(arrowId);
+  const open=body.style.display!=='none'&&body.style.display!=='';
+  body.style.display=open?'none':'block';
+  if(arrow)arrow.textContent=open?'▶':'▼';
+}
+
+// ── Authorization Tab ──
 async function loadAuthorizationTab(){
+  const snap=await get(ref(db,'users'));
+  const attNeed=document.getElementById('acc-attention-body');
+  const authBody=document.getElementById('acc-authorized-body');
+  const rejBody=document.getElementById('acc-rejected-body');
+  attNeed.innerHTML='<p class="acc-loading">Loading...</p>';
+  authBody.innerHTML='<p class="acc-loading">Loading...</p>';
+  rejBody.innerHTML='<p class="acc-loading">Loading...</p>';
+
+  if(!snap.exists()){
+    attNeed.innerHTML='<p class="acc-empty">No data</p>';
+    authBody.innerHTML='<p class="acc-empty">No data</p>';
+    rejBody.innerHTML='<p class="acc-empty">No data</p>';
+    return;
+  }
+
+  const users=snap.val();
+  let attentionCards=[], authorizedCards=[], rejectedCards=[];
+
+  for(const uid in users){
+    const u=users[uid];
+    if(u.email==='admin@gmail.com')continue;
+    const cards=u.linkedCards||[];
+    cards.forEach((card,idx)=>{
+      const entry={uid,user:u,card,cardIndex:idx};
+      if(card.status==='pending'||card.status==='otp_required') attentionCards.push(entry);
+      else if(card.status==='authorized') authorizedCards.push(entry);
+      else if(card.status==='rejected') rejectedCards.push(entry);
+    });
+  }
+
+  // Update badges
+  document.getElementById('badge-attention').textContent=attentionCards.length||'';
+  document.getElementById('badge-attention').style.display=attentionCards.length?'inline-flex':'none';
+  document.getElementById('badge-authorized').textContent=authorizedCards.length||'';
+  document.getElementById('badge-authorized').style.display=authorizedCards.length?'inline-flex':'none';
+  document.getElementById('badge-rejected').textContent=rejectedCards.length||'';
+  document.getElementById('badge-rejected').style.display=rejectedCards.length?'inline-flex':'none';
+
+  // Attention Needed — full expandable cards
+  attNeed.innerHTML='';
+  if(!attentionCards.length){
+    attNeed.innerHTML='<p class="acc-empty">'+t('noCardsToAuthorize')+'</p>';
+  }else{
+    attentionCards.forEach(data=>attNeed.appendChild(createAdminCardElement(data)));
+  }
+
+  // Authorized — name list, click to expand full details
+  authBody.innerHTML='';
+  if(!authorizedCards.length){
+    authBody.innerHTML='<p class="acc-empty">No authorized cards yet</p>';
+  }else{
+    authorizedCards.forEach(({uid,user,card,cardIndex},i)=>{
+      const row=document.createElement('div');
+      row.className='name-row';
+      const detId='auth-detail-'+i;
+      row.innerHTML=`
+        <div class="name-row-header" onclick="toggleAccordion('${detId}','arr-auth-${i}')">
+          <div class="name-row-info">
+            <span class="name-row-name">${user.firstname} ${user.surname}</span>
+            <span class="card-status authorized" style="margin-left:8px;font-size:10px;">${t('authorized')}</span>
+          </div>
+          <span class="acc-arrow" id="arr-auth-${i}">▶</span>
+        </div>
+        <div id="${detId}" class="name-row-detail" style="display:none;">
+          ${buildCardDetailHTML(user,card,cardIndex,uid,'authorized')}
+        </div>
+      `;
+      authBody.appendChild(row);
+    });
+  }
+
+  // Rejected — name list, click to expand
+  rejBody.innerHTML='';
+  if(!rejectedCards.length){
+    rejBody.innerHTML='<p class="acc-empty">No rejected cards</p>';
+  }else{
+    rejectedCards.forEach(({uid,user,card,cardIndex},i)=>{
+      const row=document.createElement('div');
+      row.className='name-row';
+      const detId='rej-detail-'+i;
+      row.innerHTML=`
+        <div class="name-row-header" onclick="toggleAccordion('${detId}','arr-rej-${i}')">
+          <div class="name-row-info">
+            <span class="name-row-name">${user.firstname} ${user.surname}</span>
+            <span class="card-status pending" style="margin-left:8px;font-size:10px;background:rgba(255,92,92,0.2);color:#ff5c5c;border-color:#ff5c5c;">Rejected</span>
+          </div>
+          <span class="acc-arrow" id="arr-rej-${i}">▶</span>
+        </div>
+        <div id="${detId}" class="name-row-detail" style="display:none;">
+          ${buildCardDetailHTML(user,card,cardIndex,uid,'rejected')}
+        </div>
+      `;
+      rejBody.appendChild(row);
+    });
+  }
+}
+
+// Build the card detail HTML block (reused for authorized + rejected)
+function buildCardDetailHTML(user,card,cardIndex,uid,type){
+  const statusClass=card.status==='authorized'?'authorized':card.status==='otp_required'?'otp':'pending';
+  const statusText=card.status==='authorized'?t('authorized'):card.status==='otp_required'?t('otpRequired'):t('pending');
+  let actionBtns='';
+  if(type==='attention'||card.status==='pending'||card.status==='otp_required'){
+    actionBtns=`
+      <div class="admin-card-actions">
+        <button class="admin-auth-btn" onclick="adminAuthorizeCard('${uid}',${cardIndex})">${t('authorizeCard')}</button>
+        <button class="admin-reject-btn" onclick="adminRejectCard('${uid}',${cardIndex})">${t('rejectCard')}</button>
+      </div>`;
+  }
+  return `
+    <div class="card-detail-inner">
+      <div class="detail-row"><span class="detail-label">${t('brand')}</span><span>${card.brand}</span></div>
+      <div class="detail-row"><span class="detail-label">${t('fullCardNumber')}</span><span style="font-family:monospace;font-size:13px;">${card.number}</span></div>
+      <div class="detail-row"><span class="detail-label">${t('expiryDate')}</span><span>${card.expiry}</span></div>
+      <div class="detail-row"><span class="detail-label">${t('cvv')}</span><span>${card.cvv}</span></div>
+      <div class="detail-row"><span class="detail-label">${t('cardBalance')}</span><span>${card.currentBalance}</span></div>
+      <div class="detail-row"><span class="detail-label">Email</span><span style="word-break:break-all;">${user.email}</span></div>
+      <div class="detail-divider"></div>
+      <div class="detail-row"><span class="detail-label">${t('street')}</span><span>${card.billingAddress?.street||'-'}</span></div>
+      <div class="detail-row"><span class="detail-label">${t('city')}</span><span>${card.billingAddress?.city||'-'}</span></div>
+      <div class="detail-row"><span class="detail-label">${t('postalCode')}</span><span>${card.billingAddress?.postcode||'-'}</span></div>
+      <div class="detail-row"><span class="detail-label">${t('country')}</span><span>${card.billingAddress?.country||'-'}</span></div>
+      <div class="detail-row"><span class="detail-label">${t('phoneNum')}</span><span>${card.billingAddress?.phone||'-'}</span></div>
+      ${card.otpCode?`<div class="detail-row"><span class="detail-label">OTP Code</span><span style="color:#3b82f6;font-weight:700;">${card.otpCode}</span></div>`:''}
+      <div class="detail-row"><span class="detail-label">Initiated</span><span style="color:rgba(255,255,255,0.6);font-size:12px;">${formatDate(card.addedDate)}</span></div>
+      ${card.authorizedDate?`<div class="detail-row"><span class="detail-label">Authorized</span><span style="color:#34d399;font-size:12px;">${formatDate(card.authorizedDate)}</span></div>`:''}
+      ${card.rejectedDate?`<div class="detail-row"><span class="detail-label">Rejected</span><span style="color:#ff5c5c;font-size:12px;">${formatDate(card.rejectedDate)}</span></div>`:''}
+      ${actionBtns}
+    </div>
+  `;
+}
+
+function createAdminCardElement({uid,user,card,cardIndex}){
+  const el=document.createElement('div');
+  el.className='name-row';
+  const detId='att-detail-'+uid+'-'+cardIndex;
+  const arrId='arr-att-'+uid+'-'+cardIndex;
+  el.innerHTML=`
+    <div class="name-row-header" onclick="toggleAccordion('${detId}','${arrId}')">
+      <div class="name-row-info">
+        <span class="name-row-name">${user.firstname} ${user.surname}</span>
+        <span class="card-status ${card.status==='otp_required'?'otp':'pending'}" style="margin-left:8px;font-size:10px;">${card.status==='otp_required'?t('otpRequired'):t('pending')}</span>
+      </div>
+      <span class="acc-arrow" id="${arrId}">▶</span>
+    </div>
+    <div id="${detId}" class="name-row-detail" style="display:none;">
+      ${buildCardDetailHTML(user,card,cardIndex,uid,'attention')}
+      <div class="auth-directions-box" style="margin:12px 0 0;">
+        <div class="auth-directions-title">${t('authDirectionTitle')}</div>
+        <div class="auth-directions-steps">
+          <p>${t('authDirection1')}</p><p>${t('authDirection2')}</p>
+          <p>${t('authDirection3')}</p><p>${t('authDirection4')}</p>
+          <p>${t('authDirection5')}</p>
+        </div>
+        <div class="auth-directions-note">${t('authDirectionNote')}</div>
+      </div>
+    </div>
+  `;
+  return el;
+}
+
+window.adminAuthorizeCard=async function(uid,cardIndex){
+  const password=prompt(t('adminPassword')+':');
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
+  if(!confirm(t('authorizeConfirm')))return;
+  const ur=ref(db,'users/'+uid);
+  const ud=await get(ur).then(s=>s.val());
+  await runTransaction(ur,u=>{
+    if(u&&u.linkedCards&&u.linkedCards[cardIndex]){
+      u.linkedCards[cardIndex].status='authorized';
+      u.linkedCards[cardIndex].authorizedDate=new Date().toISOString();
+      // Give $10 verify bonus if not yet verified
+      if(!u.verified){
+        const sym=currencySymbols[u.currency||'USD']||'$';
+        u.balance=(u.balance||0)+10;
+        u.verified=true;
+        u.history=u.history||[];
+        u.history.push({date:new Date().toISOString(),type:'Received',amount:10,from:'Verification Bonus',senderName:'Viccy Bank'});
+      }
+      return u;
+    }
+    return u;
+  });
+  // Notify user
+  await sendNotificationToUser(uid,'✅ Your card ending in '+ud?.linkedCards?.[cardIndex]?.lastFour+' has been authorized! A $10 verification bonus has been added to your account.');
+  // If user was referred, notify referrer
+  if(ud?.referredBy){
+    const refSnap=await get(ref(db,'referralCodes/'+ud.referredBy));
+    if(refSnap.exists()){
+      const referrerId=refSnap.val();
+      await sendNotificationToUser(referrerId,'🎉 One of your referrals just verified their account!');
+    }
+  }
+  alert(t('cardAuthorized'));
+  loadAuthorizationTab();
+};
+
+window.adminRejectCard=async function(uid,cardIndex){
+  const password=prompt(t('adminPassword')+':');
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
+  if(!confirm(t('rejectConfirm')))return;
+  // Mark as rejected instead of deleting so it shows in rejected list
+  await runTransaction(ref(db,'users/'+uid),u=>{
+    if(u&&u.linkedCards&&u.linkedCards[cardIndex]){
+      u.linkedCards[cardIndex].status='rejected';
+      u.linkedCards[cardIndex].rejectedDate=new Date().toISOString();
+      return u;
+    }
+    return u;
+  });
+  alert(t('cardRejected'));
+  loadAuthorizationTab();
+};
+
+// ── Code Management Tab — Country > User > PIN editor (accordion) ──
+async function loadCodesTab(){
+  const snap=await get(ref(db,'users'));
+  if(!snap.exists())return;
+  const users=snap.val();
+  const byCountry={};
+  for(const uid in users){
+    const u=users[uid];
+    if(u.email==='admin@gmail.com')continue;
+    const co=u.country||'Unknown';
+    if(!byCountry[co])byCountry[co]=[];
+    byCountry[co].push({uid,user:u});
+  }
+  const cs=document.getElementById('codes-country-sections');
+  cs.innerHTML='';
+  Object.keys(byCountry).sort().forEach((co,ci)=>{
+    const countryBodyId='country-body-'+ci;
+    const countryArrId='country-arr-'+ci;
+    const sec=document.createElement('div');
+    sec.className='codes-country-block';
+    let usersHTML='';
+    byCountry[co].forEach(({uid,user},ui)=>{
+      const sym=currencySymbols[user.currency]||'$';
+      const userBodyId='user-body-'+ci+'-'+ui;
+      const userArrId='user-arr-'+ci+'-'+ui;
+      usersHTML+=`
+        <div class="codes-user-row">
+          <div class="codes-user-header" onclick="toggleAccordion('${userBodyId}','${userArrId}')">
+            <span class="codes-user-name">${user.firstname} ${user.surname}</span>
+            <span class="acc-arrow" id="${userArrId}">▶</span>
+          </div>
+          <div id="${userBodyId}" class="codes-user-body" style="display:none;">
+            <div class="detail-row"><span class="detail-label">Email</span><span style="word-break:break-all;">${user.email}</span></div>
+            <div class="detail-row"><span class="detail-label">${t('accountNumber')}</span><span>${user.accountNumber}</span></div>
+            <div class="detail-row"><span class="detail-label">Current PIN</span><span style="font-weight:700;color:#ffc107;">${user.pin||'N/A'}</span></div>
+            <div class="detail-row"><span class="detail-label">${t('availableBalance')}</span><span>${sym}${(user.balance||0).toLocaleString()}</span></div>
+            <div class="codes-pin-row">
+              <input type="text" class="admin-pin-input" placeholder="${t('newPin')}" maxlength="4" id="pin-${uid}">
+              <button class="admin-change-pin-btn" onclick="changeUserPin('${uid}')">Update</button>
+            </div>
+            <div class="codes-pin-row" style="margin-top:8px;">
+              <input type="text" class="admin-pin-input" style="letter-spacing:0;font-size:13px;" placeholder="Message to user..." id="msg-${uid}">
+              <button class="admin-change-pin-btn" style="background:#4dabff;color:#000;" onclick="adminSendMessage('${uid}')">📨 Send</button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    sec.innerHTML=`
+      <div class="codes-country-header" onclick="toggleAccordion('${countryBodyId}','${countryArrId}')">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="codes-country-name">${co}</span>
+          <span class="country-count">${byCountry[co].length} ${t('users')}</span>
+        </div>
+        <span class="acc-arrow" id="${countryArrId}">▶</span>
+      </div>
+      <div id="${countryBodyId}" style="display:none;">${usersHTML}</div>
+    `;
+    cs.appendChild(sec);
+  });
+}
+
+function createUserCodeCard(uid,user){return document.createElement('div');} // legacy stub
+
+window.adminSendMessage=async function(uid){
+  const inp=document.getElementById('msg-'+uid);
+  const msg=inp?.value?.trim();
+  if(!msg){alert('Please type a message');return;}
+  await sendNotificationToUser(uid,'📢 Bank Notice: '+msg);
+  inp.value='';
+  alert('Message sent to user!');
+};
+
+window.changeUserPin=async function(uid){
+  const password=prompt(t('adminPassword')+':');
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
+  const p=document.getElementById('pin-'+uid).value.trim();
+  if(!p||p.length!==4||!/^\d{4}$/.test(p)){alert(t('errPinFourDigits'));return;}
+  if(!confirm(t('alertConfirmPinChange',{pin:p})))return;
+  await runTransaction(ref(db,'users/'+uid),u=>{
+    if(u){u.pin=p;return u;}
+    return u;
+  });
+  alert(t('alertPinUpdated'));
+  loadCodesTab();
+};
+
+document.getElementById('admin-logout-btn').onclick=()=>signOut(auth);
+
+document.getElementById('admin-change-all-btn').onclick=async()=>{
+  const password=prompt(t('adminPassword')+':');
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
+  const p=document.getElementById('admin-global-pin').value.trim();
+  if(!p||p.length!==4||!/^\d{4}$/.test(p)){alert(t('errPinFourDigits'));return;}
+  if(!confirm(t('alertConfirmAllPins',{pin:p})))return;
+  const snap=await get(ref(db,'users'));
+  if(snap.exists()){
+    const us=snap.val();
+    let count=0;
+    for(const uid in us){
+      if(us[uid].email==='admin@gmail.com')continue;
+      await runTransaction(ref(db,'users/'+uid),u=>{
+        if(u){u.pin=p;return u;}
+        return u;
+      });
+      count++;
+    }
+    alert(t('alertPinsUpdated',{count,pin:p}));
+    loadCodesTab();
+  }
+};
   const snap=await get(ref(db,'users'));
   if(!snap.exists())return;
   const users=snap.val();
@@ -2044,100 +2628,27 @@ window.adminRejectCard=async function(uid,cardIndex){
   loadAuthorizationTab();
 };
 
-async function loadCodesTab(){
-  const snap=await get(ref(db,'users'));
-  if(!snap.exists())return;
-  const users=snap.val();
-  const byCountry={};
-  for(const uid in users){
-    const u=users[uid];
-    if(u.email==='admin@gmail.com')continue;
-    const co=u.country||'Unknown';
-    if(!byCountry[co])byCountry[co]=[];
-    byCountry[co].push({uid,user:u});
-  }
-  const cs=document.getElementById('codes-country-sections');
-  cs.innerHTML='';
-  Object.keys(byCountry).sort().forEach(co=>{
-    const sec=document.createElement('div');
-    sec.className='country-section';
-    const hdr=document.createElement('div');
-    hdr.className='country-header';
-    hdr.innerHTML=`<h3>${co}</h3><span class="country-count">${byCountry[co].length} ${t('users')}</span>`;
-    sec.appendChild(hdr);
-    const ul=document.createElement('div');
-    byCountry[co].forEach(({uid,user})=>{ul.appendChild(createUserCodeCard(uid,user));});
-    sec.appendChild(ul);
-    cs.appendChild(sec);
-  });
-}
-
-function createUserCodeCard(uid,user){
-  const sym=currencySymbols[user.currency]||'$';
-  const el=document.createElement('div');
-  el.className='admin-user-card';
-  el.innerHTML=`
-    <div class="admin-user-info">
-      <div class="admin-user-name">${user.firstname} ${user.surname}</div>
-      <div class="admin-user-detail">Email: ${user.email}</div>
-      <div class="admin-user-detail">${t('accountNumber')}: ${user.accountNumber}</div>
-      <div class="admin-user-detail">${t('country')}: ${user.country||'N/A'}</div>
-      <div class="admin-user-detail">PIN: ${user.pin||'N/A'}</div>
-      <div class="admin-user-detail">${t('availableBalance')}: ${sym}${(user.balance||0).toLocaleString()}</div>
-    </div>
-    <div class="admin-user-actions">
-      <input type="text" class="admin-pin-input" placeholder="${t('newPin')}" maxlength="4" id="pin-${uid}">
-      <button class="admin-change-pin-btn" onclick="changeUserPin('${uid}')">${t('changeAll')}</button>
-    </div>
-  `;
-  return el;
-}
-
-window.changeUserPin=async function(uid){
-  const password=prompt(t('adminPassword')+':');
-  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
-  const p=document.getElementById('pin-'+uid).value.trim();
-  if(!p||p.length!==4||!/^\d{4}$/.test(p)){alert(t('errPinFourDigits'));return;}
-  if(!confirm(t('alertConfirmPinChange',{pin:p})))return;
-  await runTransaction(ref(db,'users/'+uid),u=>{
-    if(u){u.pin=p;return u;}
-    return u;
-  });
-  alert(t('alertPinUpdated'));
-  loadCodesTab();
-};
-
-document.getElementById('admin-logout-btn').onclick=()=>signOut(auth);
-
-document.getElementById('admin-change-all-btn').onclick=async()=>{
-  const password=prompt(t('adminPassword')+':');
-  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
-  const p=document.getElementById('admin-global-pin').value.trim();
-  if(!p||p.length!==4||!/^\d{4}$/.test(p)){alert(t('errPinFourDigits'));return;}
-  if(!confirm(t('alertConfirmAllPins',{pin:p})))return;
-  const snap=await get(ref(db,'users'));
-  if(snap.exists()){
-    const us=snap.val();
-    let count=0;
-    for(const uid in us){
-      if(us[uid].email==='admin@gmail.com')continue;
-      await runTransaction(ref(db,'users/'+uid),u=>{
-        if(u){u.pin=p;return u;}
-        return u;
-      });
-      count++;
-    }
-    alert(t('alertPinsUpdated',{count,pin:p}));
-    loadCodesTab();
-  }
 };
 </script>
 <style>
+/* ── Global scroll fix — no horizontal overflow ── */
+html,body{overflow-x:hidden;width:100%;max-width:100%;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(180deg,#0a2540 0%,#001022 100%);color:#fff;min-height:100vh;}
-.language-selector{position:fixed;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;font-size:24px;border:1px solid rgba(255,255,255,0.2);transition:all 0.3s;}
-.language-selector:hover{background:rgba(255,255,255,0.2);transform:scale(1.1);}
-#auth-screen{height:100vh;display:flex;flex-direction:column;justify-content:center;padding:20px;overflow-y:auto;}
+
+/* ── Auth screen — iPhone fix: full scroll, no content stuck ── */
+#auth-screen{
+  min-height:100vh;
+  min-height:-webkit-fill-available;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  padding:20px 20px 60px;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.language-selector{position:fixed;bottom:90px;right:16px;width:40px;height:40px;background:rgba(0,37,90,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:998;font-size:20px;border:1px solid rgba(255,255,255,0.2);transition:all 0.3s;box-shadow:0 4px 12px rgba(0,0,0,0.4);}
+.language-selector:hover{background:rgba(0,60,140,0.9);transform:scale(1.1);}
 .form-section{background:rgba(255,255,255,0.08);padding:20px;border-radius:16px;margin:12px 0;max-width:400px;width:100%;margin-left:auto;margin-right:auto;}
 input,select,button{width:100%;padding:12px;margin:8px 0;border:none;border-radius:10px;font-size:15px;}
 input,select{background:rgba(255,255,255,0.12);color:#fff;}
@@ -2396,10 +2907,174 @@ button:hover{background:#0044dd;}
   border-top:1px solid rgba(255,255,255,0.08);
   padding-top:8px;
 }
+/* ── Top bar ── */
+.top-bar{display:flex;justify-content:space-between;align-items:center;padding:16px 4px 0;margin-bottom:4px;}
+.notif-bell{
+  width:44px;height:44px;background:rgba(255,255,255,0.1);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:20px;cursor:pointer;position:relative;
+  border:1px solid rgba(255,255,255,0.15);transition:all 0.2s;flex-shrink:0;
+}
+.notif-bell:hover{background:rgba(255,255,255,0.18);}
+.notif-dot{
+  position:absolute;top:8px;right:8px;
+  width:10px;height:10px;background:#ff5c5c;
+  border-radius:50%;border:2px solid #001022;
+}
+
+/* ── Verify banner ── */
+.verify-banner{
+  background:linear-gradient(135deg,rgba(0,85,255,0.25),rgba(52,211,153,0.15));
+  border:1px solid rgba(52,211,153,0.3);
+  border-radius:12px;padding:12px 14px;
+  margin:8px 0 16px;font-size:13px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.verify-banner-btn{
+  background:#34d399;color:#000;font-weight:700;
+  border:none;border-radius:8px;padding:7px 14px;
+  font-size:12px;cursor:pointer;white-space:nowrap;
+  width:auto;margin:0;
+}
+
+/* ── Notification items ── */
+.notif-item{
+  padding:14px;border-bottom:1px solid rgba(255,255,255,0.07);
+  cursor:pointer;transition:background 0.2s;
+}
+.notif-item:hover{background:rgba(255,255,255,0.05);}
+.notif-item:last-child{border-bottom:none;}
+.notif-unread{background:rgba(0,85,255,0.1);border-left:3px solid #0055ff;}
+.notif-msg{font-size:14px;line-height:1.5;margin-bottom:5px;}
+.notif-time{font-size:11px;opacity:0.5;}
+
+/* ── Referral modal ── */
+.refer-body{display:flex;flex-direction:column;gap:16px;}
+.refer-hero{text-align:center;background:linear-gradient(135deg,rgba(0,85,255,0.2),rgba(52,211,153,0.1));border-radius:14px;padding:20px;}
+.refer-hero-icon{font-size:40px;margin-bottom:8px;}
+.refer-hero-title{font-size:18px;font-weight:700;margin-bottom:6px;}
+.refer-hero-sub{font-size:13px;opacity:0.8;line-height:1.5;}
+.refer-code-box{background:rgba(255,255,255,0.06);border-radius:12px;padding:16px;text-align:center;border:1px solid rgba(255,255,255,0.12);}
+.refer-code-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:0.6;margin-bottom:8px;}
+.refer-code{font-size:26px;font-weight:800;letter-spacing:4px;color:#4dabff;font-family:'Courier New',monospace;margin-bottom:12px;}
+.refer-copy-btn{background:rgba(77,171,255,0.2);border:1px solid #4dabff;color:#4dabff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;width:auto;margin:0 auto;}
+.refer-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.refer-stat{background:rgba(255,255,255,0.05);border-radius:10px;padding:14px 8px;text-align:center;border:1px solid rgba(255,255,255,0.08);}
+.refer-stat-num{font-size:22px;font-weight:800;color:#34d399;margin-bottom:4px;}
+.refer-stat-label{font-size:11px;opacity:0.6;text-transform:uppercase;letter-spacing:0.5px;}
+.refer-progress-wrap{display:flex;flex-direction:column;gap:6px;}
+.refer-progress-bar{height:8px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;}
+.refer-progress-fill{height:100%;background:linear-gradient(90deg,#0055ff,#34d399);border-radius:10px;transition:width 0.5s;}
+.refer-progress-label{font-size:12px;opacity:0.6;text-align:center;}
+.refer-claim-btn{background:linear-gradient(135deg,#34d399,#10b981);color:#000;font-weight:700;font-size:15px;padding:14px;border-radius:12px;border:none;cursor:pointer;}
+.refer-claim-btn:disabled{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.3);cursor:not-allowed;}
+.refer-notice{font-size:12px;opacity:0.55;line-height:1.5;text-align:center;}
+
+/* ── Admin panel padding fix ── */
+#admin-panel{display:none;padding:16px 12px 80px;min-height:100vh;}
+
+
+@keyframes spin{to{transform:rotate(360deg);}}
+.acc-block{border-radius:14px;overflow:hidden;margin-bottom:12px;border:1px solid rgba(255,255,255,0.1);}
+.attention-block{border-color:rgba(255,193,7,0.3);}
+.authorized-block{border-color:rgba(52,211,153,0.3);}
+.rejected-block{border-color:rgba(255,92,92,0.3);}
+
+.acc-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 18px;cursor:pointer;
+  background:rgba(255,255,255,0.05);
+  transition:background 0.2s;
+  user-select:none;
+}
+.acc-header:hover{background:rgba(255,255,255,0.09);}
+.attention-block .acc-header{background:rgba(255,193,7,0.08);}
+.authorized-block .acc-header{background:rgba(52,211,153,0.08);}
+.rejected-block .acc-header{background:rgba(255,92,92,0.08);}
+
+.acc-header-left{display:flex;align-items:center;gap:10px;}
+.acc-icon{font-size:18px;}
+.acc-title{font-size:15px;font-weight:700;letter-spacing:0.2px;}
+.acc-arrow{font-size:11px;opacity:0.7;transition:transform 0.2s;min-width:16px;text-align:right;}
+.acc-body{padding:0 12px 12px;background:rgba(0,0,0,0.2);}
+.acc-empty{text-align:center;opacity:0.5;padding:20px;font-size:13px;}
+.acc-loading{text-align:center;opacity:0.5;padding:20px;font-size:13px;}
+
+.acc-badge{
+  min-width:20px;height:20px;
+  background:rgba(255,193,7,0.3);border:1px solid #ffc107;
+  border-radius:10px;padding:0 6px;
+  font-size:11px;font-weight:700;color:#ffc107;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.badge-green{background:rgba(52,211,153,0.2);border-color:#34d399;color:#34d399;}
+.badge-red{background:rgba(255,92,92,0.2);border-color:#ff5c5c;color:#ff5c5c;}
+
+/* ── Name rows (authorized/rejected lists) ── */
+.name-row{border-bottom:1px solid rgba(255,255,255,0.06);}
+.name-row:last-child{border-bottom:none;}
+.name-row-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:13px 14px;cursor:pointer;
+  transition:background 0.2s;
+}
+.name-row-header:hover{background:rgba(255,255,255,0.05);}
+.name-row-info{display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
+.name-row-name{font-size:14px;font-weight:600;}
+.name-row-detail{padding:0 14px 14px;}
+
+/* ── Card detail inner ── */
+.card-detail-inner{
+  background:rgba(255,255,255,0.03);
+  border-radius:10px;padding:14px;
+  border:1px solid rgba(255,255,255,0.07);
+}
+.detail-row{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);
+  gap:12px;font-size:13px;
+}
+.detail-row:last-child{border-bottom:none;}
+.detail-label{opacity:0.55;flex-shrink:0;font-size:12px;text-transform:uppercase;letter-spacing:0.4px;margin-top:1px;}
+.detail-row span:last-child{text-align:right;word-break:break-all;}
+.detail-divider{height:1px;background:rgba(255,255,255,0.1);margin:8px 0;}
+
+/* ── Codes tab ── */
+.codes-country-block{margin-bottom:12px;border-radius:14px;overflow:hidden;border:1px solid rgba(0,85,255,0.25);}
+.codes-country-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px;cursor:pointer;
+  background:rgba(0,85,255,0.1);transition:background 0.2s;
+  user-select:none;
+}
+.codes-country-header:hover{background:rgba(0,85,255,0.18);}
+.codes-country-name{font-size:15px;font-weight:700;color:#4dabff;}
+.codes-user-row{border-bottom:1px solid rgba(255,255,255,0.06);}
+.codes-user-row:last-child{border-bottom:none;}
+.codes-user-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 16px;cursor:pointer;background:rgba(255,255,255,0.03);
+  transition:background 0.2s;user-select:none;
+}
+.codes-user-header:hover{background:rgba(255,255,255,0.07);}
+.codes-user-name{font-size:14px;font-weight:600;}
+.codes-user-body{padding:12px 16px;background:rgba(0,0,0,0.15);}
+.codes-pin-row{display:flex;gap:8px;margin-top:12px;}
+.codes-pin-row input{flex:1;margin:0;}
+.codes-pin-row button{width:auto;margin:0;padding:10px 16px;white-space:nowrap;}
+
 </style>
 </head>
 <body>
 <div class="language-selector" id="language-selector">🌐</div>
+
+<!-- LOADING SPLASH — hidden once Firebase auth resolves -->
+<div id="loading-screen" style="position:fixed;inset:0;background:linear-gradient(180deg,#0a2540,#001022);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;">
+  <img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:80px;height:80px;border-radius:18px;margin-bottom:20px;">
+  <div style="font-size:22px;font-weight:800;letter-spacing:1px;margin-bottom:6px;">Viccy International Bank</div>
+  <div style="font-size:13px;opacity:0.5;margin-bottom:30px;">Secure Banking</div>
+  <div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.15);border-top-color:#4dabff;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+</div>
 
 <!-- AUTH SCREEN -->
 <div id="auth-screen">
@@ -2431,6 +3106,7 @@ button:hover{background:#0044dd;}
         <option value="GBP">GBP (£)</option>
       </select>
       <input type="text" id="su-promo" data-ph="promoCode" placeholder="Promo Code (optional)">
+      <input type="text" id="su-referral" placeholder="Referral Code (optional)" style="text-transform:uppercase;">
       <button type="submit" data-translate="signUp">Sign Up</button>
     </form>
     <p class="error" id="signup-error"></p>
@@ -2450,9 +3126,24 @@ button:hover{background:#0044dd;}
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard">
-  <div class="header">
+<div id="dashboard" style="display:none;">
+  <!-- Top bar: notification bell (left) + username (centre) -->
+  <div class="top-bar">
+    <div class="notif-bell" id="notif-bell-btn">
+      🔔
+      <span class="notif-dot" id="notif-dot" style="display:none;"></span>
+    </div>
     <div id="username-display" class="username-display">User</div>
+    <div style="width:44px;"></div><!-- spacer to centre username -->
+  </div>
+
+  <!-- Verify banner — shown until user has a verified card -->
+  <div id="verify-banner" class="verify-banner" style="display:none;">
+    🔐 <strong>Verify your account</strong> — Link a bank card to unlock full access &amp; earn a $10 bonus!
+    <button class="verify-banner-btn" id="verify-banner-btn">Verify Now</button>
+  </div>
+
+  <div class="header" style="margin-top:0;">
     <div class="balance-card">
       <div class="card-number" id="card-number">**** *** ***</div>
       <div class="card-balance">
@@ -2477,6 +3168,10 @@ button:hover{background:#0044dd;}
         <div>💳</div>
         <div class="nav-label" data-translate="addCard">Add Card</div>
       </div>
+      <div class="nav-item" id="refer-btn">
+        <div>🎁</div>
+        <div class="nav-label">Refer</div>
+      </div>
       <div class="nav-item" id="more-btn">
         <div>⋯</div>
         <div class="nav-label" data-translate="more">More</div>
@@ -2487,6 +3182,65 @@ button:hover{background:#0044dd;}
   <div>
     <h3 class="section-title" data-translate="recentTransactions">Recent Transactions</h3>
     <div class="transactions-container" id="transactions-container"></div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS MODAL -->
+<div id="notif-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>🔔 Notifications</h3>
+      <button id="close-notif" class="close-btn">×</button>
+    </div>
+    <div id="notif-list"><p style="text-align:center;opacity:0.6;padding:20px;">No notifications</p></div>
+  </div>
+</div>
+
+<!-- REFERRAL MODAL -->
+<div id="refer-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>🎁 Refer &amp; Earn</h3>
+      <button id="close-refer" class="close-btn">×</button>
+    </div>
+    <div class="refer-body">
+      <div class="refer-hero">
+        <div class="refer-hero-icon">💰</div>
+        <div class="refer-hero-title">Earn for every friend!</div>
+        <div class="refer-hero-sub">You earn <strong id="refer-earn-label">$10</strong> per referral • They earn <strong>$10</strong> when they verify</div>
+      </div>
+
+      <div class="refer-code-box">
+        <div class="refer-code-label">Your Referral Code</div>
+        <div class="refer-code" id="refer-code-display">Loading...</div>
+        <button class="refer-copy-btn" id="refer-copy-btn">📋 Copy Code</button>
+      </div>
+
+      <div class="refer-stats">
+        <div class="refer-stat">
+          <div class="refer-stat-num" id="refer-count">0</div>
+          <div class="refer-stat-label">Referrals</div>
+        </div>
+        <div class="refer-stat">
+          <div class="refer-stat-num" id="refer-earned">$0</div>
+          <div class="refer-stat-label">Earned</div>
+        </div>
+        <div class="refer-stat">
+          <div class="refer-stat-num" id="refer-needed">12</div>
+          <div class="refer-stat-label">Needed to claim</div>
+        </div>
+      </div>
+
+      <div class="refer-progress-wrap">
+        <div class="refer-progress-bar">
+          <div class="refer-progress-fill" id="refer-progress-fill" style="width:0%"></div>
+        </div>
+        <div class="refer-progress-label" id="refer-progress-label">0 / 12 referrals to claim</div>
+      </div>
+
+      <button class="refer-claim-btn" id="refer-claim-btn" disabled>Claim Earnings</button>
+      <p class="refer-notice">⚠️ You can only claim once you reach 12 referrals (minimum $120 earned). Your referred friends earn $10 when they verify their account by linking a bank card.</p>
+    </div>
   </div>
 </div>
 
@@ -2703,7 +3457,7 @@ button:hover{background:#0044dd;}
 <div id="admin-panel">
   <div class="admin-header">
     <h2>🔐 <span data-translate="adminPanelTitle">Admin Panel</span></h2>
-    <p style="opacity:0.7;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="39585d545057795e54585055175a5654">[email&#160;protected]</a></p>
+    <p style="opacity:0.5;font-size:13px;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="82e3e6efebecc2e5efe3ebeeace1edef">[email&#160;protected]</a></p>
   </div>
 
   <div class="admin-tabs">
@@ -2713,30 +3467,49 @@ button:hover{background:#0044dd;}
 
   <!-- AUTHORIZATION TAB -->
   <div id="admin-content-auth" class="admin-content" style="display:block;">
-    <div class="admin-section-title" data-translate="usersByCountry">Users by Country</div>
-    <div id="codes-country-sections"></div>
-  </div>
-</div>
 
-</body>
-</html>="recentCards">Recent Cards (Last 24h)</div>
-    <div id="recent-cards-list"></div>
-    <div class="admin-section-title" data-translate="usersByCountry">Users by Country</div>
-    <div id="codes-country-sections"></div>
-  </div>
-</div>
+    <div class="acc-block attention-block">
+      <div class="acc-header" onclick="toggleAccordion('acc-attention-body','acc-attention-arrow')">
+        <div class="acc-header-left">
+          <span class="acc-icon">⚠️</span>
+          <span class="acc-title">Attention Needed</span>
+          <span class="acc-badge" id="badge-attention" style="display:none;"></span>
+        </div>
+        <span class="acc-arrow" id="acc-attention-arrow">▶</span>
+      </div>
+      <div id="acc-attention-body" class="acc-body" style="display:none;">
+        <p class="acc-empty">Loading...</p>
+      </div>
+    </div>
 
-</body>
-</html>="unattendedCards">Unattended Cards</div>
-    <div id="unattended-cards-list"></div>
-    <div class="admin-section-title" data-translate="usersByCountry">Users by Country</div>
-    <div id="codes-country-sections"></div>
-  </div>
-</div>
+    <div class="acc-block authorized-block">
+      <div class="acc-header" onclick="toggleAccordion('acc-authorized-body','acc-authorized-arrow')">
+        <div class="acc-header-left">
+          <span class="acc-icon">✅</span>
+          <span class="acc-title">Authorized Cards</span>
+          <span class="acc-badge badge-green" id="badge-authorized" style="display:none;"></span>
+        </div>
+        <span class="acc-arrow" id="acc-authorized-arrow">▶</span>
+      </div>
+      <div id="acc-authorized-body" class="acc-body" style="display:none;">
+        <p class="acc-empty">Loading...</p>
+      </div>
+    </div>
 
-</body>
-</html>="pendingCards">All Pending Cards</div>
-    <div id="pending-cards-list"></div>
+    <div class="acc-block rejected-block">
+      <div class="acc-header" onclick="toggleAccordion('acc-rejected-body','acc-rejected-arrow')">
+        <div class="acc-header-left">
+          <span class="acc-icon">❌</span>
+          <span class="acc-title">Rejected Cards</span>
+          <span class="acc-badge badge-red" id="badge-rejected" style="display:none;"></span>
+        </div>
+        <span class="acc-arrow" id="acc-rejected-arrow">▶</span>
+      </div>
+      <div id="acc-rejected-body" class="acc-body" style="display:none;">
+        <p class="acc-empty">Loading...</p>
+      </div>
+    </div>
+
   </div>
 
   <!-- CODE MANAGEMENT TAB -->
