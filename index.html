@@ -1042,10 +1042,6 @@ async function deleteRejectedCard(userId,cardIndex){
 // AUTH STATE
 // ============================================================
 onAuthStateChanged(auth,user=>{
-  // Always hide loading screen first
-  const ls=document.getElementById('loading-screen');
-  if(ls)ls.style.display='none';
-
   if(user){
     currentUser=user;
     userDataRef=ref(db,'users/'+user.uid);
@@ -3068,10 +3064,6 @@ button:hover{background:#0044dd;}
 <body>
 <div class="language-selector" id="language-selector">🌐</div>
 
-<!-- LOADING SPLASH — hidden once Firebase auth resolves -->
-<div id="loading-screen" style="position:fixed;inset:0;background:linear-gradient(180deg,#0a2540,#001022);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;">
-  <img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:80px;height:80px;border-radius:18px;margin-bottom:20px;">
-  <div style="font-size:22px;font-weight:800;letter-spacing:1px;margin-bottom:6px;">Viccy International Bank</div>
   <div style="font-size:13px;opacity:0.5;margin-bottom:30px;">Secure Banking</div>
   <div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.15);border-top-color:#4dabff;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
 </div>
