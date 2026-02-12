@@ -1914,42 +1914,9 @@ document.getElementById('more-account').onclick=()=>{
 document.getElementById('more-logout').onclick=()=>signOut(auth);
 
 // ============================================================
-// SERVICE WORKER — Push Notifications even when app is closed
 // ============================================================
-const SW_CODE=`
-self.addEventListener('push',e=>{
-  const data=e.data?e.data.json():{title:'Viccy Bank',body:'You have a new notification.'};
-  self.registration.showNotification(data.title||'Viccy Bank',{
-    body:data.body||'',
-    icon:'/icon-192.png',
-    badge:'/icon-72.png',
-    data:data.url||'/'
-  });
-});
-self.addEventListener('notificationclick',e=>{
-  e.notification.close();
-  e.waitUntil(clients.openWindow(e.notification.data||'/'));
-});
-self.addEventListener('message',e=>{
-  if(e.data&&e.data.type==='SHOW_NOTIF'){
-    self.registration.showNotification(e.data.title||'Viccy Bank',{
-      body:e.data.body||'',
-      icon:'https://i.imgur.com/L2U0Crf.jpeg'
-    });
-  }
-});
-`;
-
-async function registerSW(){
-  if(!('serviceWorker' in navigator))return;
-  try{
-    const blob=new Blob([SW_CODE],{type:'application/javascript'});
-    const url=URL.createObjectURL(blob);
-    const reg=await navigator.serviceWorker.register(url,{scope:'/'});
-    window._swReg=reg;
-    console.log('SW registered');
-  }catch(e){console.warn('SW registration failed',e);}
-}
+// NOTIFICATIONS — in-page only (no Service Worker blob)
+// ============================================================
 
 async function requestNotifPermission(){
   if(!('Notification' in window))return;
@@ -1960,15 +1927,11 @@ async function requestNotifPermission(){
 
 function showLocalNotif(title,body){
   if(Notification.permission==='granted'){
-    if(window._swReg){
-      window._swReg.active?.postMessage({type:'SHOW_NOTIF',title,body});
-    }else{
+    try{
       new Notification(title,{body,icon:'https://i.imgur.com/L2U0Crf.jpeg'});
-    }
+    }catch(e){}
   }
 }
-
-registerSW();
 
 // ============================================================
 // NOTIFICATIONS — real-time inbox from Firebase
@@ -2652,7 +2615,22 @@ input::placeholder{color:rgba(255,255,255,0.5);}
 select option{background:#0a2540;color:#fff;}
 button{background:#0055ff;color:white;font-weight:bold;cursor:pointer;transition:background 0.2s;}
 button:hover{background:#0044dd;}
-.toggle-link{text-align:center;margin-top:12px;color:#4dabff;text-decoration:underline;cursor:pointer;font-size:14px;}
+.toggle-link{
+  display:block;
+  width:100%;
+  text-align:center;
+  margin-top:16px;
+  color:#4dabff;
+  text-decoration:underline;
+  cursor:pointer;
+  font-size:14px;
+  background:none;
+  border:none;
+  padding:12px 0;
+  font-family:inherit;
+  -webkit-tap-highlight-color:rgba(77,171,255,0.2);
+  min-height:44px;
+}
 #dashboard{padding:24px 16px 140px;}
 .header{text-align:center;margin:40px 0 24px;}
 .username-display{font-size:22px;font-weight:600;margin-bottom:8px;}
@@ -3102,7 +3080,7 @@ button:hover{background:#0044dd;}
       <button type="submit" data-translate="signUp">Sign Up</button>
     </form>
     <p class="error" id="signup-error"></p>
-    <div class="toggle-link" id="to-login" data-translate="alreadyHaveAccount">Already have an account? Log In</div>
+    <button type="button" class="toggle-link" id="to-login" data-translate="alreadyHaveAccount">Already have an account? Log In</button>
   </div>
 
   <div id="login-section" class="form-section" style="display:none;">
@@ -3113,7 +3091,7 @@ button:hover{background:#0044dd;}
       <button type="submit" data-translate="login">Log In</button>
     </form>
     <p class="error" id="login-error"></p>
-    <div class="toggle-link" id="to-signup" data-translate="noAccount">Don't have an account? Sign Up</div>
+    <button type="button" class="toggle-link" id="to-signup" data-translate="noAccount">Don't have an account? Sign Up</button>
   </div>
 </div>
 
