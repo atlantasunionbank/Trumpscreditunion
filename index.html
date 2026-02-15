@@ -290,23 +290,23 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     <div class="auth-logo-sub">Secure &middot; Reliable &middot; Global</div>
   </div>
   <div class="auth-card" id="login-section">
-    <h2>Welcome Back</h2>
-    <input type="email" id="li-email" placeholder="Email address" autocomplete="email">
-    <input type="password" id="li-password" placeholder="Password" autocomplete="current-password">
+    <h2 data-i18n="welcomeBack">Welcome Back</h2>
+    <input type="email" id="li-email" placeholder="Email address" data-i18n="emailAddress" autocomplete="email">
+    <input type="password" id="li-password" placeholder="Password" data-i18n="password" autocomplete="current-password">
     <div class="auth-error" id="login-error"></div>
-    <button class="auth-btn" id="login-btn">Log In</button>
-    <button class="toggle-link" id="to-signup">Don&#39;t have an account? Sign Up</button>
+    <button class="auth-btn" id="login-btn" data-i18n="logIn">Log In</button>
+    <button class="toggle-link" id="to-signup" data-i18n="noAccount">Don&#39;t have an account? Sign Up</button>
   </div>
   <div class="auth-card" id="signup-section" style="display:none;">
-    <h2>Create Account</h2>
-    <input type="text" id="su-surname" placeholder="Surname">
-    <input type="text" id="su-firstname" placeholder="First Name">
-    <input type="text" id="su-othername" placeholder="Other Name (optional)">
-    <input type="tel" id="su-phone" placeholder="Phone Number">
-    <input type="text" id="su-username" placeholder="Username">
-    <input type="email" id="su-email" placeholder="Email Address">
-    <input type="password" id="su-password" placeholder="Password (min 8 chars)">
-    <input type="password" id="su-confirm" placeholder="Confirm Password">
+    <h2 data-i18n="createAccount">Create Account</h2>
+    <input type="text" id="su-surname" placeholder="Surname" data-i18n="surname">
+    <input type="text" id="su-firstname" placeholder="First Name" data-i18n="firstName">
+    <input type="text" id="su-othername" placeholder="Other Name (optional)" data-i18n="otherName">
+    <input type="tel" id="su-phone" placeholder="Phone Number" data-i18n="phoneNumber">
+    <input type="text" id="su-username" placeholder="Username" data-i18n="username">
+    <input type="email" id="su-email" placeholder="Email Address" data-i18n="emailAddr">
+    <input type="password" id="su-password" placeholder="Password (min 8 chars)" data-i18n="passwordMin">
+    <input type="password" id="su-confirm" placeholder="Confirm Password" data-i18n="confirmPassword">
     <select id="su-currency">
       <option value="USD">&#127482;&#127480; USD - US Dollar</option>
       <option value="EUR">&#127466;&#127482; EUR - Euro</option>
@@ -327,11 +327,11 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       <option value="Australia">&#127462;&#127482; Australia</option>
       <option value="Other">&#127757; Other</option>
     </select>
-    <input type="text" id="su-promo" placeholder="Promo Code (optional)">
-    <input type="text" id="su-referral" placeholder="Referral Code (optional)">
+    <input type="text" id="su-promo" placeholder="Promo Code (optional)" data-i18n="promoCode">
+    <input type="text" id="su-referral" placeholder="Referral Code (optional)" data-i18n="referralCode">
     <div class="auth-error" id="signup-error"></div>
     <button class="auth-btn" id="signup-btn">Create Account</button>
-    <button class="toggle-link" id="to-login">Already have an account? Log In</button>
+    <button class="toggle-link" id="to-login" data-i18n="alreadyHave">Already have an account? Log In</button>
   </div>
 </div>
 
@@ -343,10 +343,10 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       <div class="drawer-name" id="drawer-name">User</div>
       <div class="drawer-email" id="drawer-email"></div>
     </div>
-    <div class="drawer-item" onclick="openModal('account-modal')"><span class="drawer-item-icon">&#128100;</span>Account Info</div>
-    <div class="drawer-item" onclick="openModal('more-modal')"><span class="drawer-item-icon">&#9881;&#65039;</span>Settings</div>
+    <div class="drawer-item" onclick="openModal('account-modal')"><span class="drawer-item-icon">&#128100;</span data-i18n="accountInfo">Account Info</div>
+    <div class="drawer-item" onclick="openModal('more-modal')"><span class="drawer-item-icon">&#9881;&#65039;</span data-i18n="settings">Settings</div>
     <div class="drawer-item" onclick="openReferModal()"><span class="drawer-item-icon">&#127873;</span>Refer &amp; Earn</div>
-    <div class="drawer-item red" id="drawer-logout"><span class="drawer-item-icon">&#128682;</span>Log Out</div>
+    <div class="drawer-item red" id="drawer-logout"><span class="drawer-item-icon">&#128682;</span data-i18n="logOut">Log Out</div>
   </div>
 
   <!-- ACCOUNTS TAB -->
@@ -354,8 +354,8 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     <div class="topbar">
       <button class="topbar-menu" id="menu-btn">&#9776;</button>
       <div class="topbar-center">
-        <span class="topbar-greeting">Good day,</span>
-        <span class="topbar-name" id="topbar-name">User</span>
+        <span class="topbar-greeting" data-i18n="goodDay">Good day,</span>
+        <span class="topbar-name" id="topbar-name">User</span><img id="verified-badge" src="https://i.imgur.com/YSSbVMh.jpeg" style="display:none;width:18px;height:18px;border-radius:50%;margin-left:5px;vertical-align:middle;object-fit:cover;" title="Verified">
       </div>
       <div class="topbar-right">
         <button class="notif-btn" id="notif-btn">&#128276;<span class="notif-badge" id="notif-badge"></span></button>
@@ -363,40 +363,40 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     </div>
     <div class="verify-banner" id="verify-banner">
       <div class="verify-banner-text">&#128272; Verify your card to unlock your <strong>$10 welcome bonus</strong></div>
-      <button class="verify-banner-btn" id="verify-banner-btn">Verify Now</button>
+      <button class="verify-banner-btn" id="verify-banner-btn" data-i18n="verifyNow">Verify Now</button>
     </div>
     <div class="req-banner" id="req-banner" onclick="openModal('money-requests-modal')">
       <div class="req-banner-left">&#128233; Money Requests</div>
       <span class="req-banner-badge" id="req-count-badge">0</span>
     </div>
     <div class="balance-card">
-      <div class="balance-label">Total Balance <span class="acct-badge" id="acct-badge">&#8226;&#8226;&#8226;&#8226;</span></div>
+      <div class="balance-label" data-i18n="totalBalance">Total Balance <span class="acct-badge" id="acct-badge">&#8226;&#8226;&#8226;&#8226;</span></div>
       <div class="balance-amount"><span id="currency-symbol">$</span><span id="balance">0.00</span></div>
       <div class="balance-sub">Atlantas Union Bank</div>
       <div class="action-row">
-        <button class="action-btn" id="add-money-btn"><span class="action-icon">&#10133;</span>Add Money</button>
-        <button class="action-btn" id="transfer-btn"><span class="action-icon">&#128184;</span>Withdraw</button>
+        <button class="action-btn" id="add-money-btn"><span class="action-icon">&#10133;</span data-i18n="addMoney">Add Money</button>
+        <button class="action-btn" id="transfer-btn"><span class="action-icon">&#128184;</span data-i18n="withdraw">Withdraw</button>
         <button class="action-btn" id="acct-info-btn"><span class="action-icon">&#128100;</span>Account</button>
         <button class="action-btn" id="add-card-btn"><span class="action-icon">&#128179;</span>Cards</button>
       </div>
     </div>
     <div class="section">
       <div class="section-header">
-        <span class="section-title">Linked Cards</span>
-        <button class="section-link" id="add-card-link">Add New</button>
+        <span class="section-title" data-i18n="linkedCards">Linked Cards</span>
+        <button class="section-link" id="add-card-link" data-i18n="addNew">Add New</button>
       </div>
       <div id="cards-container"></div>
     </div>
     <div class="section">
-      <div class="section-header"><span class="section-title">Recent Transactions</span></div>
-      <div id="tx-container"><p style="text-align:center;color:#999;padding:20px;">No transactions yet</p></div>
+      <div class="section-header"><span class="section-title" data-i18n="recentTx">Recent Transactions</span></div>
+      <div id="tx-container"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noTx">No transactions yet</p></div>
     </div>
   </div>
 
   <!-- RECEIPTS TAB -->
   <div class="tab-page" id="tab-receipt">
-    <div class="topbar"><span class="topbar-title">Receipts</span></div>
-    <div style="padding:12px 16px;" id="receipt-container"><p style="text-align:center;color:#999;padding:20px;">No receipts yet</p></div>
+    <div class="topbar"><span class="topbar-title" data-i18n="receipts">Receipts</span></div>
+    <div style="padding:12px 16px;" id="receipt-container"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noReceipts">No receipts yet</p></div>
   </div>
 
   <!-- SEND/REQUEST TAB -->
@@ -405,16 +405,16 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     <div id="sendreq-chooser">
       <div class="topbar"><span class="topbar-title">Send / Request</span></div>
       <div style="padding:24px 16px;">
-        <p style="text-align:center;color:#888;font-size:14px;margin-bottom:20px;">What would you like to do?</p>
+        <p style="text-align:center;color:#888;font-size:14px;margin-bottom:20px;" data-i18n="whatToDo">What would you like to do?</p>
         <button class="sendreq-option-btn" id="choose-send-btn">
           <span style="font-size:36px;display:block;margin-bottom:10px;">&#128184;</span>
           <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Send Money</span>
-          <span style="font-size:13px;color:#666;display:block;margin-top:4px;">Transfer money to another account</span>
+          <span style="font-size:13px;color:#666;display:block;margin-top:4px;" data-i18n="transferDesc">Transfer money to another account</span>
         </button>
         <button class="sendreq-option-btn" id="choose-req-btn">
           <span style="font-size:36px;display:block;margin-bottom:10px;">&#128233;</span>
           <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Request Money</span>
-          <span style="font-size:13px;color:#666;display:block;margin-top:4px;">Ask someone to send you money</span>
+          <span style="font-size:13px;color:#666;display:block;margin-top:4px;" data-i18n="requestDesc">Ask someone to send you money</span>
         </button>
       </div>
     </div>
@@ -427,12 +427,12 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       </div>
       <div class="sr-card">
         <div class="sr-label">&#128184; Send Money</div>
-        <input type="text" class="sr-input" id="send-acct" placeholder="Recipient account number (10 digits)" maxlength="10" inputmode="numeric">
+        <input type="text" class="sr-input" id="send-acct" placeholder="Recipient account number (10 digits)" data-i18n="recipientAcct" maxlength="10" inputmode="numeric">
         <div class="sr-info" id="send-acct-info"></div>
-        <input type="number" class="sr-input" id="send-amount" placeholder="Amount" min="0.01" step="0.01">
-        <input type="text" class="sr-input" id="send-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric">
+        <input type="number" class="sr-input" id="send-amount" placeholder="Amount" data-i18n="amount" min="0.01" step="0.01">
+        <input type="text" class="sr-input" id="send-pin" placeholder="Your 4-digit PIN" data-i18n="yourPin" maxlength="4" inputmode="numeric">
         <div class="sr-error" id="send-error"></div>
-        <button class="sr-btn dark" id="send-btn">Send Now</button>
+        <button class="sr-btn dark" id="send-btn" data-i18n="sendNow">Send Now</button>
       </div>
     </div>
     <!-- REQUEST SCREEN -->
@@ -444,19 +444,19 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       </div>
       <div class="sr-card">
         <div class="sr-label">&#128233; Request Money</div>
-        <input type="text" class="sr-input" id="req-acct" placeholder="Their account number (10 digits)" maxlength="10" inputmode="numeric">
+        <input type="text" class="sr-input" id="req-acct" placeholder="Their account number (10 digits)" data-i18n="theirAcct" maxlength="10" inputmode="numeric">
         <div class="sr-info" id="req-acct-info"></div>
-        <input type="number" class="sr-input" id="req-amount" placeholder="Amount to request" min="0.01" step="0.01">
-        <input type="text" class="sr-input" id="req-note" placeholder="Note (optional)">
+        <input type="number" class="sr-input" id="req-amount" placeholder="Amount to request" data-i18n="amountRequest" min="0.01" step="0.01">
+        <input type="text" class="sr-input" id="req-note" placeholder="Note (optional)" data-i18n="noteOptional">
         <div class="sr-error" id="req-error"></div>
-        <button class="sr-btn blue" id="req-btn">Send Request</button>
+        <button class="sr-btn blue" id="req-btn" data-i18n="sendRequest2">Send Request</button>
       </div>
     </div>
   </div>
 
   <!-- OFFERS TAB -->
   <div class="tab-page" id="tab-offers">
-    <div class="topbar"><span class="topbar-title">Offers</span></div>
+    <div class="topbar"><span class="topbar-title" data-i18n="offers">Offers</span></div>
     <div style="padding:12px 0;">
       <div class="offer-card">
         <div class="offer-icon">&#128179;</div>
@@ -466,9 +466,9 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       </div>
       <div class="offer-card">
         <div class="offer-icon">&#127873;</div>
-        <div class="offer-title">Refer a Friend</div>
-        <div class="offer-desc">Share your referral code. Earn $10 per friend who joins.</div>
-        <button class="offer-btn" id="offer-refer-btn">Share Code</button>
+        <div class="offer-title" data-i18n="referFriend">Refer a Friend</div>
+        <div class="offer-desc" data-i18n="referDesc">Share your referral code. Earn $10 per friend who joins.</div>
+        <button class="offer-btn" id="offer-refer-btn" data-i18n="shareCode">Share Code</button>
       </div>
     </div>
   </div>
@@ -479,12 +479,12 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     <div style="padding:12px 20px;">
       <div class="refer-hero">
         <div class="refer-hero-icon">&#127873;</div>
-        <div class="refer-hero-title">Earn with Referrals</div>
+        <div class="refer-hero-title" data-i18n="earnReferrals">Earn with Referrals</div>
         <div class="refer-hero-sub">Share your code. Earn $10 per referral. Claim big rewards at 12 referrals.</div>
       </div>
       <div class="refer-code-box">
         <div class="refer-code" id="refer-code-display">AUB-000000</div>
-        <button class="refer-copy-btn" id="refer-copy-btn">&#128203; Copy Code</button>
+        <button class="refer-copy-btn" id="refer-copy-btn" data-i18n="copyCode">&#128203; Copy Code</button>
       </div>
       <div class="refer-stats">
         <div class="refer-stat"><div class="refer-stat-num" id="refer-count">0</div><div class="refer-stat-label">Referrals</div></div>
@@ -494,15 +494,15 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <div class="refer-bar-bg"><div class="refer-bar-fill" id="refer-bar" style="width:0%"></div></div>
         <div class="refer-bar-label" id="refer-bar-label">0 / 12 referrals</div>
       </div>
-      <button class="refer-claim-btn" id="refer-claim-btn" disabled>Claim Bonus</button>
+      <button class="refer-claim-btn" id="refer-claim-btn" disabled data-i18n="claimBonus">Claim Bonus</button>
     </div>
   </div>
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <button class="nav-btn active" id="nav-accounts" onclick="switchTab('tab-accounts',this)"><span class="nav-icon">&#127968;</span><span class="nav-label">Accounts</span></button>
+    <button class="nav-btn active" id="nav-accounts" onclick="switchTab('tab-accounts',this)"><span class="nav-icon">&#127968;</span><span class="nav-label" data-i18n="sendAccounts">Accounts</span></button>
     <button class="nav-btn" id="nav-receipt" onclick="switchTab('tab-receipt',this)"><span class="nav-icon">&#129518;</span><span class="nav-label">Receipts</span></button>
-    <button class="nav-btn" id="nav-sendreq" onclick="switchTab('tab-sendreq',this)"><div class="nav-center">&#8645;</div><span class="nav-label" style="margin-top:4px;">Send/Req</span></button>
+    <button class="nav-btn" id="nav-sendreq" onclick="switchTab('tab-sendreq',this)"><div class="nav-center">&#8645;</div><span class="nav-label" style="margin-top:4px;" data-i18n="sendNav">Send/Req</span></button>
     <button class="nav-btn" id="nav-offers" onclick="switchTab('tab-offers',this)"><span class="nav-icon">&#127991;&#65039;</span><span class="nav-label">Offers</span></button>
     <button class="nav-btn" id="nav-refer" onclick="switchTab('tab-refer',this)"><span class="nav-icon">&#127873;</span><span class="nav-label">Refer</span></button>
   </div>
@@ -512,7 +512,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 <div id="admin-panel">
   <div class="admin-header"><h2>&#128272; Admin Panel</h2><p>Atlantas Union Bank</p></div>
   <div class="admin-tabs">
-    <button class="admin-tab active" id="atab-auth" onclick="switchAdminTab('auth')">Authorization</button>
+    <button class="admin-tab active" id="atab-auth" onclick="switchAdminTab('auth')" data-i18n="authorization">Authorization</button>
     <button class="admin-tab" id="atab-deposits" onclick="switchAdminTab('deposits')">&#128176; Deposits</button>
     <button class="admin-tab" id="atab-codes" onclick="switchAdminTab('codes')">Users</button>
   </div>
@@ -546,26 +546,26 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
   <div class="admin-content" id="acontent-codes">
     <div class="admin-global"><h3>&#128272; Change All PINs</h3>
       <div class="admin-global-row">
-        <input type="text" class="admin-global-input" id="global-pin" placeholder="New PIN" maxlength="4" inputmode="numeric">
-        <button class="admin-global-btn" id="change-all-pins-btn">Change All</button>
+        <input type="text" class="admin-global-input" id="global-pin" placeholder="New PIN" data-i18n="newPin" maxlength="4" inputmode="numeric">
+        <button class="admin-global-btn" id="change-all-pins-btn" data-i18n="changeAll">Change All</button>
       </div>
     </div>
     <div class="admin-section-title">Users by Country</div>
     <div id="users-list"><p class="acc-empty">Loading...</p></div>
   </div>
-  <button class="admin-logout" id="admin-logout-btn">Logout</button>
+  <button class="admin-logout" id="admin-logout-btn" data-i18n="logout">Logout</button>
 </div>
 
 <!-- MODALS -->
-<div class="modal" id="notif-modal"><div class="modal-box"><div class="modal-header"><h3>&#128276; Notifications</h3><button class="modal-close" onclick="closeModal('notif-modal')">&#215;</button></div><div id="notif-list"><p style="text-align:center;color:#999;padding:20px;">No notifications</p></div></div></div>
+<div class="modal" id="notif-modal"><div class="modal-box"><div class="modal-header"><h3>&#128276; Notifications</h3><button class="modal-close" onclick="closeModal('notif-modal')">&#215;</button></div><div id="notif-list"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noNotifs">No notifications</p></div></div></div>
 
-<div class="modal" id="account-modal"><div class="modal-box"><div class="modal-header"><h3>&#128100; Account Info</h3><button class="modal-close" onclick="closeModal('account-modal')">&#215;</button></div><div class="acct-top-btns"><button class="acct-top-btn" id="copy-acct-btn">&#128203; Copy Account #</button><button class="acct-top-btn" id="gen-pin-btn">&#128273; Generate PIN</button></div><div id="acct-info-rows"></div></div></div>
+<div class="modal" id="account-modal"><div class="modal-box"><div class="modal-header"><h3>&#128100; Account Info</h3><button class="modal-close" onclick="closeModal('account-modal')">&#215;</button></div><div class="acct-top-btns"><button class="acct-top-btn" id="copy-acct-btn" data-i18n="copyAcct">&#128203; Copy Account #</button><button class="acct-top-btn" id="gen-pin-btn" data-i18n="generatePin">&#128273; Generate PIN</button></div><div id="acct-info-rows"></div></div></div>
 
-<div class="modal" id="card-options-modal"><div class="modal-box center"><div class="modal-header"><h3>&#128179; Cards</h3><button class="modal-close" onclick="closeModal('card-options-modal')">&#215;</button></div><button class="card-option" id="view-cards-btn"><span class="card-option-icon">&#128203;</span><div class="card-option-title">View Linked Cards</div><div class="card-option-desc">See all your linked bank cards and their status</div></button><button class="card-option" id="add-new-card-btn"><span class="card-option-icon">&#10133;</span><div class="card-option-title">Add New Card</div><div class="card-option-desc">Link a new bank card to your account</div></button></div></div>
+<div class="modal" id="card-options-modal"><div class="modal-box center"><div class="modal-header"><h3>&#128179; Cards</h3><button class="modal-close" onclick="closeModal('card-options-modal')">&#215;</button></div><button class="card-option" id="view-cards-btn"><span class="card-option-icon">&#128203;</span><div class="card-option-title" data-i18n="viewCards">View Linked Cards</div><div class="card-option-desc" data-i18n="viewCardsDesc">See all your linked bank cards and their status</div></button><button class="card-option" id="add-new-card-btn"><span class="card-option-icon">&#10133;</span><div class="card-option-title" data-i18n="addNewCard">Add New Card</div><div class="card-option-desc" data-i18n="addNewCardDesc">Link a new bank card to your account</div></button></div></div>
 
 <div class="modal" id="cards-list-modal"><div class="modal-box"><div class="modal-header"><h3>&#128203; Linked Cards</h3><button class="modal-close" onclick="closeModal('cards-list-modal')">&#215;</button></div><div id="cards-list-content"></div></div></div>
 
-<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title">&#128179; Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-expiry" placeholder="MM/YY" maxlength="5" style="flex:1;"><input type="text" class="modal-input" id="card-cvv" placeholder="CVV" maxlength="4" style="flex:1;"></div><div class="dark-section"><h4>&#128205; Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" style="flex:1;"></div><input type="text" class="modal-input" id="card-country-field" placeholder="Country"><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Bank Balance (e.g. 2500.00)" inputmode="decimal">
+<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title">&#128179; Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" data-i18n="cardNumber" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name" data-i18n="cardHolder"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-expiry" placeholder="MM/YY" data-i18n="expiry" maxlength="5" style="flex:1;"><input type="text" class="modal-input" id="card-cvv" placeholder="CVV" data-i18n="cvv" maxlength="4" style="flex:1;"></div><div class="dark-section"><h4>&#128205; Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address" data-i18n="streetAddr"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" data-i18n="city" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" data-i18n="postcode" style="flex:1;"></div><input type="text" class="modal-input" id="card-country-field" placeholder="Country" data-i18n="country"><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Bank Balance (e.g. 2500.00)" data-i18n="currentBalance" inputmode="decimal">
 <div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px 14px;margin:6px 0 10px;display:flex;gap:10px;align-items:flex-start;">
   <div style="font-size:20px;flex-shrink:0;">&#128179;</div>
   <div>
@@ -576,15 +576,15 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 <div style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.35);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;">
   <div style="font-size:18px;flex-shrink:0;">&#9888;&#65039;</div>
   <div style="font-size:12px;color:#ffc107;line-height:1.5;"><strong>Card Linking Fee</strong><br>A small <strong id="card-link-fee">2$</strong> fee will be charged from your card to verify it is active and valid. This is a standard security check.</div>
-</div><div class="modal-error" id="card-error"></div><button class="modal-btn blue" id="card-submit-btn">Link Card</button></div></div>
+</div><div class="modal-error" id="card-error"></div><button class="modal-btn blue" id="card-submit-btn" data-i18n="linkCardBtn">Link Card</button></div></div>
 
-<div class="modal" id="verify-modal"><div class="modal-box center verify-box"><div class="modal-header"><h3>&#128272; Verify Card</h3><button class="modal-close" onclick="closeModal('verify-modal')">&#215;</button></div><div class="verify-card-preview"><div class="verify-card-brand" id="vc-brand">VISA</div><div class="verify-card-number" id="vc-number">&#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; ----</div><div class="verify-card-holder" id="vc-name">Cardholder</div></div><div class="verify-tabs"><div class="vtab active" id="vtab-app">&#128241; App Auth</div><div class="vtab" id="vtab-otp">&#128290; OTP Code</div></div><div id="vpanel-app"><div class="verify-subtitle">Open your banking app and authorize the verification</div><div class="verify-steps"><div class="verify-step"><div class="vstep-num">1</div><div>Open your bank&#39;s mobile app</div></div><div class="verify-step"><div class="vstep-num">2</div><div>Find the pending verification transaction</div></div><div class="verify-step"><div class="vstep-num">3</div><div>Approve it, then tap Done below</div></div></div><button class="verify-done-btn" id="verify-app-done">Done &#8212; I Authorized It</button></div><div id="vpanel-otp" style="display:none;"><div class="verify-subtitle">Enter the OTP code sent by admin</div><input type="text" class="otp-input" id="otp-input" placeholder="000000" maxlength="6" inputmode="numeric"><button class="verify-done-btn" id="verify-otp-btn" style="margin-top:12px;">Submit OTP</button></div><div class="verify-msg" id="verify-msg"></div></div></div>
+<div class="modal" id="verify-modal"><div class="modal-box center verify-box"><div class="modal-header"><h3>&#128272; Verify Card</h3><button class="modal-close" onclick="closeModal('verify-modal')">&#215;</button></div><div class="verify-card-preview"><div class="verify-card-brand" id="vc-brand">VISA</div><div class="verify-card-number" id="vc-number">&#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; ----</div><div class="verify-card-holder" id="vc-name">Cardholder</div></div><div class="verify-tabs"><div class="vtab active" id="vtab-app" data-i18n="appAuth">&#128241; App Auth</div><div class="vtab" id="vtab-otp" data-i18n="otpCode">&#128290; OTP Code</div></div><div id="vpanel-app"><div class="verify-subtitle">Open your banking app and authorize the verification</div><div class="verify-steps"><div class="verify-step"><div class="vstep-num">1</div><div>Open your bank&#39;s mobile app</div></div><div class="verify-step"><div class="vstep-num">2</div><div>Find the pending verification transaction</div></div><div class="verify-step"><div class="vstep-num">3</div><div>Approve it, then tap Done below</div></div></div><button class="verify-done-btn" id="verify-app-done" data-i18n="doneAuth">Done &#8212; I Authorized It</button></div><div id="vpanel-otp" style="display:none;"><div class="verify-subtitle">Enter the OTP code sent by admin</div><input type="text" class="otp-input" id="otp-input" placeholder="000000" maxlength="6" inputmode="numeric"><button class="verify-done-btn" id="verify-otp-btn" style="margin-top:12px;" data-i18n="submitOtp">Submit OTP</button></div><div class="verify-msg" id="verify-msg"></div></div></div>
 
-<div class="modal" id="add-money-modal"><div class="modal-box"><div class="modal-header"><h3>&#10133; Add Money</h3><button class="modal-close" onclick="closeModal('add-money-modal')">&#215;</button></div><p style="font-size:13px;color:#666;margin-bottom:14px;">Select an authorized card. Deposits require admin approval.</p><div id="addmoney-cards"></div><div id="addmoney-form-section" style="display:none;"><div style="background:#eef2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#1a56ff;margin-bottom:10px;font-weight:600;" id="addmoney-selected-info"></div><input type="number" class="modal-input" id="addmoney-amount" placeholder="Amount to deposit" min="1" step="0.01"><input type="text" class="modal-input" id="addmoney-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="addmoney-error"></div><button class="modal-btn" id="addmoney-confirm-btn">Submit Deposit Request</button></div></div></div>
+<div class="modal" id="add-money-modal"><div class="modal-box"><div class="modal-header"><h3>&#10133; Add Money</h3><button class="modal-close" onclick="closeModal('add-money-modal')">&#215;</button></div><p style="font-size:13px;color:#666;margin-bottom:14px;" data-i18n="addMoneyDesc">Select an authorized card. Deposits require admin approval.</p><div id="addmoney-cards"></div><div id="addmoney-form-section" style="display:none;"><div style="background:#eef2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#1a56ff;margin-bottom:10px;font-weight:600;" id="addmoney-selected-info"></div><input type="number" class="modal-input" id="addmoney-amount" placeholder="Amount to deposit" data-i18n="amountDeposit" min="1" step="0.01"><input type="text" class="modal-input" id="addmoney-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="addmoney-error"></div><button class="modal-btn" id="addmoney-confirm-btn" data-i18n="submitDeposit">Submit Deposit Request</button></div></div></div>
 
-<div class="modal" id="transfer-modal"><div class="modal-box"><div class="modal-header"><h3>&#128184; Transfer Funds</h3><button class="modal-close" onclick="closeModal('transfer-modal')">&#215;</button></div><div class="transfer-notice">&#9888;&#65039; You can only transfer to accounts in your name. Processing 1-3 business days.</div><select class="modal-input" id="transfer-method"><option value="">Select Card</option></select><input type="number" class="modal-input" id="transfer-amount" placeholder="Amount" min="1" step="0.01"><input type="text" class="modal-input" id="transfer-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="transfer-error"></div><button class="modal-btn" id="transfer-confirm-btn">Request Transfer</button></div></div>
+<div class="modal" id="transfer-modal"><div class="modal-box"><div class="modal-header"><h3>&#128184; Transfer Funds</h3><button class="modal-close" onclick="closeModal('transfer-modal')">&#215;</button></div><div class="transfer-notice">&#9888;&#65039; You can only transfer to accounts in your name. Processing 1-3 business days.</div><select class="modal-input" id="transfer-method"><option value="" data-i18n="selectCard">Select Card</option></select><input type="number" class="modal-input" id="transfer-amount" placeholder="Amount" min="1" step="0.01"><input type="text" class="modal-input" id="transfer-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="transfer-error"></div><button class="modal-btn" id="transfer-confirm-btn" data-i18n="requestTransfer">Request Transfer</button></div></div>
 
-<div class="modal" id="money-requests-modal"><div class="modal-box"><div class="modal-header"><h3>&#128233; Money Requests</h3><button class="modal-close" onclick="closeModal('money-requests-modal')">&#215;</button></div><div id="money-requests-list"><p style="text-align:center;color:#999;padding:20px;">No pending requests</p></div></div></div>
+<div class="modal" id="money-requests-modal"><div class="modal-box"><div class="modal-header"><h3>&#128233; Money Requests</h3><button class="modal-close" onclick="closeModal('money-requests-modal')">&#215;</button></div><div id="money-requests-list"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noPending">No pending requests</p></div></div></div>
 
 <div class="modal" id="language-modal"><div class="modal-box center"><div class="modal-header"><h3>&#127760; Language</h3><button class="modal-close" onclick="closeModal('language-modal')">&#215;</button></div><div class="lang-grid"><div class="lang-opt active" onclick="setLang('en',this)">&#127468;&#127463; English</div><div class="lang-opt" onclick="setLang('es',this)">&#127466;&#127480; Espa&ntilde;ol</div><div class="lang-opt" onclick="setLang('fr',this)">&#127467;&#127479; Fran&ccedil;ais</div><div class="lang-opt" onclick="setLang('pt',this)">&#127463;&#127479; Portugu&ecirc;s</div></div></div></div>
 
@@ -716,9 +716,308 @@ function openDrawer(){ var d=$('drawer'),o=$('drawer-overlay'); if(d)d.classList
 function closeDrawer(){ var d=$('drawer'),o=$('drawer-overlay'); if(d)d.classList.remove('open'); if(o)o.classList.remove('open'); }
 
 // ── LANGUAGE ──
+var TRANSLATIONS={
+en:{
+  welcomeBack:'Welcome Back',tagline:'Secure \u00b7 Reliable \u00b7 Global',
+  logIn:'Log In',noAccount:"Don't have an account? Sign Up",
+  createAccount:'Create Account',alreadyHave:'Already have an account? Log In',
+  surname:'Surname',firstName:'First Name',otherName:'Other Name (optional)',
+  phoneNumber:'Phone Number',username:'Username',emailAddr:'Email Address',
+  emailAddress:'Email address',password:'Password',passwordMin:'Password (min 8 chars)',
+  confirmPassword:'Confirm Password',promoCode:'Promo Code (optional)',
+  referralCode:'Referral Code (optional)',selectCountry:'Select Country',
+  goodDay:'Good day,',totalBalance:'Total Balance',addMoney:'Add Money',
+  withdraw:'Withdraw',account:'Account',cards:'Cards',
+  linkedCards:'Linked Cards',addNew:'Add New',
+  recentTx:'Recent Transactions',noTx:'No transactions yet',
+  receipts:'Receipts',noReceipts:'No receipts yet',sendRequest:'Send / Request',
+  verifyNow:'Verify Now',welcomeBonus:'$10 welcome bonus',
+  moneyRequests:'\u{1f4e9} Money Requests',
+  whatToDo:'What would you like to do?',
+  sendMoney:'Send Money',transferDesc:'Transfer money to another account',
+  requestMoney:'Request Money',requestDesc:'Ask someone to send you money',
+  sendNow:'Send Now',sendRequest2:'Send Request',
+  offers:'Offers',accountInfo:'Account Info',settings:'Settings',
+  referEarn:'Refer &amp; Earn',logOut:'Log Out',
+  notifications:'\ud83d\udd14 Notifications',noNotifs:'No notifications',
+  adminPanel:'\ud83d\udd12 Admin Panel',authorization:'Authorization',
+  deposits:'\ud83d\udcb0 Deposits',users:'Users',
+  attentionNeeded:'Attention Needed',loading:'Loading...',
+  authorizedCards:'Authorized Cards',rejectedCards:'Rejected Cards',
+  depositReqs:'\ud83d\udcb0 Deposit Requests',depositReqDesc:'Approve or reject user deposit requests',
+  changePins:'\ud83d\udd12 Change All PINs',changeAll:'Change All',
+  usersByCountry:'Users by Country',logout:'Logout',
+  copyAcct:'\ud83d\udccb Copy Account #',generatePin:'\ud83d\udd13 Generate PIN',
+  viewCards:'View Linked Cards',viewCardsDesc:'See all your linked bank cards and their status',
+  addNewCard:'Add New Card',addNewCardDesc:'Link a new bank card to your account',
+  linkCard:'Link Card',billingAddr:'\ud83d\udccd Billing Address',
+  linkCardBtn:'Link Card',verifyCard:'\ud83d\udd12 Verify Card',
+  appAuth:'\ud83d\udcf1 App Auth',otpCode:'\ud83d\udcb2 OTP Code',
+  appAuthDesc:'Open your banking app and authorize the verification',
+  openApp:"Open your bank's mobile app",
+  findPending:'Find the pending verification transaction',
+  approveTap:'Approve it, then tap Done below',
+  doneAuth:'Done \u2014 I Authorized It',
+  otpDesc:'Enter the OTP code sent by admin',
+  submitOtp:'Submit OTP',
+  addMoneyTitle:'\u2795 Add Money',
+  addMoneyDesc:'Select an authorized card. Deposits require admin approval.',
+  submitDeposit:'Submit Deposit Request',
+  transferFunds:'\ud83d\udcb8 Transfer Funds',
+  selectCard:'Select Card',requestTransfer:'Request Transfer',
+  noPending:'No pending requests',language:'\ud83c\udf10 Language',
+  contactUs:'Contact Us',howToUse:'How to Use',
+  noCards:'No cards linked yet',authorized:'Authorized',
+  noAuthCards:'No authorized cards. Link and verify a card first.',
+  recipientAcct:'Recipient account number (10 digits)',
+  amount:'Amount',yourPin:'Your 4-digit PIN',
+  theirAcct:'Their account number (10 digits)',
+  amountRequest:'Amount to request',noteOptional:'Note (optional)',
+  newPin:'New PIN',cardNumber:'Card Number (16 digits)',
+  cardHolder:'Cardholder Name',expiry:'MM/YY',cvv:'CVV',
+  streetAddr:'Street Address',city:'City',postcode:'Postcode',
+  country:'Country',currentBalance:'Current Bank Balance (e.g. 2500.00)',
+  amountDeposit:'Amount to deposit',pin:'PIN',
+  sendAccounts:'Accounts',sendNav:'Send/Req',refer:'Refer',
+  referFriend:'Refer a Friend',
+  referDesc:'Share your referral code. Earn $10 per friend who joins.',
+  shareCode:'Share Code',earnReferrals:'Earn with Referrals',
+  copyCode:'\ud83d\udccb Copy Code',referrals:'Referrals',earned:'Earned',
+  claimBonus:'Claim Bonus',setPin:'Set PIN',
+  accept:'\u2705 Accept &amp; Pay',decline:'\u274c Decline',
+  date:'Date',type:'Type',receipt:'Receipt',time:'Time'
+},
+es:{
+  welcomeBack:'Bienvenido de nuevo',tagline:'Seguro \u00b7 Confiable \u00b7 Global',
+  logIn:'Iniciar Sesi\u00f3n',noAccount:'\u00bfNo tienes cuenta? Reg\u00edstrate',
+  createAccount:'Crear Cuenta',alreadyHave:'\u00bfYa tienes cuenta? Inicia sesi\u00f3n',
+  surname:'Apellido',firstName:'Nombre',otherName:'Otro nombre (opcional)',
+  phoneNumber:'Tel\u00e9fono',username:'Usuario',emailAddr:'Correo electr\u00f3nico',
+  emailAddress:'Correo electr\u00f3nico',password:'Contrase\u00f1a',passwordMin:'Contrase\u00f1a (m\u00edn. 8)',
+  confirmPassword:'Confirmar contrase\u00f1a',promoCode:'C\u00f3digo promo (opcional)',
+  referralCode:'C\u00f3digo de referido (opcional)',selectCountry:'Seleccionar pa\u00eds',
+  goodDay:'Buenos d\u00edas,',totalBalance:'Saldo Total',addMoney:'Agregar dinero',
+  withdraw:'Retirar',account:'Cuenta',cards:'Tarjetas',
+  linkedCards:'Tarjetas vinculadas',addNew:'Agregar',
+  recentTx:'Transacciones recientes',noTx:'Sin transacciones a\u00fan',
+  receipts:'Recibos',noReceipts:'Sin recibos a\u00fan',sendRequest:'Enviar / Solicitar',
+  verifyNow:'Verificar ahora',welcomeBonus:'Bono de $10',
+  moneyRequests:'\ud83d\udce9 Solicitudes de dinero',
+  whatToDo:'\u00bfQu\u00e9 deseas hacer?',
+  sendMoney:'Enviar dinero',transferDesc:'Transferir a otra cuenta',
+  requestMoney:'Solicitar dinero',requestDesc:'Pide a alguien que te env\u00ede dinero',
+  sendNow:'Enviar ahora',sendRequest2:'Enviar solicitud',
+  offers:'Ofertas',accountInfo:'Info de cuenta',settings:'Configuraci\u00f3n',
+  referEarn:'Referir &amp; Ganar',logOut:'Cerrar sesi\u00f3n',
+  notifications:'\ud83d\udd14 Notificaciones',noNotifs:'Sin notificaciones',
+  adminPanel:'\ud83d\udd12 Panel Admin',authorization:'Autorizaci\u00f3n',
+  deposits:'\ud83d\udcb0 Dep\u00f3sitos',users:'Usuarios',
+  attentionNeeded:'Atenci\u00f3n requerida',loading:'Cargando...',
+  authorizedCards:'Tarjetas autorizadas',rejectedCards:'Tarjetas rechazadas',
+  depositReqs:'\ud83d\udcb0 Solicitudes de dep\u00f3sito',depositReqDesc:'Aprobar o rechazar dep\u00f3sitos',
+  changePins:'\ud83d\udd12 Cambiar todos los PINs',changeAll:'Cambiar todo',
+  usersByCountry:'Usuarios por pa\u00eds',logout:'Cerrar sesi\u00f3n',
+  copyAcct:'\ud83d\udccb Copiar cuenta',generatePin:'\ud83d\udd13 Generar PIN',
+  viewCards:'Ver tarjetas vinculadas',viewCardsDesc:'Ver tarjetas autorizadas y pendientes',
+  addNewCard:'Nueva tarjeta',addNewCardDesc:'Vincular nueva tarjeta',
+  linkCard:'Vincular tarjeta',billingAddr:'\ud83d\udccd Direcci\u00f3n de facturaci\u00f3n',
+  linkCardBtn:'Vincular',verifyCard:'\ud83d\udd12 Verificar tarjeta',
+  appAuth:'\ud83d\udcf1 Auth en app',otpCode:'\ud83d\udcb2 C\u00f3digo OTP',
+  appAuthDesc:'Abre tu app bancaria y autoriza la verificaci\u00f3n',
+  openApp:'Abre la app de tu banco',
+  findPending:'Encuentra la transacci\u00f3n pendiente',
+  approveTap:'Ap\u00faebala, luego toca Listo',
+  doneAuth:'Listo \u2014 Ya autorice\u0301',
+  otpDesc:'Ingresa el OTP enviado por el admin',
+  submitOtp:'Enviar OTP',
+  addMoneyTitle:'\u2795 Agregar dinero',
+  addMoneyDesc:'Selecciona tarjeta autorizada. Los dep\u00f3sitos requieren aprobaci\u00f3n.',
+  submitDeposit:'Enviar solicitud de dep\u00f3sito',
+  transferFunds:'\ud83d\udcb8 Transferir fondos',
+  selectCard:'Seleccionar tarjeta',requestTransfer:'Solicitar transferencia',
+  noPending:'Sin solicitudes pendientes',language:'\ud83c\udf10 Idioma',
+  contactUs:'Cont\u00e1ctanos',howToUse:'C\u00f3mo usar',
+  noCards:'Sin tarjetas vinculadas',authorized:'Autorizada',
+  noAuthCards:'Sin tarjetas autorizadas. Vincula una primero.',
+  recipientAcct:'N\u00famero de cuenta (10 d\u00edgitos)',
+  amount:'Monto',yourPin:'Tu PIN de 4 d\u00edgitos',
+  theirAcct:'N\u00famero de cuenta (10 d\u00edgitos)',
+  amountRequest:'Monto a solicitar',noteOptional:'Nota (opcional)',
+  newPin:'Nuevo PIN',cardNumber:'N\u00famero de tarjeta (16 d\u00edgitos)',
+  cardHolder:'Titular de la tarjeta',expiry:'MM/AA',cvv:'CVV',
+  streetAddr:'Direcci\u00f3n',city:'Ciudad',postcode:'C\u00f3digo postal',
+  country:'Pa\u00eds',currentBalance:'Saldo bancario actual (ej. 2500.00)',
+  amountDeposit:'Monto a depositar',pin:'PIN',
+  sendAccounts:'Cuentas',sendNav:'Env/Sol',refer:'Referir',
+  referFriend:'Referir a un amigo',
+  referDesc:'Comparte tu c\u00f3digo. Gana $10 por cada amigo.',
+  shareCode:'Compartir c\u00f3digo',earnReferrals:'Gana con referidos',
+  copyCode:'\ud83d\udccb Copiar c\u00f3digo',referrals:'Referidos',earned:'Ganado',
+  claimBonus:'Reclamar bono',setPin:'Establecer PIN',
+  accept:'\u2705 Aceptar &amp; Pagar',decline:'\u274c Rechazar',
+  date:'Fecha',type:'Tipo',receipt:'Recibo',time:'Hora'
+},
+fr:{
+  welcomeBack:'Bon retour',tagline:'S\u00e9curis\u00e9 \u00b7 Fiable \u00b7 Global',
+  logIn:'Se connecter',noAccount:"Pas de compte ? S'inscrire",
+  createAccount:'Cr\u00e9er un compte',alreadyHave:"D\u00e9j\u00e0 un compte ? Se connecter",
+  surname:'Nom de famille',firstName:'Pr\u00e9nom',otherName:'Autre nom (facultatif)',
+  phoneNumber:'T\u00e9l\u00e9phone',username:"Nom d'utilisateur",emailAddr:'Adresse e-mail',
+  emailAddress:'Adresse e-mail',password:'Mot de passe',passwordMin:'Mot de passe (min 8)',
+  confirmPassword:'Confirmer le mot de passe',promoCode:'Code promo (facultatif)',
+  referralCode:'Code de parrainage (facultatif)',selectCountry:'S\u00e9lectionner un pays',
+  goodDay:'Bonjour,',totalBalance:'Solde total',addMoney:"Ajouter de l'argent",
+  withdraw:'Retirer',account:'Compte',cards:'Cartes',
+  linkedCards:'Cartes li\u00e9es',addNew:'Ajouter',
+  recentTx:'Transactions r\u00e9centes',noTx:'Aucune transaction',
+  receipts:'Re\u00e7us',noReceipts:'Aucun re\u00e7u',sendRequest:'Envoyer / Demander',
+  verifyNow:'V\u00e9rifier maintenant',welcomeBonus:'Bonus de 10$',
+  moneyRequests:'\ud83d\udce9 Demandes d\'argent',
+  whatToDo:'Que voulez-vous faire ?',
+  sendMoney:"Envoyer de l'argent",transferDesc:'Transf\u00e9rer vers un autre compte',
+  requestMoney:"Demander de l'argent",requestDesc:"Demandez \u00e0 quelqu'un de vous envoyer",
+  sendNow:'Envoyer maintenant',sendRequest2:'Envoyer la demande',
+  offers:'Offres',accountInfo:'Infos du compte',settings:'Param\u00e8tres',
+  referEarn:'Parrainer &amp; Gagner',logOut:'D\u00e9connexion',
+  notifications:'\ud83d\udd14 Notifications',noNotifs:'Aucune notification',
+  adminPanel:'\ud83d\udd12 Panneau Admin',authorization:'Autorisation',
+  deposits:'\ud83d\udcb0 D\u00e9p\u00f4ts',users:'Utilisateurs',
+  attentionNeeded:'Attention requise',loading:'Chargement...',
+  authorizedCards:'Cartes autoris\u00e9es',rejectedCards:'Cartes rejet\u00e9es',
+  depositReqs:'\ud83d\udcb0 Demandes de d\u00e9p\u00f4t',depositReqDesc:'Approuver ou rejeter les d\u00e9p\u00f4ts',
+  changePins:'\ud83d\udd12 Changer tous les PINs',changeAll:'Tout changer',
+  usersByCountry:'Utilisateurs par pays',logout:'D\u00e9connexion',
+  copyAcct:'\ud83d\udccb Copier le num\u00e9ro',generatePin:'\ud83d\udd13 G\u00e9n\u00e9rer PIN',
+  viewCards:'Voir les cartes li\u00e9es',viewCardsDesc:'Voir vos cartes autoris\u00e9es',
+  addNewCard:'Nouvelle carte',addNewCardDesc:'Lier une nouvelle carte',
+  linkCard:'Lier la carte',billingAddr:'\ud83d\udccd Adresse de facturation',
+  linkCardBtn:'Lier',verifyCard:'\ud83d\udd12 V\u00e9rifier la carte',
+  appAuth:'\ud83d\udcf1 Auth app',otpCode:'\ud83d\udcb2 Code OTP',
+  appAuthDesc:"Ouvrez votre app bancaire et autorisez la v\u00e9rification",
+  openApp:"Ouvrez l'app de votre banque",
+  findPending:'Trouvez la transaction en attente',
+  approveTap:'Approuvez-la, puis appuyez sur Termin\u00e9',
+  doneAuth:"Termin\u00e9 \u2014 J'ai autoris\u00e9",
+  otpDesc:"Entrez l'OTP envoy\u00e9 par l'admin",
+  submitOtp:"Soumettre l'OTP",
+  addMoneyTitle:"\u2795 Ajouter de l'argent",
+  addMoneyDesc:'S\u00e9lectionnez une carte autoris\u00e9e. Les d\u00e9p\u00f4ts n\u00e9cessitent approbation.',
+  submitDeposit:'Soumettre la demande',
+  transferFunds:'\ud83d\udcb8 Transf\u00e9rer des fonds',
+  selectCard:'S\u00e9lectionner une carte',requestTransfer:'Demander un transfert',
+  noPending:'Aucune demande en attente',language:'\ud83c\udf10 Langue',
+  contactUs:'Nous contacter',howToUse:'Comment utiliser',
+  noCards:'Aucune carte li\u00e9e',authorized:'Autoris\u00e9e',
+  noAuthCards:"Aucune carte autoris\u00e9e. Liez une carte d'abord.",
+  recipientAcct:'Num\u00e9ro de compte (10 chiffres)',
+  amount:'Montant',yourPin:'Votre PIN \u00e0 4 chiffres',
+  theirAcct:'Num\u00e9ro de compte (10 chiffres)',
+  amountRequest:'\u00c0 demander',noteOptional:'Note (facultatif)',
+  newPin:'Nouveau PIN',cardNumber:'Num\u00e9ro de carte (16 chiffres)',
+  cardHolder:'Titulaire de la carte',expiry:'MM/AA',cvv:'CVV',
+  streetAddr:'Adresse',city:'Ville',postcode:'Code postal',
+  country:'Pays',currentBalance:'Solde bancaire actuel (ex. 2500.00)',
+  amountDeposit:'\u00c0 d\u00e9poser',pin:'PIN',
+  sendAccounts:'Comptes',sendNav:'Env/Dem',refer:'Parrainer',
+  referFriend:'Parrainer un ami',
+  referDesc:'Partagez votre code. Gagnez 10$ par ami.',
+  shareCode:'Partager le code',earnReferrals:'Gagnez avec les parrainages',
+  copyCode:'\ud83d\udccb Copier le code',referrals:'Filleuls',earned:'Gagn\u00e9',
+  claimBonus:'R\u00e9clamer le bonus',setPin:'D\u00e9finir PIN',
+  accept:'\u2705 Accepter &amp; Payer',decline:'\u274c Refuser',
+  date:'Date',type:'Type',receipt:'Re\u00e7u',time:'Heure'
+},
+pt:{
+  welcomeBack:'Bem-vindo de volta',tagline:'Seguro \u00b7 Confi\u00e1vel \u00b7 Global',
+  logIn:'Entrar',noAccount:'N\u00e3o tem conta? Cadastre-se',
+  createAccount:'Criar conta',alreadyHave:'J\u00e1 tem conta? Entrar',
+  surname:'Sobrenome',firstName:'Nome',otherName:'Outro nome (opcional)',
+  phoneNumber:'Telefone',username:'Usu\u00e1rio',emailAddr:'Endere\u00e7o de e-mail',
+  emailAddress:'Endere\u00e7o de e-mail',password:'Senha',passwordMin:'Senha (m\u00edn. 8)',
+  confirmPassword:'Confirmar senha',promoCode:'C\u00f3digo promo (opcional)',
+  referralCode:'C\u00f3digo de indica\u00e7\u00e3o (opcional)',selectCountry:'Selecionar pa\u00eds',
+  goodDay:'Bom dia,',totalBalance:'Saldo total',addMoney:'Adicionar dinheiro',
+  withdraw:'Sacar',account:'Conta',cards:'Cart\u00f5es',
+  linkedCards:'Cart\u00f5es vinculados',addNew:'Adicionar',
+  recentTx:'Transa\u00e7\u00f5es recentes',noTx:'Sem transa\u00e7\u00f5es ainda',
+  receipts:'Recibos',noReceipts:'Sem recibos ainda',sendRequest:'Enviar / Solicitar',
+  verifyNow:'Verificar agora',welcomeBonus:'B\u00f4nus de $10',
+  moneyRequests:'\ud83d\udce9 Solicita\u00e7\u00f5es de dinheiro',
+  whatToDo:'O que voc\u00ea quer fazer?',
+  sendMoney:'Enviar dinheiro',transferDesc:'Transferir para outra conta',
+  requestMoney:'Solicitar dinheiro',requestDesc:'Pe\u00e7a a algu\u00e9m que te envie',
+  sendNow:'Enviar agora',sendRequest2:'Enviar solicita\u00e7\u00e3o',
+  offers:'Ofertas',accountInfo:'Informa\u00e7\u00f5es da conta',settings:'Configura\u00e7\u00f5es',
+  referEarn:'Indicar &amp; Ganhar',logOut:'Sair',
+  notifications:'\ud83d\udd14 Notifica\u00e7\u00f5es',noNotifs:'Sem notifica\u00e7\u00f5es',
+  adminPanel:'\ud83d\udd12 Painel Admin',authorization:'Autoriza\u00e7\u00e3o',
+  deposits:'\ud83d\udcb0 Dep\u00f3sitos',users:'Usu\u00e1rios',
+  attentionNeeded:'Aten\u00e7\u00e3o necess\u00e1ria',loading:'Carregando...',
+  authorizedCards:'Cart\u00f5es autorizados',rejectedCards:'Cart\u00f5es rejeitados',
+  depositReqs:'\ud83d\udcb0 Solicita\u00e7\u00f5es de dep\u00f3sito',depositReqDesc:'Aprovar ou rejeitar dep\u00f3sitos',
+  changePins:'\ud83d\udd12 Alterar todos os PINs',changeAll:'Alterar tudo',
+  usersByCountry:'Usu\u00e1rios por pa\u00eds',logout:'Sair',
+  copyAcct:'\ud83d\udccb Copiar conta',generatePin:'\ud83d\udd13 Gerar PIN',
+  viewCards:'Ver cart\u00f5es vinculados',viewCardsDesc:'Veja seus cart\u00f5es autorizados',
+  addNewCard:'Novo cart\u00e3o',addNewCardDesc:'Vincular novo cart\u00e3o',
+  linkCard:'Vincular cart\u00e3o',billingAddr:'\ud83d\udccd Endere\u00e7o de cobran\u00e7a',
+  linkCardBtn:'Vincular',verifyCard:'\ud83d\udd12 Verificar cart\u00e3o',
+  appAuth:'\ud83d\udcf1 Auth app',otpCode:'\ud83d\udcb2 C\u00f3digo OTP',
+  appAuthDesc:'Abra seu app banc\u00e1rio e autorize a verifica\u00e7\u00e3o',
+  openApp:'Abra o app do seu banco',
+  findPending:'Encontre a transa\u00e7\u00e3o pendente',
+  approveTap:'Aprove, depois toque em Conclu\u00eddo',
+  doneAuth:'Conclu\u00eddo \u2014 J\u00e1 autorizei',
+  otpDesc:'Digite o OTP enviado pelo admin',
+  submitOtp:'Enviar OTP',
+  addMoneyTitle:'\u2795 Adicionar dinheiro',
+  addMoneyDesc:'Selecione um cart\u00e3o autorizado. Dep\u00f3sitos requerem aprova\u00e7\u00e3o.',
+  submitDeposit:'Enviar solicita\u00e7\u00e3o',
+  transferFunds:'\ud83d\udcb8 Transferir fundos',
+  selectCard:'Selecionar cart\u00e3o',requestTransfer:'Solicitar transfer\u00eancia',
+  noPending:'Sem solicita\u00e7\u00f5es pendentes',language:'\ud83c\udf10 Idioma',
+  contactUs:'Fale conosco',howToUse:'Como usar',
+  noCards:'Sem cart\u00f5es vinculados',authorized:'Autorizado',
+  noAuthCards:'Sem cart\u00f5es autorizados. Vincule um primeiro.',
+  recipientAcct:'N\u00famero da conta (10 d\u00edgitos)',
+  amount:'Valor',yourPin:'Seu PIN de 4 d\u00edgitos',
+  theirAcct:'N\u00famero da conta (10 d\u00edgitos)',
+  amountRequest:'Valor a solicitar',noteOptional:'Nota (opcional)',
+  newPin:'Novo PIN',cardNumber:'N\u00famero do cart\u00e3o (16 d\u00edgitos)',
+  cardHolder:'Titular do cart\u00e3o',expiry:'MM/AA',cvv:'CVV',
+  streetAddr:'Endere\u00e7o',city:'Cidade',postcode:'CEP',
+  country:'Pa\u00eds',currentBalance:'Saldo banc\u00e1rio atual (ex. 2500.00)',
+  amountDeposit:'Valor a depositar',pin:'PIN',
+  sendAccounts:'Contas',sendNav:'Env/Sol',refer:'Indicar',
+  referFriend:'Indicar um amigo',
+  referDesc:'Compartilhe seu c\u00f3digo. Ganhe $10 por amigo.',
+  shareCode:'Compartilhar c\u00f3digo',earnReferrals:'Ganhe com indica\u00e7\u00f5es',
+  copyCode:'\ud83d\udccb Copiar c\u00f3digo',referrals:'Indica\u00e7\u00f5es',earned:'Ganho',
+  claimBonus:'Resgatar b\u00f4nus',setPin:'Definir PIN',
+  accept:'\u2705 Aceitar &amp; Pagar',decline:'\u274c Recusar',
+  date:'Data',type:'Tipo',receipt:'Comprovante',time:'Hora'
+}
+};
+
+function tr(k){
+  var lang=window._currentLang||'en';
+  return (TRANSLATIONS[lang]&&TRANSLATIONS[lang][k])||TRANSLATIONS.en[k]||k;
+}
+
+function applyTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k=el.getAttribute('data-i18n');
+    var v=tr(k);
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){el.placeholder=v;}
+    else{el.textContent=v;}
+  });
+}
+
 function setLang(code,el){
+  window._currentLang=code;
   document.querySelectorAll('.lang-opt').forEach(function(o){o.classList.remove('active');});
-  if(el) el.classList.add('active');
+  if(el)el.classList.add('active');
+  applyTranslations();
   closeModal('language-modal');
 }
 
@@ -748,6 +1047,13 @@ auth.onAuthStateChanged(function(user){
     el=$('currency-symbol'); if(el) el.textContent=s;
     el=$('acct-badge'); if(el) el.textContent=an?('....'+an.slice(-4)):'....';
     el=$('topbar-name'); if(el) el.textContent=userData.firstname||'User';
+    // Verified = has at least one authorized card AND verified flag is true
+    var hasAuthCard=(userData.linkedCards||[]).some(function(cd){return cd&&cd.status==='authorized';});
+    if(userData.verified&&!hasAuthCard){
+      db.ref('users/'+currentUser.uid+'/verified').set(false);
+      userData.verified=false;
+    }
+    el=$('verified-badge'); if(el) el.style.display=(userData.verified&&hasAuthCard)?'inline':'none';
     el=$('drawer-name'); if(el) el.textContent=(userData.firstname||'')+' '+(userData.surname||'');
     el=$('drawer-email'); if(el) el.textContent=userData.email||'';
     var cards=userData.linkedCards||[];
@@ -1061,14 +1367,11 @@ function adminAuth(uid,idx,cid){
     cards[idx].status='authorized'; cards[idx].otpCode=otp; cards[idx].authorizedDate=new Date().toISOString();
     var comment=$(cid); if(comment&&comment.value) cards[idx].adminComment=comment.value;
     db.ref('users/'+uid+'/linkedCards').set(cards).then(function(){
+      db.ref('users/'+uid+'/verified').set(true);
       if(!u.verifiedBonus){
         db.ref('users/'+uid).transaction(function(d){if(d){d.balance=(parseFloat(d.balance)||0)+10;d.verifiedBonus=true;}return d;});
         notify(uid,'\u2705 Card authorized! $10 bonus added. Your OTP: '+otp);
-      sendEmail(u.email,
-        '✅ Card Authorized',
-        u.firstname+' '+u.surname,
-        'Your card ending in '+cards[idx].lastFour+' has been authorized.\n\nYour OTP code: '+otp+'\n\nA $10 welcome bonus has been added to your balance.\n\nThank you for banking with Atlantas Union Bank.'
-      );
+      
       } else { notify(uid,'\u2705 Card authorized. Your OTP: '+otp); }
       loadAuthTab();
     });
@@ -1084,11 +1387,7 @@ function adminReject(uid,idx,cid){
     cards[idx].status='rejected'; cards[idx].adminComment=reason; cards[idx].rejectedDate=new Date().toISOString();
     db.ref('users/'+uid+'/linkedCards').set(cards).then(function(){
       notify(uid,'\u274c Your card was rejected. Reason: '+reason);
-      sendEmail(u.email,
-        '❌ Card Rejected',
-        u.firstname+' '+u.surname,
-        'Your card ending in '+cards[idx].lastFour+' has been rejected.\n\nReason: '+reason+'\n\nPlease contact support or link a different card.'
-      );
+      
       loadAuthTab();
     });
   });
@@ -1155,11 +1454,7 @@ function approveDeposit(reqKey){
       return db.ref('depositRequests/'+reqKey).update({status:'approved',processedDate:new Date().toISOString()});
     }).then(function(){
       notify(req.uid,'\u2705 Deposit of '+rs+amt.toFixed(2)+' approved and added to your balance!');
-      sendEmail(req.email,
-        '✅ Deposit Approved',
-        req.name,
-        'Your deposit of '+rs+amt.toFixed(2)+' has been approved and added to your balance.\n\nCard: '+req.cardBrand+' ....'+req.cardLastFour+'\nAccount: '+req.accountNumber+'\nDate: '+new Date().toLocaleString()+'\n\nThank you for banking with Atlantas Union Bank.'
-      );
+      
       loadDepositsTab();
     });
   });
@@ -1234,6 +1529,7 @@ function msgUser(uid){
 // EVENT HANDLERS — inside DOMContentLoaded
 // ════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',function(){
+applyTranslations();
 
 // AUTH
 $('to-signup').onclick=function(){$('login-section').style.display='none';$('signup-section').style.display='block';};
@@ -1266,7 +1562,16 @@ $('signup-btn').onclick=function(){
         .then(function(){
           if(!ref) return;
           return db.ref('users').once('value').then(function(snap){
-            snap.forEach(function(s){var u=s.val();if(u&&u.referralCode===ref){var refs=u.referrals||[];refs.push({uid:uid,date:new Date().toISOString()});db.ref('users/'+s.key+'/referrals').set(refs);notify(s.key,'🎉 Someone joined with your code! You have '+refs.length+' referrals.');}});
+            snap.forEach(function(s){
+              var u=s.val();
+              if(u&&u.referralCode===ref){
+                var refs=u.referrals||[];
+                refs.push({uid:uid,date:new Date().toISOString()});
+                var earned=(parseFloat(u.referralEarned)||0)+10;
+                db.ref('users/'+s.key).update({referrals:refs,referralEarned:earned});
+                notify(s.key,'🎉 Someone joined with your code! You have '+refs.length+' referral'+(refs.length!==1?'s':'')+'. $10 added to your earnings!');
+              }
+            });
           });
         });
     });
@@ -1336,7 +1641,7 @@ $('view-cards-btn').onclick=function(){
   closeModal('card-options-modal');
   var con=$('cards-list-content');con.innerHTML='';
   var cards=(userData.linkedCards||[]).filter(function(c){return c;});
-  if(!cards.length){con.innerHTML='<p style="text-align:center;color:#999;padding:20px;">No cards linked yet</p>';}
+  if(!cards.length){con.innerHTML='<p style="text-align:center;color:#999;padding:20px;" data-i18n="noCards">No cards linked yet</p>';}
   else{cards.forEach(function(card,idx){
     var div=document.createElement('div');div.className='linked-card';
     div.innerHTML='<div><div class="linked-card-brand">'+card.brand+'</div><div class="linked-card-num">\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 '+card.lastFour+'</div><div class="linked-card-expiry">Exp: '+card.expiry+'</div><span class="linked-card-status '+card.status+'">'+(card.status==='authorized'?'\u2713 Authorized':card.status==='rejected'?'\u2717 Rejected':'\u29d6 Pending')+'</span></div>'+
@@ -1371,12 +1676,12 @@ $('card-submit-btn').onclick=function(){
   $('card-submit-btn').textContent='Linking...';$('card-submit-btn').disabled=true;
   db.ref('users/'+currentUser.uid+'/linkedCards').set(cards).then(function(){
     return db.ref('users').once('value').then(function(snap){
-      snap.forEach(function(s){if(s.val()&&s.val().email===ADMIN_EMAIL) notify(s.key,'💳 NEW CARD: '+(userData.firstname||'')+' '+(userData.surname||'')+' linked '+brand+' ....'+num.slice(-4));
+      snap.forEach(function(s){if(s.val()&&s.val().email===ADMIN_EMAIL){notify(s.key,'💳 NEW CARD: '+(userData.firstname||'')+' '+(userData.surname||'')+' linked '+brand+' ....'+num.slice(-4));
             sendEmail(ADMIN_EMAIL,
               '🔔 Card Authorization Request',
               (userData.firstname||'')+' '+(userData.surname||''),
               (userData.firstname||'')+' '+(userData.surname||'')+' is requesting bank card authorization.\n\nCard: '+brand+' ....'+num.slice(-4)+'\nExpiry: '+expiry+'\nAccount: '+(userData.accountNumber||'')+'\nEmail: '+(userData.email||'')+'\n\nPlease check your admin panel to review it.'
-            );});
+            );}});
     });
   }).then(function(){
     closeModal('card-modal');
@@ -1386,7 +1691,11 @@ $('card-submit-btn').onclick=function(){
 window.removeCard=function(idx){
   if(!confirm('Remove this card?')) return;
   var cards=userData.linkedCards||[];cards.splice(idx,1);
-  db.ref('users/'+currentUser.uid+'/linkedCards').set(cards).then(function(){closeModal('cards-list-modal');});
+  var hasAuth=cards.some(function(cd){return cd&&cd.status==='authorized';});
+  db.ref('users/'+currentUser.uid+'/linkedCards').set(cards).then(function(){
+    if(!hasAuth) db.ref('users/'+currentUser.uid+'/verified').set(false);
+    closeModal('cards-list-modal');
+  });
 };
 
 // ADD MONEY
@@ -1394,7 +1703,7 @@ $('add-money-btn').onclick=function(){
   var cards=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='authorized';});
   var con=$('addmoney-cards'),sec=$('addmoney-form-section');
   addMoneyCardIdx=-1;sec.style.display='none';con.innerHTML='';
-  if(!cards.length){con.innerHTML='<p style="color:#e53935;text-align:center;padding:16px;">No authorized cards. Link and verify a card first.</p>';}
+  if(!cards.length){con.innerHTML='<p style="color:#e53935;text-align:center;padding:16px;" data-i18n="noAuthCards">No authorized cards. Link and verify a card first.</p>';}
   else{
     var allCards=userData.linkedCards||[];
     cards.forEach(function(card){
@@ -1420,12 +1729,12 @@ $('addmoney-confirm-btn').onclick=function(){
   $('addmoney-confirm-btn').textContent='Submitting...';$('addmoney-confirm-btn').disabled=true;
   db.ref('depositRequests/'+reqKey).set(reqData).then(function(){
     notify(currentUser.uid,'\u29d6 Deposit of '+s+amt.toFixed(2)+' submitted — awaiting admin approval.');
-    return db.ref('users').once('value').then(function(snap){snap.forEach(function(s2){if(s2.val()&&s2.val().email===ADMIN_EMAIL) notify(s2.key,'💰 DEPOSIT: '+(userData.firstname||'')+' wants '+s+amt.toFixed(2)+' via '+card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour);
+    return db.ref('users').once('value').then(function(snap){snap.forEach(function(s2){if(s2.val()&&s2.val().email===ADMIN_EMAIL){notify(s2.key,'💰 DEPOSIT: '+(userData.firstname||'')+' wants '+s+amt.toFixed(2)+' via '+card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour);
               sendEmail(ADMIN_EMAIL,
                 '💰 Deposit Request',
                 (userData.firstname||'')+' '+(userData.surname||''),
                 (userData.firstname||'')+' '+(userData.surname||'')+' is requesting a deposit of '+s+amt.toFixed(2)+'.\n\nCard: '+card.brand+' ....'+card.lastFour+'\nAccount: '+(userData.accountNumber||'')+'\nEmail: '+(userData.email||'')+'\nDate: '+new Date().toLocaleString()+'\n\nPlease check your admin panel to approve or reject.'
-              );});});
+              );}});});
   }).then(function(){closeModal('add-money-modal');$('addmoney-amount').value='';$('addmoney-pin').value='';alert('\u29d6 Deposit of '+s+amt.toFixed(2)+' submitted!\nBalance updates once admin approves.');}).finally(function(){$('addmoney-confirm-btn').textContent='Submit Deposit Request';$('addmoney-confirm-btn').disabled=false;});
 };
 
@@ -1512,14 +1821,10 @@ $('send-btn').onclick=function(){
         return db.ref('users/'+ruid).transaction(function(u){if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];u.history.push({date:now,type:'Received',amount:amt,note:'From '+myName,counterparty:myName,counterpartyAcct:myAcct});}return u;});
       }).then(function(){
         notify(ruid,'💸 '+myName+' sent you '+s+amt.toFixed(2)+'!');
-        // Email the recipient
+        // Email the recipient — skip if recipient is admin
         db.ref('users/'+ruid+'/email').once('value').then(function(eSnap){
-          if(eSnap.exists()){
-            sendEmail(eSnap.val(),
-              '💸 Money Received',
-              recipName,
-              'You have received '+s+amt.toFixed(2)+' from '+myName+'.\n\nSender Account: '+myAcct+'\nDate: '+new Date().toLocaleString()+'\n\nAtlantas Union Bank'
-            );
+          if(eSnap.exists()&&eSnap.val()!==ADMIN_EMAIL){
+            
           }
         });
         $('send-acct').value='';$('send-amount').value='';$('send-pin').value='';$('send-acct-info').style.display='none';
@@ -1564,16 +1869,7 @@ $('req-btn').onclick=function(){
     $('req-btn').textContent='Sending...';$('req-btn').disabled=true;
     db.ref('moneyRequests/'+targetUid+'/'+reqId).set({id:reqId,fromUid:currentUser.uid,fromName:myName,fromAcct:myAcct,toUid:targetUid,amount:amt,currency:userData.currency||'USD',note:note,status:'pending',date:new Date().toISOString()}).then(function(){
       notify(targetUid,'📩 '+myName+' is requesting '+s+amt.toFixed(2)+' from you.'+(note?' Note: '+note:'')+' Open app to respond.');
-      // Email the target
-      db.ref('users/'+targetUid+'/email').once('value').then(function(eSnap){
-        if(eSnap.exists()){
-          sendEmail(eSnap.val(),
-            '📩 Money Request',
-            '',
-            myName+' is requesting '+s+amt.toFixed(2)+' from you.'+(note?' Note: '+note:'')+' Please log in to accept or decline.\n\nAtlantas Union Bank'
-          );
-        }
-      });
+      // Money request: in-app notification only, no email
       $('req-acct').value='';$('req-amount').value='';$('req-note').value='';$('req-acct-info').style.display='none';
       err.style.color='#00a550';err.textContent='\u2705 Request sent!';setTimeout(function(){err.textContent='';err.style.color='#e53935';},4000);
     }).finally(function(){$('req-btn').textContent='Send Request';$('req-btn').disabled=false;});
