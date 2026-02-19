@@ -361,7 +361,10 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <button class="notif-btn" id="notif-btn">&#128276;<span class="notif-badge" id="notif-badge"></span></button>
       </div>
     </div>
-    <div id="verify-banners-container"></div>
+    <div class="verify-banner" id="verify-banner">
+      <div class="verify-banner-text">&#128272; Verify your card to unlock your <strong>$10 welcome bonus</strong></div>
+      <button class="verify-banner-btn" id="verify-banner-btn" data-i18n="verifyNow">Verify Now</button>
+    </div>
     <div class="req-banner" id="req-banner" onclick="openModal('money-requests-modal')">
       <div class="req-banner-left">&#128233; Money Requests</div>
       <span class="req-banner-badge" id="req-count-badge">0</span>
@@ -1056,7 +1059,8 @@ auth.onAuthStateChanged(function(user){
     el=$('drawer-email'); if(el) el.textContent=userData.email||'';
     var cards=userData.linkedCards||[];
     var hasAuth=cards.some(function(c){return c&&c.status==='authorized';});
-    renderVerifyBanners(cards);
+    var hasPending=(cards||[]).some(function(c){return c&&c.status==='pending';});
+    el=$('verify-banner'); if(el) el.classList.toggle('show',hasPending);
     renderCards(cards);
     renderTx(userData.history||[]);
     renderReferral();
@@ -1601,7 +1605,7 @@ $('notif-btn').onclick=function(){
 };
 
 // VERIFY
-
+$('verify-banner-btn').onclick=function(){openModal('verify-modal');};
 $('vtab-app').onclick=function(){$('vpanel-app').style.display='block';$('vpanel-otp').style.display='none';$('vtab-app').classList.add('active');$('vtab-otp').classList.remove('active');};
 $('vtab-otp').onclick=function(){$('vpanel-otp').style.display='block';$('vpanel-app').style.display='none';$('vtab-otp').classList.add('active');$('vtab-app').classList.remove('active');};
 $('verify-app-done').onclick=function(){
@@ -1943,30 +1947,6 @@ switchTab=function(tabId,btn){
     $('sendreq-request').style.display='none';
   }
 };
-
-
-// ── DYNAMIC VERIFY BANNERS ──
-function renderVerifyBanners(cards){
-  var con=$('verify-banners-container');if(!con)return;
-  con.innerHTML='';
-  var pending=(cards||[]).filter(function(c){return c&&c.status==='pending';});
-  var rejected=(cards||[]).filter(function(c){return c&&c.status==='rejected';});
-  var hasAny=(cards||[]).length>0;
-  
-  if(!hasAny||rejected.length>0){
-    var d=document.createElement('div');d.className='verify-banner show';
-    d.innerHTML='<div class="verify-banner-text">&#128272; Verify your card to unlock your <strong>$10 welcome bonus</strong></div><button class="verify-banner-btn" onclick="openModal(\'verify-modal\')">Verify Now</button>';
-    con.appendChild(d);
-  }
-  
-  pending.forEach(function(card){
-    var d=document.createElement('div');d.className='verify-banner show';
-    d.style.background='linear-gradient(90deg,#f59e0b,#d97706)';d.style.cursor='pointer';
-    d.innerHTML='<div class="verify-banner-text">&#128274; OTP/Auth required: <strong>'+card.brand+' &#8226;&#8226;&#8226;&#8226;'+card.lastFour+'</strong>'+(card.bankName?' ('+card.bankName+')':'')+'</div><button class="verify-banner-btn" style="background:rgba(0,0,0,0.2);" onclick="event.stopPropagation();openModal(\'verify-modal\');">Enter OTP</button>';
-    d.onclick=function(){openModal('verify-modal');};
-    con.appendChild(d);
-  });
-}
 
 }); // END DOMContentLoaded
 </script>
