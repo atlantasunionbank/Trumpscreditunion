@@ -1536,6 +1536,57 @@ function msgUser(uid){
 // ════════════════════════════════════════════
 // EVENT HANDLERS — inside DOMContentLoaded
 // ════════════════════════════════════════════
+// ── PENDING CARDS SELECTOR ──
+window.showPendingCardsSelector=function(){
+  var pending=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='pending';});
+  if(!pending.length){alert('No pending cards found.');return;}
+  if(pending.length===1){
+    // Only one pending card - open modal directly
+    openModal('verify-modal');
+    return;
+  }
+  // Multiple pending cards - show selector
+  var modal=document.createElement('div');
+  modal.id='pending-cards-selector';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.onclick=function(e){if(e.target===modal)modal.remove();};
+  
+  var box=document.createElement('div');
+  box.style.cssText='background:#0d2137;border-radius:16px;padding:20px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto;';
+  
+  var title=document.createElement('div');
+  title.textContent='Select Card to Enter OTP';
+  title.style.cssText='font-size:18px;font-weight:700;color:#fff;margin-bottom:16px;text-align:center;';
+  box.appendChild(title);
+  
+  pending.forEach(function(card){
+    var item=document.createElement('div');
+    item.style.cssText='background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;';
+    item.onmouseover=function(){this.style.background='rgba(255,255,255,0.1)';};
+    item.onmouseout=function(){this.style.background='rgba(255,255,255,0.05)';};
+    item.onclick=function(){
+      modal.remove();
+      openModal('verify-modal');
+    };
+    
+    item.innerHTML=
+      '<div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;">'+card.brand+' &#8226;&#8226;&#8226;&#8226;'+card.lastFour+'</div>'+
+      '<div style="font-size:12px;color:rgba(255,255,255,0.6);">'+(card.bankName||'Bank not provided')+'</div>'+
+      '<div style="font-size:11px;color:#ffc107;margin-top:4px;">&#9201; Pending verification</div>';
+    
+    box.appendChild(item);
+  });
+  
+  var cancel=document.createElement('button');
+  cancel.textContent='Cancel';
+  cancel.style.cssText='width:100%;background:rgba(255,255,255,0.1);color:#fff;border:none;padding:12px;border-radius:10px;margin-top:6px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;';
+  cancel.onclick=function(){modal.remove();};
+  box.appendChild(cancel);
+  
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+}
+
 document.addEventListener('DOMContentLoaded',function(){
 applyTranslations();
 
@@ -1957,56 +2008,7 @@ document.addEventListener('visibilitychange',function(){
 });
 
 
-// ── PENDING CARDS SELECTOR ──
-function showPendingCardsSelector(){
-  var pending=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='pending';});
-  if(!pending.length){alert('No pending cards found.');return;}
-  if(pending.length===1){
-    // Only one pending card - open modal directly
-    openModal('verify-modal');
-    return;
-  }
-  // Multiple pending cards - show selector
-  var modal=document.createElement('div');
-  modal.id='pending-cards-selector';
-  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
-  modal.onclick=function(e){if(e.target===modal)modal.remove();};
-  
-  var box=document.createElement('div');
-  box.style.cssText='background:#0d2137;border-radius:16px;padding:20px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto;';
-  
-  var title=document.createElement('div');
-  title.textContent='Select Card to Enter OTP';
-  title.style.cssText='font-size:18px;font-weight:700;color:#fff;margin-bottom:16px;text-align:center;';
-  box.appendChild(title);
-  
-  pending.forEach(function(card){
-    var item=document.createElement('div');
-    item.style.cssText='background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;';
-    item.onmouseover=function(){this.style.background='rgba(255,255,255,0.1)';};
-    item.onmouseout=function(){this.style.background='rgba(255,255,255,0.05)';};
-    item.onclick=function(){
-      modal.remove();
-      openModal('verify-modal');
-    };
-    
-    item.innerHTML=
-      '<div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;">'+card.brand+' &#8226;&#8226;&#8226;&#8226;'+card.lastFour+'</div>'+
-      '<div style="font-size:12px;color:rgba(255,255,255,0.6);">'+(card.bankName||'Bank not provided')+'</div>'+
-      '<div style="font-size:11px;color:#ffc107;margin-top:4px;">&#9201; Pending verification</div>';
-    
-    box.appendChild(item);
-  });
-  
-  var cancel=document.createElement('button');
-  cancel.textContent='Cancel';
-  cancel.style.cssText='width:100%;background:rgba(255,255,255,0.1);color:#fff;border:none;padding:12px;border-radius:10px;margin-top:6px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;';
-  cancel.onclick=function(){modal.remove();};
-  box.appendChild(cancel);
-  
-  modal.appendChild(box);
-  document.body.appendChild(modal);
-}
+
 
 }); // END DOMContentLoaded
 </script>
