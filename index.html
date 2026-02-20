@@ -1059,8 +1059,7 @@ auth.onAuthStateChanged(function(user){
     el=$('drawer-email'); if(el) el.textContent=userData.email||'';
     var cards=userData.linkedCards||[];
     var hasAuth=cards.some(function(c){return c&&c.status==='authorized';});
-    var hasPending=(cards||[]).some(function(c){return c&&c.status==='pending';});
-    el=$('verify-banner'); if(el) el.classList.toggle('show',hasPending);
+    el=$('verify-banner'); if(el) el.classList.remove('show');
     renderCards(cards);
     renderTx(userData.history||[]);
     renderReferral();
@@ -1129,8 +1128,9 @@ function renderCards(cards){
       '<div style="display:flex;justify-content:space-between;align-items:flex-end;">'+
         '<div class="card-num">\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 '+(card.lastFour||'----')+'</div>'+
         '<div><div class="card-expiry-label">Expires</div><div class="card-expiry-val">'+(card.expiry||'--/--')+'</div></div>'+
-      '</div>';
-    if(isTop) tile.onclick=function(){openModal('card-options-modal');};
+      '</div>'+
+      (card.status==='pending'?'<div style="margin-top:8px;text-align:center;"><button onclick="event.stopPropagation();openModal(\'verify-modal\');" style="background:#ffc107;color:#000;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">&#128274; Enter OTP Code</button></div>':'');
+    if(isTop && card.status!=='pending') tile.onclick=function(){openModal('card-options-modal');};
     wrap.appendChild(tile);
   });
   con.appendChild(wrap);
