@@ -1,0 +1,177 @@
+<div id="dashboard">
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div class="drawer-name" id="drawer-name">User</div>
+      <div class="drawer-email" id="drawer-email"></div>
+    </div>
+    <div class="drawer-item" onclick="openModal('account-modal')"><span class="drawer-item-icon">&#128100;</span data-i18n="accountInfo">Account Info</div>
+    <div class="drawer-item" onclick="openModal('more-modal')"><span class="drawer-item-icon">&#9881;&#65039;</span data-i18n="settings">Settings</div>
+    <div class="drawer-item" onclick="openReferModal()"><span class="drawer-item-icon">&#127873;</span>Refer &amp; Earn</div>
+    <div class="drawer-item red" id="drawer-logout"><span class="drawer-item-icon">&#128682;</span data-i18n="logOut">Log Out</div>
+  </div>
+
+  <!-- ACCOUNTS TAB -->
+  <div class="tab-page active" id="tab-accounts">
+    <div class="topbar">
+      <button class="topbar-menu" id="menu-btn">&#9776;</button>
+      <div class="topbar-center">
+        <span class="topbar-greeting" data-i18n="goodDay">Good day,</span>
+        <span class="topbar-name" id="topbar-name">User</span><img id="verified-badge" src="https://i.imgur.com/YSSbVMh.jpeg" style="display:none;width:18px;height:18px;border-radius:50%;margin-left:5px;vertical-align:middle;object-fit:cover;" title="Verified">
+      </div>
+      <div class="topbar-right">
+        <button class="notif-btn" id="notif-btn">&#128276;<span class="notif-badge" id="notif-badge"></span></button>
+      </div>
+    </div>
+    <div class="verify-banner" id="verify-banner">
+      <div class="verify-banner-text">&#128272; Verify your card to unlock your <strong>$10 welcome bonus</strong></div>
+      <button class="verify-banner-btn" id="verify-banner-btn" data-i18n="verifyNow">Verify Now</button>
+    </div>
+    <div class="req-banner" id="req-banner" onclick="openModal('money-requests-modal')">
+      <div class="req-banner-left">&#128233; Money Requests</div>
+      <span class="req-banner-badge" id="req-count-badge">0</span>
+    </div>
+    <div class="balance-card">
+      <div class="balance-label" data-i18n="totalBalance">Total Balance <span class="acct-badge" id="acct-badge">&#8226;&#8226;&#8226;&#8226;</span></div>
+      <div class="balance-amount"><span id="currency-symbol">$</span><span id="balance">0.00</span></div>
+      <div class="balance-sub">Atlantas Union Bank</div>
+      <div class="action-row">
+        <button class="action-btn" id="add-money-btn"><span class="action-icon">&#10133;</span data-i18n="addMoney">Add Money</button>
+        <button class="action-btn" id="transfer-btn"><span class="action-icon">&#128184;</span data-i18n="withdraw">Withdraw</button>
+        <button class="action-btn" id="acct-info-btn"><span class="action-icon">&#128100;</span>Account</button>
+        <button class="action-btn" id="add-card-btn"><span class="action-icon">&#128179;</span>Cards</button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title" data-i18n="linkedCards">Linked Cards</span>
+        <button class="section-link" id="add-card-link" data-i18n="addNew">Add New</button>
+      </div>
+      <div id="cards-container"></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-title" data-i18n="recentTx">Recent Transactions</span></div>
+      <div id="tx-container"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noTx">No transactions yet</p></div>
+    </div>
+  </div>
+
+  <!-- RECEIPTS TAB -->
+  <div class="tab-page" id="tab-receipt">
+    <div class="topbar"><span class="topbar-title" data-i18n="receipts">Receipts</span></div>
+    <div style="padding:12px 16px;" id="receipt-container"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noReceipts">No receipts yet</p></div>
+  </div>
+
+  <!-- SEND/REQUEST TAB -->
+  <div class="tab-page" id="tab-sendreq">
+    <!-- CHOOSER SCREEN -->
+    <div id="sendreq-chooser">
+      <div class="topbar"><span class="topbar-title">Send / Request</span></div>
+      <div style="padding:24px 16px;">
+        <p style="text-align:center;color:#888;font-size:14px;margin-bottom:20px;" data-i18n="whatToDo">What would you like to do?</p>
+        <button class="sendreq-option-btn" id="choose-send-btn">
+          <span style="font-size:36px;display:block;margin-bottom:10px;">&#128184;</span>
+          <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Send Money</span>
+          <span style="font-size:13px;color:#666;display:block;margin-top:4px;" data-i18n="transferDesc">Transfer money to another account</span>
+        </button>
+        <button class="sendreq-option-btn" id="choose-req-btn">
+          <span style="font-size:36px;display:block;margin-bottom:10px;">&#128233;</span>
+          <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Request Money</span>
+          <span style="font-size:13px;color:#666;display:block;margin-top:4px;" data-i18n="requestDesc">Ask someone to send you money</span>
+        </button>
+      </div>
+    </div>
+    <!-- SEND SCREEN -->
+    <div id="sendreq-send" style="display:none;">
+      <div class="topbar">
+        <button onclick="showSendReqChooser()" style="background:none;border:none;font-size:22px;color:#0a2540;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;padding:0;">&#8592;</button>
+        <span class="topbar-title">Send Money</span>
+        <div style="width:40px;"></div>
+      </div>
+      <div class="sr-card">
+        <div class="sr-label">&#128184; Send Money</div>
+        <input type="text" class="sr-input" id="send-acct" placeholder="Recipient account number (10 digits)" data-i18n="recipientAcct" maxlength="10" inputmode="numeric">
+        <div class="sr-info" id="send-acct-info"></div>
+        <input type="number" class="sr-input" id="send-amount" placeholder="Amount" data-i18n="amount" min="0.01" step="0.01">
+        <input type="text" class="sr-input" id="send-pin" placeholder="Your 4-digit PIN" data-i18n="yourPin" maxlength="4" inputmode="numeric">
+        <div class="sr-error" id="send-error"></div>
+        <button class="sr-btn dark" id="send-btn" data-i18n="sendNow">Send Now</button>
+      </div>
+    </div>
+    <!-- REQUEST SCREEN -->
+    <div id="sendreq-request" style="display:none;">
+      <div class="topbar">
+        <button onclick="showSendReqChooser()" style="background:none;border:none;font-size:22px;color:#0a2540;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;padding:0;">&#8592;</button>
+        <span class="topbar-title">Request Money</span>
+        <div style="width:40px;"></div>
+      </div>
+      <div class="sr-card">
+        <div class="sr-label">&#128233; Request Money</div>
+        <input type="text" class="sr-input" id="req-acct" placeholder="Their account number (10 digits)" data-i18n="theirAcct" maxlength="10" inputmode="numeric">
+        <div class="sr-info" id="req-acct-info"></div>
+        <input type="number" class="sr-input" id="req-amount" placeholder="Amount to request" data-i18n="amountRequest" min="0.01" step="0.01">
+        <input type="text" class="sr-input" id="req-note" placeholder="Note (optional)" data-i18n="noteOptional">
+        <div class="sr-error" id="req-error"></div>
+        <button class="sr-btn blue" id="req-btn" data-i18n="sendRequest2">Send Request</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OFFERS TAB -->
+  <div class="tab-page" id="tab-offers">
+    <div class="topbar"><span class="topbar-title" data-i18n="offers">Offers</span></div>
+    <div style="padding:12px 0;">
+      <div class="offer-card">
+        <div class="offer-icon">&#128179;</div>
+        <div class="offer-title">Link &amp; Verify a Card</div>
+        <div class="offer-desc">Add your bank card and get verified by our team to earn a <strong>$10 welcome bonus</strong>.</div>
+        <button class="offer-btn" id="offer-card-btn">Link a Card</button>
+      </div>
+      <div class="offer-card">
+        <div class="offer-icon">&#127873;</div>
+        <div class="offer-title" data-i18n="referFriend">Refer a Friend</div>
+        <div class="offer-desc" data-i18n="referDesc">Share your referral code. Earn $10 per friend who joins.</div>
+        <button class="offer-btn" id="offer-refer-btn" data-i18n="shareCode">Share Code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFER TAB -->
+  <div class="tab-page" id="tab-refer">
+    <div class="topbar"><span class="topbar-title">Refer &amp; Earn</span></div>
+    <div style="padding:12px 20px;">
+      <div class="refer-hero">
+        <div class="refer-hero-icon">&#127873;</div>
+        <div class="refer-hero-title" data-i18n="earnReferrals">Earn with Referrals</div>
+        <div class="refer-hero-sub">Share your code. Earn $10 per referral. Claim big rewards at 12 referrals.</div>
+      </div>
+      <div class="refer-code-box">
+        <div class="refer-code" id="refer-code-display">AUB-000000</div>
+        <button class="refer-copy-btn" id="refer-copy-btn" data-i18n="copyCode">&#128203; Copy Code</button>
+      </div>
+      <div style="margin-top:12px;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px;display:flex;align-items:center;gap:8px;">
+        <input id="refer-link-display" readonly style="background:none;border:none;color:rgba(255,255,255,0.8);font-size:11px;flex:1;outline:none;font-family:monospace;" value="">
+        <button onclick="navigator.clipboard.writeText($('refer-link-display').value).then(function(){alert('Link copied!')});" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap;">Copy Link</button>
+      </div>
+      <div class="refer-stats">
+        <div class="refer-stat"><div class="refer-stat-num" id="refer-count">0</div><div class="refer-stat-label">Referrals</div></div>
+        <div class="refer-stat"><div class="refer-stat-num" id="refer-earned">$0</div><div class="refer-stat-label">Earned</div></div>
+      </div>
+      <div class="refer-bar-wrap">
+        <div class="refer-bar-bg"><div class="refer-bar-fill" id="refer-bar" style="width:0%"></div></div>
+        <div class="refer-bar-label" id="refer-bar-label">0 / 12 referrals</div>
+      </div>
+      <button class="refer-claim-btn" id="refer-claim-btn" disabled data-i18n="claimBonus">Claim Bonus</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <button class="nav-btn active" id="nav-accounts" onclick="switchTab('tab-accounts',this)"><span class="nav-icon">&#127968;</span><span class="nav-label" data-i18n="sendAccounts">Accounts</span></button>
+    <button class="nav-btn" id="nav-receipt" onclick="switchTab('tab-receipt',this)"><span class="nav-icon">&#129518;</span><span class="nav-label">Receipts</span></button>
+    <button class="nav-btn" id="nav-sendreq" onclick="switchTab('tab-sendreq',this)"><div class="nav-center">&#8645;</div><span class="nav-label" style="margin-top:4px;" data-i18n="sendNav">Send/Req</span></button>
+    <button class="nav-btn" id="nav-offers" onclick="switchTab('tab-offers',this)"><span class="nav-icon">&#127991;&#65039;</span><span class="nav-label">Offers</span></button>
+    <button class="nav-btn" id="nav-refer" onclick="switchTab('tab-refer',this)"><span class="nav-icon">&#127873;</span><span class="nav-label">Refer</span></button>
+  </div>
+</div>
+
+<!-- ADMIN -->

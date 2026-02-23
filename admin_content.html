@@ -1,0 +1,48 @@
+<div id="admin-panel">
+  <div class="admin-header"><h2>&#128272; Admin Panel</h2><p>Atlantas Union Bank</p></div>
+  <div class="admin-tabs">
+    <button class="admin-tab active" id="atab-auth" onclick="switchAdminTab('auth')" data-i18n="authorization">Authorization</button>
+    <button class="admin-tab" id="atab-deposits" onclick="switchAdminTab('deposits')">&#128176; Deposits</button>
+    <button class="admin-tab" id="atab-codes" onclick="switchAdminTab('codes')">Users</button>
+  </div>
+  <div class="admin-content active" id="acontent-auth">
+    <div class="acc-block">
+      <div class="acc-header" onclick="toggleAcc('acc-attention','arr-attention')">
+        <div class="acc-header-left"><span class="acc-icon-span">&#9888;&#65039;</span><span class="acc-title-span">Attention Needed</span><span class="acc-badge-span red" id="badge-attention" style="display:none;"></span></div>
+        <span class="acc-arrow-span" id="arr-attention">&#9654;</span>
+      </div>
+      <div class="acc-body" id="acc-attention"><p class="acc-empty">Loading...</p></div>
+    </div>
+    <div class="acc-block">
+      <div class="acc-header" onclick="toggleAcc('acc-authorized','arr-authorized')">
+        <div class="acc-header-left"><span class="acc-icon-span">&#9989;</span><span class="acc-title-span">Authorized Cards</span><span class="acc-badge-span green" id="badge-authorized" style="display:none;"></span></div>
+        <span class="acc-arrow-span" id="arr-authorized">&#9654;</span>
+      </div>
+      <div class="acc-body" id="acc-authorized"><p class="acc-empty">Loading...</p></div>
+    </div>
+    <div class="acc-block">
+      <div class="acc-header" onclick="toggleAcc('acc-rejected','arr-rejected')">
+        <div class="acc-header-left"><span class="acc-icon-span">&#10060;</span><span class="acc-title-span">Rejected Cards</span><span class="acc-badge-span red" id="badge-rejected" style="display:none;"></span></div>
+        <span class="acc-arrow-span" id="arr-rejected">&#9654;</span>
+      </div>
+      <div class="acc-body" id="acc-rejected"><p class="acc-empty">Loading...</p></div>
+    </div>
+  </div>
+  <div class="admin-content" id="acontent-deposits">
+    <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;">&#128176; Deposit Requests</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Approve or reject user deposit requests</div></div>
+    <div id="deposits-list"><p class="acc-empty">Loading...</p></div>
+  </div>
+  <div class="admin-content" id="acontent-codes">
+    <div class="admin-global"><h3>&#128272; Change All PINs</h3>
+      <div class="admin-global-row">
+        <input type="text" class="admin-global-input" id="global-pin" placeholder="New PIN" data-i18n="newPin" maxlength="4" inputmode="numeric">
+        <button class="admin-global-btn" id="change-all-pins-btn" data-i18n="changeAll">Change All</button>
+      </div>
+    </div>
+    <div class="admin-section-title">Users by Country</div>
+    <div id="users-list"><p class="acc-empty">Loading...</p></div>
+  </div>
+  <button class="admin-logout" id="admin-logout-btn" data-i18n="logout">Logout</button>
+</div>
+
+<!-- MODALS -->

@@ -1,0 +1,51 @@
+<div id="auth-screen">
+  <div class="auth-logo">
+    <span class="auth-logo-icon">&#127974;</span>
+    <div class="auth-logo-name">Atlantas Union Bank</div>
+    <div class="auth-logo-sub">Secure &middot; Reliable &middot; Global</div>
+  </div>
+  <div class="auth-card" id="login-section">
+    <h2 data-i18n="welcomeBack">Welcome Back</h2>
+    <input type="email" id="li-email" placeholder="Email address" data-i18n="emailAddress" autocomplete="email">
+    <input type="password" id="li-password" placeholder="Password" data-i18n="password" autocomplete="current-password">
+    <div class="auth-error" id="login-error"></div>
+    <button class="auth-btn" id="login-btn" data-i18n="logIn">Log In</button>
+    <button class="toggle-link" id="to-signup" data-i18n="noAccount">Don&#39;t have an account? Sign Up</button>
+  </div>
+  <div class="auth-card" id="signup-section" style="display:none;">
+    <h2 data-i18n="createAccount">Create Account</h2>
+    <input type="text" id="su-surname" placeholder="Surname" data-i18n="surname">
+    <input type="text" id="su-firstname" placeholder="First Name" data-i18n="firstName">
+    <input type="text" id="su-othername" placeholder="Other Name (optional)" data-i18n="otherName">
+    <input type="tel" id="su-phone" placeholder="Phone Number" data-i18n="phoneNumber">
+    <input type="text" id="su-username" placeholder="Username" data-i18n="username">
+    <input type="email" id="su-email" placeholder="Email Address" data-i18n="emailAddr">
+    <input type="password" id="su-password" placeholder="Password (min 8 chars)" data-i18n="passwordMin">
+    <input type="password" id="su-confirm" placeholder="Confirm Password" data-i18n="confirmPassword">
+    <select id="su-currency">
+      <option value="USD">&#127482;&#127480; USD - US Dollar</option>
+      <option value="EUR">&#127466;&#127482; EUR - Euro</option>
+      <option value="GBP">&#127468;&#127463; GBP - British Pound</option>
+      <option value="NGN">&#127475;&#127468; NGN - Nigerian Naira</option>
+      <option value="CAD">&#127464;&#127462; CAD - Canadian Dollar</option>
+      <option value="AUD">&#127462;&#127482; AUD - Australian Dollar</option>
+    </select>
+    <select id="su-country">
+      <option value="">Select Country</option>
+      <option value="USA">&#127482;&#127480; United States</option>
+      <option value="UK">&#127468;&#127463; United Kingdom</option>
+      <option value="Nigeria">&#127475;&#127468; Nigeria</option>
+      <option value="Germany">&#127465;&#127466; Germany</option>
+      <option value="France">&#127467;&#127479; France</option>
+      <option value="Canada">&#127464;&#127462; Canada</option>
+      <option value="Brazil">&#127463;&#127479; Brazil</option>
+      <option value="Australia">&#127462;&#127482; Australia</option>
+      <option value="Other">&#127757; Other</option>
+    </select>
+    <input type="text" id="su-promo" placeholder="Promo Code (optional)" data-i18n="promoCode">
+    <input type="text" id="su-referral" placeholder="Referral Code (optional)" data-i18n="referralCode">
+    <div class="auth-error" id="signup-error"></div>
+    <button class="auth-btn" id="signup-btn">Create Account</button>
+    <button class="toggle-link" id="to-login" data-i18n="alreadyHave">Already have an account? Log In</button>
+  </div>
+</div>
