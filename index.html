@@ -687,13 +687,16 @@ function detectBrand(n){
 }
 
 // ── SCREEN ──
-function showScreen(name){
+function showScreen(name,noPush){
   ['auth-screen','dashboard','admin-panel'].forEach(function(id){
     var el=$(id); if(el) el.classList.remove('visible');
   });
   var el=$(name); if(el) el.classList.add('visible');
   var g=$('globe-btn');
   if(g) g.classList.toggle('show', name!=='auth-screen');
+  if(!noPush && name!=='auth-screen'){
+    history.pushState({screen:name},'',window.location.pathname+(window.location.search||''));
+  }
 }
 
 // ── MODALS ──
@@ -701,11 +704,14 @@ function openModal(id){ var m=$(id); if(m) m.classList.add('show'); }
 function closeModal(id){ var m=$(id); if(m) m.classList.remove('show'); }
 
 // ── TABS ──
-function switchTab(tabId,btn){
+function switchTab(tabId,btn,noPush){
   document.querySelectorAll('.tab-page').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
   var p=$(tabId); if(p) p.classList.add('active');
   if(btn) btn.classList.add('active');
+  if(!noPush){
+    history.replaceState({screen:'dashboard',tab:tabId},'',window.location.pathname+(window.location.search||''));
+  }
 }
 
 // ── ADMIN TABS ──
@@ -1091,7 +1097,8 @@ auth.onAuthStateChanged(function(user){
       showScreen('admin-panel');
       loadAuthTab(); loadDepositsTab(); loadUsersTab();
     } else {
-      showScreen('dashboard');
+      showScreen('dashboard',true);
+      history.replaceState({screen:'dashboard',tab:'tab-home'},'',window.location.pathname+(window.location.search||''));
     }
   });
 
@@ -2047,6 +2054,25 @@ document.addEventListener('visibilitychange',function(){
 
 
 
+
+
+// ── BROWSER BACK BUTTON SUPPORT ──
+window.addEventListener('popstate',function(e){
+  if(!currentUser) return;
+  if(e.state && e.state.screen){
+    if(e.state.screen==='dashboard'){
+      showScreen('dashboard',true);
+      if(e.state.tab){
+        var tabBtn=document.querySelector('[onclick*="'+e.state.tab+'"]');
+        switchTab(e.state.tab,tabBtn,true);
+      }
+    } else {
+      showScreen(e.state.screen,true);
+    }
+  } else {
+    auth.signOut();
+  }
+});
 
 }); // END DOMContentLoaded
 </script>
