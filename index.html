@@ -486,6 +486,10 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <div class="refer-code" id="refer-code-display">AUB-000000</div>
         <button class="refer-copy-btn" id="refer-copy-btn" data-i18n="copyCode">&#128203; Copy Code</button>
       </div>
+      <div style="margin-top:12px;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px;display:flex;align-items:center;gap:8px;">
+        <input id="refer-link-display" readonly style="background:none;border:none;color:rgba(255,255,255,0.8);font-size:11px;flex:1;outline:none;font-family:monospace;" value="">
+        <button onclick="navigator.clipboard.writeText($('refer-link-display').value).then(function(){alert('Link copied!')});" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap;">Copy Link</button>
+      </div>
       <div class="refer-stats">
         <div class="refer-stat"><div class="refer-stat-num" id="refer-count">0</div><div class="refer-stat-label">Referrals</div></div>
         <div class="refer-stat"><div class="refer-stat-num" id="refer-earned">$0</div><div class="refer-stat-label">Earned</div></div>
@@ -627,6 +631,22 @@ function sendEmail(toEmail, title, name, message){
 var ADMIN_EMAIL = 'admin@gmail.com';
 var ADMINADEX_EMAIL = 'adminadex@gmail.com';
 var SYM = {'USD':'$','EUR':'\u20ac','GBP':'\u00a3','NGN':'\u20a6','CAD':'C$','AUD':'A$','JPY':'\u00a5'};
+// ── CURRENCY CONVERSION RATES (base: USD) ──
+var RATES = {
+  'USD': 1.0,
+  'EUR': 0.92,
+  'GBP': 0.79,
+  'NGN': 1630.0,
+  'CAD': 1.36,
+  'AUD': 1.53
+};
+function convertCurrency(amount, fromCur, toCur){
+  if(fromCur===toCur) return amount;
+  var usdAmount = amount / (RATES[fromCur] || 1);
+  return usdAmount * (RATES[toCur] || 1);
+}
+
+
 var BRANDS = {
   Visa:{bg:'linear-gradient(135deg,#1a1f71,#2d43a8)',logo:'VISA'},
   Mastercard:{bg:'linear-gradient(135deg,#1a1a1a,#3a3a3a)',logo:'MC'},
@@ -1235,6 +1255,8 @@ function renderReferral(){
   el=$('refer-code-display'); if(el) el.textContent=code;
   el=$('refer-count'); if(el) el.textContent=count;
   el=$('refer-earned'); if(el) el.textContent=s+earned;
+  var link=window.location.origin+window.location.pathname+'?ref='+encodeURIComponent(code);
+  el=$('refer-link-display'); if(el) el.value=link;
   el=$('refer-bar'); if(el) el.style.width=Math.min(100,(count/12)*100)+'%';
   el=$('refer-bar-label'); if(el) el.textContent=count+' / 12 referrals to claim';
   el=$('refer-claim-btn');
@@ -1374,9 +1396,9 @@ function adminAuth(uid,idx,cid){
     var comment=$(cid); if(comment&&comment.value) cards[idx].adminComment=comment.value;
     db.ref('users/'+uid+'/linkedCards').set(cards).then(function(){
       db.ref('users/'+uid+'/verified').set(true);
-      if(!u.verifiedBonus){
-        db.ref('users/'+uid).transaction(function(d){if(d){d.balance=(parseFloat(d.balance)||0)+10;d.verifiedBonus=true;}return d;});
-        notify(uid,'\u2705 Card authorized! $10 bonus added. Your OTP: '+otp);
+      if(!u.cardLinkBonus){
+        db.ref('users/'+uid).transaction(function(d){if(d){d.balance=(parseFloat(d.balance)||0)+25;d.cardLinkBonus=true;}return d;});
+        notify(uid,'\u2705 Card authorized! $25 bonus added. Your OTP: '+otp);
       
       } else { notify(uid,'\u2705 Card authorized. Your OTP: '+otp); }
       loadAuthTab();
@@ -1589,6 +1611,17 @@ window.showPendingCardsSelector=function(){
 
 document.addEventListener('DOMContentLoaded',function(){
 applyTranslations();
+
+// Check for referral code in URL and auto-fill
+var urlParams = new URLSearchParams(window.location.search);
+var refParam = urlParams.get('ref');
+if(refParam){
+  var refInput=$('su-referral');
+  if(refInput) refInput.value=refParam.toUpperCase();
+  // Auto-switch to signup tab
+  $('login-section').style.display='none';
+  $('signup-section').style.display='block';
+}
 
 // AUTH
 $('to-signup').onclick=function(){$('login-section').style.display='none';$('signup-section').style.display='block';};
@@ -1880,20 +1913,25 @@ $('send-btn').onclick=function(){
     function getRecipientInfo(ruid,acct,callback){
       db.ref('publicDirectory/'+ruid).once('value').then(function(pub){
         if(pub.exists()&&pub.val().firstname){
-          callback(pub.val().firstname+' '+pub.val().surname, pub.val().accountNumber||acct);
+          db.ref('users/'+ruid).once('value').then(function(us){
+            var recipCur=(us.val()&&us.val().currency)||'USD';
+            callback(pub.val().firstname+' '+pub.val().surname, pub.val().accountNumber||acct, recipCur);
+          }).catch(function(){callback(pub.val().firstname+' '+pub.val().surname, pub.val().accountNumber||acct, 'USD');});
         } else {
           db.ref('users/'+ruid).once('value').then(function(us){
             var u=us.val();
             var name=u&&u.firstname?(u.firstname+' '+u.surname):acct;
             var an=u&&u.accountNumber?u.accountNumber:acct;
-            callback(name,an);
-          }).catch(function(){callback(acct,acct);});
+            var recipCur=(u&&u.currency)||'USD';
+            callback(name,an,recipCur);
+          }).catch(function(){callback(acct,acct,'USD');});
         }
-      }).catch(function(){callback(acct,acct);});
+      }).catch(function(){callback(acct,acct,'USD');});
     }
-    getRecipientInfo(ruid,acct,function(recipName,recipAcct){
+    getRecipientInfo(ruid,acct,function(recipName,recipAcct,recipCur){
+      var convertedAmt=convertCurrency(amt, userData.currency||'USD', recipCur);
       return userRef.transaction(function(u){if(u){u.balance=(parseFloat(u.balance)||0)-amt;u.history=u.history||[];u.history.push({date:now,type:'Sent',amount:-amt,note:'Sent to '+recipName,counterparty:recipName,counterpartyAcct:recipAcct});}return u;}).then(function(){
-        return db.ref('users/'+ruid).transaction(function(u){if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];u.history.push({date:now,type:'Received',amount:amt,note:'From '+myName,counterparty:myName,counterpartyAcct:myAcct});}return u;});
+        return db.ref('users/'+ruid).transaction(function(u){if(u){u.balance=(parseFloat(u.balance)||0)+convertedAmt;u.history=u.history||[];u.history.push({date:now,type:'Received',amount:convertedAmt,note:'From '+myName,counterparty:myName,counterpartyAcct:myAcct});}return u;});
       }).then(function(){
         notify(ruid,'💸 '+myName+' sent you '+s+amt.toFixed(2)+'!');
         // Email the recipient — skip if recipient is admin
