@@ -1951,10 +1951,26 @@ $('transfer-btn').onclick=function(){
   // Set currency-specific minimum
   var cur=userData.currency||'USD';
   var s=sym();
-  var minimums={'USD':100,'EUR':100,'GBP':100,'NGN':163000,'CAD':136,'AUD':153};
-  var min=minimums[cur]||100;
+  var minimums={'USD':150,'EUR':150,'GBP':150,'NGN':150000,'CAD':150,'AUD':150,'ZAR':2700,'KES':20000,'GHS':3600,'TZS':380000,'UGX':560000,'XAF':92000,'XOF':92000};
+  var min=minimums[cur]||150;
   var el=$('transfer-confirm-text');
   if(el) el.innerHTML='I confirm my bank card has at least <strong>'+s+min.toLocaleString()+'</strong> balance to ensure the card is active and can receive funds.';
+  // Add card info display
+  sel.onchange=function(){
+    var info=$('transfer-card-info');
+    if(!info){
+      info=document.createElement('div');
+      info.id='transfer-card-info';
+      info.style.cssText='background:#eef2ff;border-radius:8px;padding:12px;margin:10px 0;font-size:13px;';
+      sel.parentNode.insertBefore(info,sel.nextSibling);
+    }
+    if(this.value===''){info.style.display='none';return;}
+    var card=cards[parseInt(this.value)];
+    if(card){
+      info.style.display='block';
+      info.innerHTML='<div style="color:#1a56ff;font-weight:600;margin-bottom:4px;">Withdrawing to:</div><div style="color:#333;"><strong>'+card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour+'</strong></div><div style="color:#666;font-size:12px;margin-top:2px;">Cardholder: '+(card.name||'--')+'</div><div style="color:#666;font-size:12px;">Bank: '+(card.bankName||'--')+'</div>';
+    }
+  };
   openModal('transfer-modal');
 };
 $('transfer-confirm-btn').onclick=function(){
@@ -1993,7 +2009,7 @@ $('transfer-confirm-btn').onclick=function(){
   }).then(function(){
     notify(currentUser.uid,'💸 Transfer of '+s+amt.toFixed(2)+' submitted. Processing 1-3 days.');
     return db.ref('users').once('value').then(function(snap){snap.forEach(function(s2){if(s2.val()&&s2.val().email===ADMIN_EMAIL) {notify(s2.key,'💸 WITHDRAWAL: '+(userData.firstname||'')+' wants '+s+amt.toFixed(2)+' to '+(card?card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour:''));sendEmail(ADMIN_EMAIL,'💸 Withdrawal Request',(userData.firstname||'')+' '+(userData.surname||''),(userData.firstname||'')+' '+(userData.surname||'')+' is requesting a withdrawal.\n\nAmount: '+s+amt.toFixed(2)+'\nCard: '+transferData.cardBrand+' ....'+transferData.cardLastFour+'\nBank: '+transferData.bankName+'\nAccount: '+transferData.accountNumber+'\nEmail: '+transferData.email+'\n\nPlease check your admin panel to process this withdrawal.');}});});
-  }).then(function(){closeModal('transfer-modal');$('transfer-amount').value='';$('transfer-pin').value='';$('transfer-confirm-checkbox').checked=false;alert('\u2705 Transfer of '+s+amt.toFixed(2)+' submitted!');}).finally(function(){$('transfer-confirm-btn').textContent='Request Transfer';$('transfer-confirm-btn').disabled=false;});
+  }).then(function(){closeModal('transfer-modal');$('transfer-amount').value='';$('transfer-pin').value='';$('transfer-confirm-checkbox').checked=false;alert('\u2705 Transfer of '+s+amt.toFixed(2)+' submitted!');}).catch(function(e){console.error('Transfer error:',e);err.textContent='Error: '+e.message;}).finally(function(){$('transfer-confirm-btn').textContent='Request Transfer';$('transfer-confirm-btn').disabled=false;});
 };
 
 // SEND
