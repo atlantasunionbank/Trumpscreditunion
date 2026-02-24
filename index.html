@@ -486,12 +486,9 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <div class="refer-code" id="refer-code-display">AUB-000000</div>
         <button class="refer-copy-btn" id="refer-copy-btn" data-i18n="copyCode">&#128203; Copy Code</button>
       </div>
-      <div style="margin-top:16px;">
-        <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:6px;font-weight:600;">🔗 Your Shareable Referral Link:</div>
-        <div style="background:rgba(255,255,255,0.1);border-radius:10px;padding:12px;display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.2);">
-          <input id="refer-link-display" readonly style="background:none;border:none;color:rgba(255,255,255,0.9);font-size:12px;flex:1;outline:none;font-family:monospace;" value="">
-          <button onclick="navigator.clipboard.writeText($('refer-link-display').value).then(function(){alert('Link copied!')});" style="background:#1a56ff;border:none;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;white-space:nowrap;">📋 Copy Link</button>
-        </div>
+      <div style="margin-top:12px;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px;display:flex;align-items:center;gap:8px;">
+        <input id="refer-link-display" readonly style="background:none;border:none;color:rgba(255,255,255,0.8);font-size:11px;flex:1;outline:none;font-family:monospace;" value="">
+        <button onclick="navigator.clipboard.writeText($('refer-link-display').value).then(function(){alert('Link copied!')});" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap;">Copy Link</button>
       </div>
       <div class="refer-stats">
         <div class="refer-stat"><div class="refer-stat-num" id="refer-count">0</div><div class="refer-stat-label">Referrals</div></div>
@@ -1260,20 +1257,17 @@ function renderAccountInfo(){
 function renderReferral(){
   var code=userData.referralCode||(currentUser?'AUB-'+currentUser.uid.slice(0,6).toUpperCase():'------');
   var count=(userData.referrals||[]).length;
-  var earned=parseFloat(userData.referralEarned)||0;
-  var s=sym();
+  var s=sym(), earned=count*10;
   var el;
   el=$('refer-code-display'); if(el) el.textContent=code;
   el=$('refer-count'); if(el) el.textContent=count;
-  el=$('refer-earned'); if(el) el.textContent=s+earned.toFixed(0);
-  var baseUrl=window.location.origin+(window.location.pathname||'/index.html').replace(/\/[^/]*$/,'/');
-  var link=baseUrl+'?ref='+encodeURIComponent(code);
-  el=$('refer-link-display'); if(el) {el.value=link; console.log('Referral link set:', link);}
+  el=$('refer-earned'); if(el) el.textContent=s+earned;
+  var link=window.location.origin+window.location.pathname+'?ref='+encodeURIComponent(code);
+  el=$('refer-link-display'); if(el) el.value=link;
   el=$('refer-bar'); if(el) el.style.width=Math.min(100,(count/12)*100)+'%';
   el=$('refer-bar-label'); if(el) el.textContent=count+' / 12 referrals to claim';
   el=$('refer-claim-btn');
-  if(el){el.disabled=count<12||userData.referralClaimed; el.textContent=userData.referralClaimed?'Already Claimed':'Claim '+s+(earned.toFixed(0))+' Bonus';}
-}
+  if(el){el.disabled=count<12||userData.referralClaimed; el.textContent=userData.referralClaimed?'Already Claimed':'Claim '+s+(count*10)+' Bonus';}
 }
 
 // ── MONEY REQUESTS ──
