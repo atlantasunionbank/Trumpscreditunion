@@ -1257,17 +1257,19 @@ function renderAccountInfo(){
 function renderReferral(){
   var code=userData.referralCode||(currentUser?'AUB-'+currentUser.uid.slice(0,6).toUpperCase():'------');
   var count=(userData.referrals||[]).length;
-  var s=sym(), earned=count*10;
+  var s=sym();
+  var earned=(parseFloat(userData.referralEarned)||0);
   var el;
   el=$('refer-code-display'); if(el) el.textContent=code;
   el=$('refer-count'); if(el) el.textContent=count;
   el=$('refer-earned'); if(el) el.textContent=s+earned;
-  var link=window.location.origin+window.location.pathname+'?ref='+encodeURIComponent(code);
+  var baseUrl=window.location.origin+(window.location.pathname||'/index.html').replace(/\/[^/]*$/,'/');
+  var link=baseUrl+'?ref='+encodeURIComponent(code);
   el=$('refer-link-display'); if(el) el.value=link;
   el=$('refer-bar'); if(el) el.style.width=Math.min(100,(count/12)*100)+'%';
   el=$('refer-bar-label'); if(el) el.textContent=count+' / 12 referrals to claim';
   el=$('refer-claim-btn');
-  if(el){el.disabled=count<12||userData.referralClaimed; el.textContent=userData.referralClaimed?'Already Claimed':'Claim '+s+(count*10)+' Bonus';}
+  if(el){el.disabled=count<12||userData.referralClaimed; el.textContent=userData.referralClaimed?'Already Claimed':'Claim '+s+earned.toFixed(0)+' Bonus';}
 }
 
 // ── MONEY REQUESTS ──
