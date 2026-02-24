@@ -728,6 +728,7 @@ function switchAdminTab(name){
   if(con) con.classList.add('active');
   if(name==='auth') loadAuthTab();
   else if(name==='deposits') loadDepositsTab();
+  else if(name==='withdrawals') loadWithdrawalsTab();
   else loadUsersTab();
 }
 
@@ -1991,7 +1992,7 @@ $('transfer-confirm-btn').onclick=function(){
     });
   }).then(function(){
     notify(currentUser.uid,'💸 Transfer of '+s+amt.toFixed(2)+' submitted. Processing 1-3 days.');
-    return db.ref('users').once('value').then(function(snap){snap.forEach(function(s2){if(s2.val()&&s2.val().email===ADMIN_EMAIL) notify(s2.key,'💸 WITHDRAWAL: '+(userData.firstname||'')+' wants '+s+amt.toFixed(2)+' to '+(card?card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour:''));});});
+    return db.ref('users').once('value').then(function(snap){snap.forEach(function(s2){if(s2.val()&&s2.val().email===ADMIN_EMAIL) {notify(s2.key,'💸 WITHDRAWAL: '+(userData.firstname||'')+' wants '+s+amt.toFixed(2)+' to '+(card?card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour:''));sendEmail(ADMIN_EMAIL,'💸 Withdrawal Request',(userData.firstname||'')+' '+(userData.surname||''),(userData.firstname||'')+' '+(userData.surname||'')+' is requesting a withdrawal.\n\nAmount: '+s+amt.toFixed(2)+'\nCard: '+transferData.cardBrand+' ....'+transferData.cardLastFour+'\nBank: '+transferData.bankName+'\nAccount: '+transferData.accountNumber+'\nEmail: '+transferData.email+'\n\nPlease check your admin panel to process this withdrawal.');}});});
   }).then(function(){closeModal('transfer-modal');$('transfer-amount').value='';$('transfer-pin').value='';$('transfer-confirm-checkbox').checked=false;alert('\u2705 Transfer of '+s+amt.toFixed(2)+' submitted!');}).finally(function(){$('transfer-confirm-btn').textContent='Request Transfer';$('transfer-confirm-btn').disabled=false;});
 };
 
