@@ -485,6 +485,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       <div class="refer-code-box">
         <div class="refer-code" id="refer-code-display">AUB-000000</div>
         <button class="refer-copy-btn" id="refer-copy-btn" data-i18n="copyCode">&#128203; Copy Code</button>
+        <button class="refer-copy-btn" id="refer-share-btn" style="background:#10b981;margin-left:8px;">&#128226; Share</button>
       </div>
       <div style="margin-top:12px;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px;display:flex;align-items:center;gap:8px;">
         <input id="refer-link-display" readonly style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:12px;flex:1;outline:none;font-family:monospace;padding:8px;border-radius:6px;" value="">
@@ -668,6 +669,15 @@ var addMoneyCardIdx = -1;
 // ── HELPERS ──
 function $(id){ return document.getElementById(id); }
 function sym(){ return SYM[userData.currency||'USD']||'$'; }
+function formatMoney(amount,currency){
+  var num=parseFloat(amount)||0;
+  var commaDecimal=['EUR','BRL','ARS','CLP','COP','ZAR'];
+  if(commaDecimal.indexOf(currency)!==-1){
+    return num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g,'$&.').replace(/\.(\d{2})$/,',$1');
+  }else{
+    return num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g,'$&,');
+  }
+}
 function fmtDate(iso){
   if(!iso) return '--';
   var d=new Date(iso);
@@ -1073,7 +1083,7 @@ auth.onAuthStateChanged(function(user){
     var bal=parseFloat(userData.balance||0);
     var an=userData.accountNumber||'';
     var el;
-    el=$('balance'); if(el) el.textContent=bal.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    el=$('balance'); if(el) el.textContent=formatMoney(bal,userData.currency||'USD');
     el=$('currency-symbol'); if(el) el.textContent=s;
     el=$('acct-badge'); if(el) el.textContent=an?('....'+an.slice(-4)):'....';
     el=$('topbar-name'); if(el) el.textContent=userData.firstname||'User';
@@ -1219,7 +1229,7 @@ function renderTx(history){
     return;
   }
   var s=sym();
-  history.slice().reverse().slice(0,5).forEach(function(tx){
+  history.slice().reverse().forEach(function(tx){
     var isCredit=tx.amount>0;
     var dateStr=fmtDate(tx.date);
     var txEl=document.createElement('div');
@@ -1286,9 +1296,8 @@ function renderTx(history){
         '</div>'+
         '<div class="receipt-body">'+
           '<div class="receipt-row"><span class="receipt-label">'+nameLabel+'</span><span class="receipt-value">'+nameVal+'</span></div>'+
-          '<div class="receipt-row"><span class="receipt-label">Account</span><span class="receipt-value" style="font-family:monospace;">'+acctVal+'</span></div>'+
           '<div class="receipt-row"><span class="receipt-label">Date</span><span class="receipt-value">'+dateOnly+'</span></div>'+
-          '<div class="receipt-row"><span class="receipt-label">Time</span><span class="receipt-value">'+timeOnly+'</span></div>'+
+          '<button onclick="showReceiptModal(arguments[0])" style="width:100%;background:#f3f4f6;border:none;padding:8px;border-radius:6px;color:#1f2937;font-size:12px;cursor:pointer;margin-top:8px;font-weight:600;font-family:inherit;">👁 See Details</button>'+
           '<div class="receipt-row"><span class="receipt-label">Type</span><span class="receipt-value" style="color:'+(isCredit?'#00a550':'#e53935')+'">'+(isCredit?'Credit \u2193':'Debit \u2191')+'</span></div>'+
         '</div>';
       recCon.appendChild(recEl);
@@ -2184,7 +2193,22 @@ $('req-btn').onclick=function(){
 };
 
 // REFERRAL
-$('refer-copy-btn').onclick=function(){var code=userData.referralCode||'';if(!code) return;navigator.clipboard.writeText(code).then(function(){alert('Copied: '+code);}).catch(function(){alert('Your code: '+code);});};
+$('refer-copy-btn').onclick=function(){
+  var code=$('refer-code-display').textContent;
+  navigator.clipboard.writeText(code).then(function(){alert('Referral code copied!');});
+};
+$('refer-share-btn').onclick=function(){
+  var code=$('refer-code-display').textContent;
+  var link=$('refer-link-display').value;
+  var name=(userData.firstname||'')+' '+(userData.surname||'');
+  var message='Hi! '+name+' invited you to join Atlantas Union Bank. Sign up with my referral code: '+code+' and get $10 bonus!\n\n'+link;
+  if(navigator.share){
+    navigator.share({title:'Join Atlantas Union Bank',text:message}).catch(function(){});
+  }else{
+    navigator.clipboard.writeText(message).then(function(){alert('Referral message copied! Paste it to share.');});
+  }
+};
+$('refer-copy-btn-old').onclick=function(){var code=userData.referralCode||'';if(!code) return;navigator.clipboard.writeText(code).then(function(){alert('Copied: '+code);}).catch(function(){alert('Your code: '+code);});};
 $('offer-refer-btn').onclick=function(){switchTab('tab-refer',$('nav-refer'));};
 $('refer-claim-btn').onclick=function(){
   var count=(userData.referrals||[]).length;if(count<12){alert('Need 12 referrals. Have '+count+'.');return;}if(userData.referralClaimed){alert('Already claimed!');return;}
