@@ -1184,9 +1184,89 @@ function renderCards(cards){
 
 // ── RENDER TRANSACTIONS + RECEIPTS ──
 
+
+function showWithdrawalTracker(tx){
+  var content=$('receipt-detail-content');
+  if(!content) return;
+  
+  db.ref('withdrawalRequests/'+tx.transferKey).once('value').then(function(snap){
+    if(!snap.exists()){
+      openModal('receipt-detail-modal');
+      return;
+    }
+    var req=snap.val();
+    var s=sym();
+    var amt=Math.abs(tx.amount);
+    var fee=5;
+    var total=amt+fee;
+    
+    var isPending=req.status==='pending';
+    var isSent=req.status==='sent';
+    var isRefunded=req.status==='refunded'||req.status==='rejected';
+    
+    if(isRefunded){
+      // Refunded view
+      content.innerHTML=
+        '<div style="text-align:center;padding:30px 20px;">'+
+          '<div style="font-size:48px;margin-bottom:12px;">\u21a9</div>'+
+          '<div style="font-size:18px;font-weight:700;color:#3b82f6;margin-bottom:8px;">Refunded</div>'+
+          '<div style="font-size:13px;color:#666;">'+( req.refundReason||req.rejectReason||'Withdrawal was refunded')+'</div>'+
+        '</div>'+
+        '<div style="background:#f9fafb;padding:16px;border-radius:8px;margin-top:20px;">'+
+          '<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="color:#6b7280;">Amount</span><span style="font-weight:600;">'+s+amt.toFixed(2)+'</span></div>'+
+          '<div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid #e5e7eb;"><span style="color:#6b7280;">Refunded to Balance</span><span style="font-weight:600;color:#3b82f6;">'+s+amt.toFixed(2)+'</span></div>'+
+        '</div>';
+    }else{
+      // Normal tracker view
+      var step1Color=isPending||isSent?'#3b82f6':'#d1d5db';
+      var step2Color=isPending||isSent?'#3b82f6':'#d1d5db';
+      var step3Color=isSent?'#10b981':'#d1d5db';
+      
+      content.innerHTML=
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">'+
+          '<div style="text-align:center;flex:1;">'+
+            '<div style="width:40px;height:40px;border-radius:50%;background:'+step1Color+';color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:18px;">\u2713</div>'+
+            '<div style="font-size:11px;color:#6b7280;">Payment<br>Successful</div>'+
+          '</div>'+
+          '<div style="flex:1;height:2px;background:'+(isPending||isSent?'#3b82f6':'#d1d5db')+';"></div>'+
+          '<div style="text-align:center;flex:1;">'+
+            '<div style="width:40px;height:40px;border-radius:50%;background:'+step2Color+';color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:18px;">'+(isPending||isSent?'\u2713':'')+'</div>'+
+            '<div style="font-size:11px;color:#6b7280;">Processing<br>by Bank</div>'+
+          '</div>'+
+          '<div style="flex:1;height:2px;background:'+(isSent?'#10b981':'#d1d5db')+';"></div>'+
+          '<div style="text-align:center;flex:1;">'+
+            '<div style="width:40px;height:40px;border-radius:50%;background:'+step3Color+';color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:18px;">'+(isSent?'\u2713':'')+'</div>'+
+            '<div style="font-size:11px;color:#6b7280;">Received<br>by Bank</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="background:#f9fafb;padding:16px;border-radius:8px;margin-bottom:16px;">'+
+          '<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="color:#6b7280;">Amount</span><span style="font-weight:600;">'+s+amt.toFixed(2)+'</span></div>'+
+          '<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="color:#6b7280;">Fee</span><span style="font-weight:600;">'+s+fee.toFixed(2)+'</span></div>'+
+          '<div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid #e5e7eb;"><span style="color:#6b7280;font-weight:600;">Amount Paid</span><span style="font-weight:700;font-size:18px;">'+s+total.toFixed(2)+'</span></div>'+
+        '</div>'+
+        '<div style="border-top:1px solid #e5e7eb;padding-top:16px;">'+
+          '<div style="font-size:13px;font-weight:600;color:#111;margin-bottom:12px;">Recipient Details</div>'+
+          '<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="color:#6b7280;font-size:13px;">Full Name</span><span style="font-weight:600;font-size:13px;">'+(req.name||'--')+'</span></div>'+
+          '<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="color:#6b7280;font-size:13px;">Bank Type</span><span style="font-weight:600;font-size:13px;">'+(req.bankName||'--')+'</span></div>'+
+          '<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="color:#6b7280;font-size:13px;">Card Type</span><span style="font-weight:600;font-size:13px;">'+(req.cardBrand||'--')+'</span></div>'+
+          '<div style="display:flex;justify-content:space-between;"><span style="color:#6b7280;font-size:13px;">Transaction Date</span><span style="font-weight:600;font-size:13px;">'+fmtDate(req.date)+'</span></div>'+
+        '</div>';
+    }
+    
+    openModal('receipt-detail-modal');
+  });
+}
+
 function showReceiptModal(tx){
   var content=$('receipt-detail-content');
   if(!content) return;
+  
+  // Check if this is a withdrawal - show special tracker
+  if(tx.type==='Transfer'&&tx.transferKey){
+    showWithdrawalTracker(tx);
+    return;
+  }
+  
   var isCredit=tx.amount>0;
   var s=sym();
   var statusColor='#f59e0b';
@@ -1194,7 +1274,7 @@ function showReceiptModal(tx){
   var statusBG='#fef3c7';
   
   if(tx.type==='Received'||tx.type==='Deposit'){statusColor='#10b981';statusText='Completed';statusBG='#d1fae5';}
-  else if(tx.type==='Sent'||tx.type==='Transfer'){statusColor='#ef4444';statusText='Sent';statusBG='#fee2e2';}
+  else if(tx.type==='Sent'){statusColor='#ef4444';statusText='Sent';statusBG='#fee2e2';}
   else if(tx.type==='Refund'){statusColor='#3b82f6';statusText='Refunded';statusBG='#dbeafe';}
   
   content.innerHTML=
@@ -1577,15 +1657,16 @@ function rejectWithdrawal(reqKey){
   db.ref('withdrawalRequests/'+reqKey).once('value').then(function(snap){
     if(!snap.exists()) return;
     var req=snap.val();
+    if(req.status!=='pending'){alert('Can only reject pending withdrawals');return;}
     var amt=parseFloat(req.amount), rs=SYM[req.currency||'USD']||'$';
-    // Refund money to user
+    // Refund money to user (already deducted when they submitted)
     db.ref('users/'+req.uid).transaction(function(u){
-      if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Refund',amount:amt,note:'Withdrawal rejected: '+reason});}
+      if(u){u.balance=(parseFloat(u.balance)||0)+amt;}
       return u;
     }).then(function(){
       return db.ref('withdrawalRequests/'+reqKey).update({status:'rejected',rejectReason:reason,rejectedDate:new Date().toISOString()});
     }).then(function(){
-      notify(req.uid,'\u274c Withdrawal of '+rs+amt.toFixed(2)+' rejected. Money refunded. Reason: '+reason);
+      notify(req.uid,'\u21a9 Withdrawal rejected: '+reason+'. Money refunded to your account.');
       loadWithdrawalsTab();
     });
   });
@@ -1597,14 +1678,14 @@ function refundWithdrawal(reqKey){
     if(!snap.exists()) return;
     var req=snap.val(); if(req.status!=='sent'){alert('Only sent withdrawals can be refunded.');return;}
     var amt=parseFloat(req.amount), rs=SYM[req.currency||'USD']||'$';
-    // Refund money to user
+    // Refund money to user (was already sent, so add back)
     db.ref('users/'+req.uid).transaction(function(u){
-      if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Refund',amount:amt,note:'Withdrawal refunded: '+reason});}
+      if(u){u.balance=(parseFloat(u.balance)||0)+amt;}
       return u;
     }).then(function(){
       return db.ref('withdrawalRequests/'+reqKey).update({status:'refunded',refundReason:reason,refundDate:new Date().toISOString()});
     }).then(function(){
-      notify(req.uid,'\u21a9 Withdrawal of '+rs+amt.toFixed(2)+' refunded. Money returned to your account. Reason: '+reason);
+      notify(req.uid,'\u21a9 Withdrawal refunded: '+reason+'. Money returned to your account.');
       loadWithdrawalsTab();
     });
   });
