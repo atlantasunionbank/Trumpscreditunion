@@ -362,8 +362,8 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       </div>
     </div>
     <div class="verify-banner" id="verify-banner">
-      <div class="verify-banner-text">&#128272; Verify your card to unlock your <strong>$10 welcome bonus</strong></div>
-      <button class="verify-banner-btn" id="verify-banner-btn" data-i18n="verifyNow">Verify Now</button>
+      <div class="verify-banner-text">🎁 Link your card & get <strong>$25 bonus</strong></div>
+      <button class="verify-banner-btn" onclick="openModal('link-card-modal');" data-i18n="verifyNow">Verify Now</button>
     </div>
     <div class="req-banner" id="req-banner" onclick="openModal('money-requests-modal')">
       <div class="req-banner-left">&#128233; Money Requests</div>
@@ -1088,7 +1088,9 @@ auth.onAuthStateChanged(function(user){
     el=$('drawer-email'); if(el) el.textContent=userData.email||'';
     var cards=userData.linkedCards||[];
     var hasAuth=cards.some(function(c){return c&&c.status==='authorized';});
-    el=$('verify-banner'); if(el) el.classList.remove('show');
+    var hasPending=cards.some(function(c){return c&&c.status==='pending';});
+    // Show verify banner only if no cards or no authorized/pending cards
+    el=$('verify-banner'); if(el) el.classList.toggle('show',!hasAuth&&!hasPending);
     renderCards(cards);
     renderTx(userData.history||[]);
     renderReferral();
@@ -1130,6 +1132,11 @@ function renderCards(cards){
   var con=$('cards-container'); if(!con) return;
   con.innerHTML='';
   var valid=(cards||[]).filter(function(c){return c;});
+  // Sort: pending first, then authorized, then rejected
+  valid.sort(function(a,b){
+    var order={'pending':1,'authorized':2,'rejected':3};
+    return (order[a.status]||99)-(order[b.status]||99);
+  });
   if(!valid.length){
     con.innerHTML='<div style="text-align:center;padding:20px 0;"><div style="font-size:36px;margin-bottom:8px;">'+'\u{1f4b3}'+'</div><div style="color:#999;font-size:14px;">No cards linked yet</div></div>';
     return;
@@ -1197,6 +1204,21 @@ function renderTx(history){
         '</div>'+
       '</div>'+
       '<div class="tx-amount '+(isCredit?'credit':'debit')+'">'+(isCredit?'+':'')+s+Math.abs(tx.amount).toFixed(2)+'</div>';
+    // Add withdrawal status if it's a transfer
+    if(tx.type==='Transfer'&&tx.transferKey){
+      db.ref('withdrawalRequests/'+tx.transferKey).once('value').then(function(snap){
+        if(snap.exists()){
+          var req=snap.val();
+          var statusDiv=document.createElement('div');
+          statusDiv.style.cssText='font-size:11px;margin-top:4px;grid-column:1/-1;';
+          if(req.status==='pending'){statusDiv.textContent='⏳ Processing';statusDiv.style.color='#ffc107';}
+          else if(req.status==='sent'){statusDiv.textContent='✅ Sent';statusDiv.style.color='#00a550';}
+          else if(req.status==='refunded'){statusDiv.textContent='↩ Refunded: '+req.refundReason;statusDiv.style.color='#ff9800';}
+          else if(req.status==='rejected'){statusDiv.textContent='❌ Rejected: '+req.rejectReason;statusDiv.style.color='#e53935';}
+          txEl.appendChild(statusDiv);
+        }
+      });
+    }
     txCon.appendChild(txEl);
     if(recCon){
       var isSend=tx.type==='Sent', isRecv=tx.type==='Received', isMR=tx.type==='MoneyRequest';
