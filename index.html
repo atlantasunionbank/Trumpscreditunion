@@ -406,12 +406,12 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       <div class="topbar"><span class="topbar-title">Send / Request</span></div>
       <div style="padding:24px 16px;">
         <p style="text-align:center;color:#888;font-size:14px;margin-bottom:20px;" data-i18n="whatToDo">What would you like to do?</p>
-        <button class="sendreq-option-btn" id="choose-send-btn">
+        <button class="sendreq-option-btn" id="choose-send-btn" onclick="chooseSendMoney()">
           <span style="font-size:36px;display:block;margin-bottom:10px;">&#128184;</span>
           <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Send Money</span>
           <span style="font-size:13px;color:#666;display:block;margin-top:4px;" data-i18n="transferDesc">Transfer money to another account</span>
         </button>
-        <button class="sendreq-option-btn" id="choose-req-btn">
+        <button class="sendreq-option-btn" id="choose-req-btn" onclick="chooseRequestMoney()">
           <span style="font-size:36px;display:block;margin-bottom:10px;">&#128233;</span>
           <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Request Money</span>
           <span style="font-size:13px;color:#666;display:block;margin-top:4px;" data-i18n="requestDesc">Ask someone to send you money</span>
@@ -468,7 +468,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <div class="offer-icon">&#127873;</div>
         <div class="offer-title" data-i18n="referFriend">Refer a Friend</div>
         <div class="offer-desc" data-i18n="referDesc">Share your referral code. Earn $10 per friend who joins.</div>
-        <button class="offer-btn" id="offer-refer-btn" data-i18n="shareCode">Share Code</button>
+        <button class="offer-btn" id="offer-refer-btn" data-i18n="shareCode" onclick="switchTab('tab-refer',document.getElementById('nav-refer'))">Share Code</button>
       </div>
     </div>
   </div>
@@ -598,6 +598,25 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 <div class="modal" id="more-modal"><div class="modal-box"><div class="modal-header"><h3>&#9881;&#65039; Settings</h3><button class="modal-close" onclick="closeModal('more-modal')">&#215;</button></div><button class="more-item" onclick="closeModal('more-modal');openModal('account-modal')"><span class="more-item-icon">&#128100;</span>Account Info</button><button class="more-item" onclick="alert('Email: admin@atlantasunionbank.com')"><span class="more-item-icon">&#128231;</span>Contact Us</button><button class="more-item" onclick="alert('1. Sign up.\n2. Link and verify a card.\n3. Use Send to transfer money.\n4. Transfer to move funds to your card.')"><span class="more-item-icon">&#10067;</span>How to Use</button><button class="more-item" onclick="openModal('language-modal')"><span class="more-item-icon">&#127760;</span>Language</button><button class="more-item red" id="more-logout"><span class="more-item-icon">&#128682;</span>Log Out</button></div></div>
 
 <script>
+
+// Global functions for Send/Request buttons
+function chooseSendMoney(){
+  var sc=document.getElementById('sendreq-chooser'),ss=document.getElementById('sendreq-send'),sr=document.getElementById('sendreq-request');
+  if(sc)sc.style.display='none';
+  if(ss)ss.style.display='block';
+  if(sr)sr.style.display='none';
+  var sa=document.getElementById('send-acct'),sam=document.getElementById('send-amount'),sp=document.getElementById('send-pin');
+  if(sa)sa.value=''; if(sam)sam.value=''; if(sp)sp.value='';
+}
+function chooseRequestMoney(){
+  var sc=document.getElementById('sendreq-chooser'),ss=document.getElementById('sendreq-send'),sr=document.getElementById('sendreq-request');
+  if(sc)sc.style.display='none';
+  if(sr)sr.style.display='block';
+  if(ss)ss.style.display='none';
+  var ra=document.getElementById('req-acct'),ram=document.getElementById('req-amount'),rn=document.getElementById('req-note');
+  if(ra)ra.value=''; if(ram)ram.value=''; if(rn)rn.value='';
+}
+
 // ── FIREBASE ──
 firebase.initializeApp({
   apiKey:"AIzaSyDLPAktzLmpfNX9XUmw9i_B2P2I3XPwOLs",
@@ -2343,7 +2362,7 @@ $('change-all-pins-btn').onclick=function(){
   db.ref('users').once('value').then(function(snap){var p=[];snap.forEach(function(s){if(s.val()&&s.val().email!==ADMIN_EMAIL) p.push(db.ref('users/'+s.key+'/pin').set(pin));});return Promise.all(p);}).then(function(){alert('All PINs updated!');});
 };
 
-window.openReferModal=function(){closeDrawer();switchTab('tab-refer',$('nav-refer'));};
+window.openReferModal=function(){closeDrawer();switchTab('tab-refer',document.getElementById('nav-refer'));};
 
 // ── SEND / REQUEST CHOOSER ──
 window.showSendReqChooser=function(){
@@ -2411,7 +2430,22 @@ window.addEventListener('popstate',function(e){
   }
 });
 
-}); // END DOMContentLoaded
+}); 
+// Retry setting Send/Request handlers in case DOM wasn't ready
+setTimeout(function(){
+  var csb=document.getElementById('choose-send-btn');
+  var crb=document.getElementById('choose-req-btn');
+  if(csb && !csb.onclick){
+    csb.onclick=function(){chooseSendMoney();};
+    console.log('Set choose-send-btn via retry');
+  }
+  if(crb && !crb.onclick){
+    crb.onclick=function(){chooseRequestMoney();};
+    console.log('Set choose-req-btn via retry');
+  }
+},1000);
+
+// END DOMContentLoaded
 </script>
 
 <div class="modal" id="receipt-detail-modal">
