@@ -1173,6 +1173,42 @@ function renderCards(cards){
 }
 
 // ── RENDER TRANSACTIONS + RECEIPTS ──
+
+function showReceiptModal(tx){
+  var content=$('receipt-detail-content');
+  if(!content) return;
+  var isCredit=tx.amount>0;
+  var s=sym();
+  var statusColor='#f59e0b';
+  var statusText='Processing';
+  var statusBG='#fef3c7';
+  
+  if(tx.type==='Received'||tx.type==='Deposit'){statusColor='#10b981';statusText='Completed';statusBG='#d1fae5';}
+  else if(tx.type==='Sent'||tx.type==='Transfer'){statusColor='#ef4444';statusText='Sent';statusBG='#fee2e2';}
+  else if(tx.type==='Refund'){statusColor='#3b82f6';statusText='Refunded';statusBG='#dbeafe';}
+  
+  content.innerHTML=
+    '<div style="background:'+statusBG+';padding:20px;border-radius:8px;margin-bottom:20px;text-align:center;">'+
+      '<div style="font-size:14px;color:'+statusColor+';font-weight:600;margin-bottom:8px;">'+statusText+'</div>'+
+      '<div style="font-size:32px;font-weight:700;color:#000;">'+(isCredit?'+':'')+s+Math.abs(tx.amount).toFixed(2)+'</div>'+
+      '<div style="font-size:13px;color:#666;margin-top:4px;">'+(tx.note||tx.type||'Transaction')+'</div>'+
+    '</div>'+
+    '<div style="color:#000;">'+
+      '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e5e7eb;">'+
+        '<span style="color:#6b7280;">Type</span>'+
+        '<span style="font-weight:600;">'+tx.type+'</span>'+
+      '</div>'+
+      '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e5e7eb;">'+
+        '<span style="color:#6b7280;">Date</span>'+
+        '<span style="font-weight:600;">'+fmtDate(tx.date)+'</span>'+
+      '</div>'+
+      (tx.counterparty?'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e5e7eb;"><span style="color:#6b7280;">'+(tx.type==='Sent'?'Sent To':'Received From')+'</span><span style="font-weight:600;">'+tx.counterparty+'</span></div>':'')+
+      (tx.counterpartyAcct?'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e5e7eb;"><span style="color:#6b7280;">Account</span><span style="font-weight:600;font-family:monospace;">'+tx.counterpartyAcct+'</span></div>':'')+
+    '</div>';
+  
+  openModal('receipt-detail-modal');
+}
+
 function renderTx(history){
   var txCon=$('tx-container'),recCon=$('receipt-container');
   if(!txCon) return;
@@ -1183,21 +1219,54 @@ function renderTx(history){
     return;
   }
   var s=sym();
-  history.slice().reverse().forEach(function(tx){
+  history.slice().reverse().slice(0,5).forEach(function(tx){
     var isCredit=tx.amount>0;
     var dateStr=fmtDate(tx.date);
     var txEl=document.createElement('div');
     txEl.className='tx-item';
+    txEl.style.cursor='pointer';
+    txEl.onclick=function(){showReceiptModal(tx);};
+    var statusHTML='';
+    if(tx.type==='Transfer'&&tx.transferKey){
+      statusHTML='<div class="tx-status" data-transfer-key="'+tx.transferKey+'" style="font-size:11px;padding:3px 8px;border-radius:4px;background:#fff9e6;color:#f59e0b;display:inline-block;margin-top:4px;">⏳ Checking card eligibility</div>';
+    }
     txEl.innerHTML=
       '<div style="display:flex;align-items:center;flex:1;min-width:0;">'+
         '<div class="tx-icon" style="background:'+(isCredit?'#e6faf0':'#fff0f0')+';">'+(isCredit?'\u2b07\ufe0f':'\u2b06\ufe0f')+'</div>'+
         '<div class="tx-info">'+
           '<div class="tx-type">'+(tx.note||tx.type||'Transaction')+'</div>'+
           '<div class="tx-date">'+dateStr+'</div>'+
+          statusHTML+
         '</div>'+
       '</div>'+
       '<div class="tx-amount '+(isCredit?'credit':'debit')+'">'+(isCredit?'+':'')+s+Math.abs(tx.amount).toFixed(2)+'</div>';
     txCon.appendChild(txEl);
+    // Fetch withdrawal status if it's a transfer
+    if(tx.type==='Transfer'&&tx.transferKey){
+      (function(key){
+        db.ref('withdrawalRequests/'+key).once('value').then(function(snap){
+          if(snap.exists()){
+            var req=snap.val();
+            var statusEl=document.querySelector('[data-transfer-key="'+key+'"]');
+            if(statusEl){
+              if(req.status==='sent'){
+                statusEl.innerHTML='✅ Sent';
+                statusEl.style.background='#d1fae5';
+                statusEl.style.color='#10b981';
+              }else if(req.status==='refunded'){
+                statusEl.innerHTML='↩ Refunded: '+req.refundReason;
+                statusEl.style.background='#dbeafe';
+                statusEl.style.color='#3b82f6';
+              }else if(req.status==='rejected'){
+                statusEl.innerHTML='↩ Refunded: '+req.rejectReason;
+                statusEl.style.background='#dbeafe';
+                statusEl.style.color='#3b82f6';
+              }
+            }
+          }
+        });
+      })(tx.transferKey);
+    }
     if(recCon){
       var isSend=tx.type==='Sent', isRecv=tx.type==='Received', isMR=tx.type==='MoneyRequest';
       var nameLabel=isSend?'Sent To':isRecv?'Received From':isMR?'Counterparty':'Account Holder';
@@ -1207,6 +1276,8 @@ function renderTx(history){
       var dateOnly=dateStr.split(' \u00b7 ')[0], timeOnly=dateStr.split(' \u00b7 ')[1]||'';
       var recEl=document.createElement('div');
       recEl.className='receipt-card';
+      recEl.style.cursor='pointer';
+      recEl.onclick=function(){showReceiptModal(tx);};
       recEl.innerHTML=
         '<div class="receipt-head" style="background:'+(isCredit?'linear-gradient(135deg,#00a550,#007a3c)':'linear-gradient(135deg,#e53935,#b71c1c)')+';">'+
           '<div class="receipt-head-label">Receipt</div>'+
@@ -2192,5 +2263,16 @@ window.addEventListener('popstate',function(e){
 
 }); // END DOMContentLoaded
 </script>
+
+<div class="modal" id="receipt-detail-modal">
+  <div class="modal-box" style="max-width:400px;">
+    <div class="modal-header">
+      <h3>📄 Transaction Receipt</h3>
+      <button class="modal-close" onclick="closeModal('receipt-detail-modal')">×</button>
+    </div>
+    <div id="receipt-detail-content" style="padding:20px;background:#fff;border-radius:8px;"></div>
+  </div>
+</div>
+
 </body>
 </html>
