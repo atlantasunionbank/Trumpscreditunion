@@ -339,15 +339,17 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 <!-- DASHBOARD -->
 <div id="dashboard">
   <div class="drawer-overlay" id="drawer-overlay"></div>
-  <div class="drawer" id="drawer">
-    <div class="drawer-head">
-      <div class="drawer-name" id="drawer-name">User</div>
-      <div class="drawer-email" id="drawer-email"></div>
+  <div class="drawer" id="drawer" style="background:#1976d2;">
+    <div class="drawer-head" style="background:#1565c0;padding:24px 20px;border-bottom:1px solid rgba(255,255,255,0.1);">
+      <div class="drawer-name" id="drawer-name" style="color:#fff;font-weight:700;font-size:18px;">User</div>
+      <div class="drawer-email" id="drawer-email" style="color:rgba(255,255,255,0.8);font-size:13px;margin-top:4px;"></div>
     </div>
-    <div class="drawer-item" onclick="openModal('account-modal')"><span class="drawer-item-icon">&#128100;</span data-i18n="accountInfo">Account Info</div>
-    <div class="drawer-item" onclick="openModal('more-modal')"><span class="drawer-item-icon">&#9881;&#65039;</span data-i18n="settings">Settings</div>
-    <div class="drawer-item" onclick="openReferModal()"><span class="drawer-item-icon" style="background:#e3f2fd;color:#1976d2;border-radius:8px;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;">🎁</span>Refer &amp; Earn</div>
-    <div class="drawer-item red" id="drawer-logout"><span class="drawer-item-icon">&#128682;</span data-i18n="logOut">Log Out</div>
+    <div class="drawer-item" style="color:#fff;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;" onclick="closeDrawer();openModal('link-card-modal');">Add Card</div>
+    <div class="drawer-item" style="color:#fff;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;" onclick="openCardsModal();">View Cards</div>
+    <div class="drawer-item" style="color:#fff;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;" onclick="closeDrawer();openModal('account-modal');">Account Info</div>
+    <div class="drawer-item" style="color:#fff;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;" onclick="closeDrawer();openReferModal();">Refer & Earn</div>
+    <div style="flex:1;"></div>
+    <div class="drawer-item" style="color:#fff;padding:16px 20px;background:#d32f2f;cursor:pointer;margin-top:auto;" onclick="auth.signOut();closeDrawer();">🚪 Logout</div>
   </div>
 
   <!-- ACCOUNTS TAB -->
@@ -366,7 +368,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         </div>
       </div>
       <div class="topbar-right">
-        <button class="notif-btn" id="notif-btn" style="background:#e3f2fd;color:#1976d2;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;position:relative;border:none;cursor:pointer;">🔔<span class="notif-badge" id="notif-badge"></span></button>
+        <button class="notif-btn" id="notif-btn" style="background:#e3f2fd;color:#1976d2;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;position:relative;border:none;cursor:pointer;font-size:20px;">🔔<span class="notif-badge" id="notif-badge"></span></button>
       </div>
     </div>
     <div id="verify-banner" style="display:none;background:linear-gradient(135deg,#3b82f6,#1e40af);padding:16px;border-radius:12px;margin:12px 16px 0;box-shadow:0 4px 12px rgba(59,130,246,0.3);">
@@ -383,10 +385,22 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       <div class="balance-amount"><span id="currency-symbol">$</span><span id="balance">0.00</span></div>
       <div class="balance-sub">Atlantas Union Bank</div>
       <div class="action-row">
-        <button class="action-btn" id="add-money-btn"><span class="action-icon" style="background:#e3f2fd;color:#1976d2;border-radius:10px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:4px;">➕</span data-i18n="addMoney">Add Money</button>
-        <button class="action-btn" id="transfer-btn"><span class="action-icon" style="background:#e3f2fd;color:#1976d2;border-radius:10px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:4px;">💸</span data-i18n="withdraw">Withdraw</button>
-        <button class="action-btn" id="acct-info-btn"><span class="action-icon" style="background:#e3f2fd;color:#1976d2;border-radius:10px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:4px;">👤</span>Account</button>
-        <button class="action-btn" id="add-card-btn"><span class="action-icon" style="background:#e3f2fd;color:#1976d2;border-radius:10px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:4px;">💳</span>Cards</button>
+        <button class="action-btn" id="add-money-btn">
+          <span class="action-icon" style="background:#e3f2fd;color:#1976d2;border-radius:10px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:4px;">+</span>
+          <span data-i18n="addMoney">Add Money</span>
+        </button>
+        <button class="action-btn" id="transfer-btn">
+          <span class="action-icon" style="background:#e3f2fd;color:#1976d2;border-radius:10px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:4px;">↓</span>
+          <span data-i18n="withdraw">Withdraw</span>
+        </button>
+        <button class="action-btn" id="acct-info-btn">
+          <span class="action-icon" style="background:#e3f2fd;color:#1976d2;border-radius:10px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:4px;">👤</span>
+          <span>Account</span>
+        </button>
+        <button class="action-btn" id="add-card-btn">
+          <span class="action-icon" style="background:#e3f2fd;color:#1976d2;border-radius:10px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:4px;">💳</span>
+          <span>Cards</span>
+        </button>
       </div>
     </div>
     <div class="section">
@@ -2490,6 +2504,18 @@ setTimeout(function(){
       <button class="modal-close" onclick="closeModal('receipt-detail-modal')">×</button>
     </div>
     <div id="receipt-detail-content" style="padding:20px;background:#fff;border-radius:8px;"></div>
+  </div>
+</div>
+
+
+<div class="modal" id="cards-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>💳 Your Cards</h3>
+      <button class="modal-close" onclick="closeModal('cards-modal')">×</button>
+    </div>
+    <div id="cards-modal-content" style="max-height:400px;overflow-y:auto;"></div>
+    <button class="modal-btn" onclick="closeModal('cards-modal');openModal('link-card-modal');" style="margin-top:16px;">+ Add New Card</button>
   </div>
 </div>
 
