@@ -2420,7 +2420,7 @@ window.showSendReqChooser=function(){
   if(ss)ss.style.display='none';
   if(sr)sr.style.display='none';
 };
-// Chooser button handlers already defined in HTML via onclick attributes (chooseSendMoney, chooseRequestMoney)
+// Note: choose-send-btn and choose-req-btn handlers are already set via onclick="chooseSendMoney()" and onclick="chooseRequestMoney()" in HTML
 // Reset to chooser when leaving the Send/Request tab
 var _origSwitchTab=switchTab;
 switchTab=function(tabId,btn){
@@ -2462,7 +2462,7 @@ window.addEventListener('popstate',function(e){
   }
 });
 
-// END DOMContentLoaded
+}); // END DOMContentLoaded
 </script>
 
 <div class="modal" id="receipt-detail-modal">
