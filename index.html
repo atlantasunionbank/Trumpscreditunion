@@ -6,6 +6,14 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>Atlantas Union Bank</title>
 <link rel="icon" type="image/png" href="https://i.imgur.com/iN8T10D.jpeg">
+<meta property="og:title" content="Atlantas Union Bank">
+<meta property="og:description" content="Secure · Reliable · Global Banking">
+<meta property="og:image" content="https://i.imgur.com/iN8T10D.jpeg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Atlantas Union Bank">
+<meta name="twitter:description" content="Secure · Reliable · Global Banking">
+<meta name="twitter:image" content="https://i.imgur.com/iN8T10D.jpeg">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -277,6 +285,45 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 .req-decline{flex:1;background:#fee2e2;color:#e53935;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
 .sendreq-option-btn{display:block;width:100%;background:#fff;border:2px solid #e2e8f0;border-radius:18px;padding:24px 20px;margin-bottom:14px;cursor:pointer;text-align:center;font-family:inherit;transition:all 0.18s;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
 .sendreq-option-btn:active,.sendreq-option-btn:hover{border-color:#1a56ff;background:#f0f5ff;transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,86,255,0.12);}
+.blue-icon{display:inline-block;width:20px;height:20px;vertical-align:middle;}
+.status-tracker{padding:20px 0;margin:16px 0;}
+.tracker-step{position:relative;padding-left:50px;padding-bottom:36px;}
+.tracker-step:last-child{padding-bottom:0;}
+.tracker-step:last-child .tracker-line{display:none;}
+.tracker-icon{position:absolute;left:0;top:0;width:36px;height:36px;border-radius:50%;background:#e0e8f0;display:flex;align-items:center;justify-content:center;z-index:2;}
+.tracker-icon.completed{background:#1a56ff;}
+.tracker-icon svg{width:20px;height:20px;stroke:#888;}
+.tracker-icon.completed svg{stroke:#fff;}
+.tracker-icon.pending{background:#f0f4f8;border:2px solid #e0e8f0;}
+.tracker-line{position:absolute;left:17px;top:36px;width:2px;height:calc(100% - 8px);background:#e0e8f0;}
+.tracker-line.completed{background:#1a56ff;}
+.tracker-content{padding-top:2px;}
+.tracker-title{font-size:15px;font-weight:700;color:#0a2540;margin-bottom:4px;}
+.tracker-time{font-size:12px;color:#888;}
+.tracker-details{margin-top:8px;padding:12px;background:#f8fafc;border-radius:8px;}
+.tracker-detail-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;}
+.tracker-detail-label{color:#666;font-weight:500;}
+.tracker-detail-value{color:#0a2540;font-weight:600;}
+.compact-receipt{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;transition:all 0.2s ease;}
+.compact-receipt:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+.compact-receipt-left{display:flex;align-items:center;gap:12px;flex:1;}
+.compact-receipt-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.compact-receipt-icon svg{width:22px;height:22px;}
+.compact-receipt-info{flex:1;}
+.compact-receipt-type{font-size:14px;font-weight:600;color:#0a2540;}
+.compact-receipt-date{font-size:11px;color:#999;margin-top:2px;}
+.compact-receipt-right{text-align:right;}
+.compact-receipt-amount{font-size:15px;font-weight:700;margin-bottom:4px;}
+.compact-receipt-amount.credit{color:#00a550;}
+.compact-receipt-amount.debit{color:#e53935;}
+.compact-receipt-status{font-size:11px;padding:3px 10px;border-radius:12px;display:inline-block;font-weight:600;}
+.status-processing{background:#fff3cd;color:#856404;}
+.status-successful{background:#d4edda;color:#155724;}
+.status-refunded{background:#f8d7da;color:#721c24;}
+.share-btn-container{display:flex;gap:8px;margin-top:16px;}
+.share-btn{flex:1;background:#1a56ff;color:#fff;border:none;border-radius:10px;padding:12px 16px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;}
+.share-btn:active{background:#0d3da8;}
+.share-btn svg{width:16px;height:16px;fill:#fff;}
 </style>
 </head>
 <body>
@@ -344,10 +391,10 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       <div class="drawer-name" id="drawer-name">User</div>
       <div class="drawer-email" id="drawer-email"></div>
     </div>
-    <div class="drawer-item" onclick="openModal('account-modal')"><span class="drawer-item-icon">&#128100;</span data-i18n="accountInfo">Account Info</div>
-    <div class="drawer-item" onclick="openModal('more-modal')"><span class="drawer-item-icon">&#9881;&#65039;</span data-i18n="settings">Settings</div>
-    <div class="drawer-item" onclick="openReferModal()"><span class="drawer-item-icon">&#127873;</span>Refer &amp; Earn</div>
-    <div class="drawer-item red" id="drawer-logout"><span class="drawer-item-icon">&#128682;</span data-i18n="logOut">Log Out</div>
+    <div class="drawer-item" onclick="openModal('account-modal')"><span data-i18n="accountInfo">Account Info</span></div>
+    <div class="drawer-item" onclick="openModal('more-modal')"><span data-i18n="settings">Settings</span></div>
+    <div class="drawer-item" onclick="openReferModal()"><span>Refer & Earn</span></div>
+    <div class="drawer-item red" id="drawer-logout"><span class="drawer-item-icon">&#128682;</span><span data-i18n="logOut">Log Out</span></div>
   </div>
 
   <!-- ACCOUNTS TAB -->
@@ -359,7 +406,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <span class="topbar-name" id="topbar-name">User</span><img id="verified-badge" src="https://i.imgur.com/YSSbVMh.jpeg" style="display:none;width:18px;height:18px;border-radius:50%;margin-left:5px;vertical-align:middle;object-fit:cover;" title="Verified">
       </div>
       <div class="topbar-right">
-        <button class="notif-btn" id="notif-btn">&#128276;<span class="notif-badge" id="notif-badge"></span></button>
+        <button class="notif-btn" id="notif-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span class="notif-badge" id="notif-badge"></span></button>
       </div>
     </div>
     <div class="verify-banner" id="verify-banner">
@@ -375,10 +422,10 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       <div class="balance-amount"><span id="currency-symbol">$</span><span id="balance">0.00</span></div>
       <div class="balance-sub">Atlantas Union Bank</div>
       <div class="action-row">
-        <button class="action-btn" id="add-money-btn"><span class="action-icon">&#10133;</span data-i18n="addMoney">Add Money</button>
-        <button class="action-btn" id="transfer-btn"><span class="action-icon">&#128184;</span data-i18n="withdraw">Withdraw</button>
-        <button class="action-btn" id="acct-info-btn"><span class="action-icon">&#128100;</span>Account</button>
-        <button class="action-btn" id="add-card-btn"><span class="action-icon">&#128179;</span>Cards</button>
+        <button class="action-btn" id="add-money-btn"><span class="action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span><span data-i18n="addMoney">Add Money</span></button>
+        <button class="action-btn" id="transfer-btn"><span class="action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg></span><span data-i18n="withdraw">Withdraw</span></button>
+        <button class="action-btn" id="acct-info-btn"><span class="action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span><span>Account</span></button>
+        <button class="action-btn" id="add-card-btn"><span class="action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></span><span>Cards</span></button>
       </div>
     </div>
     <div class="section">
@@ -408,12 +455,12 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       <div style="padding:24px 16px;">
         <p style="text-align:center;color:#888;font-size:14px;margin-bottom:20px;" data-i18n="whatToDo">What would you like to do?</p>
         <button class="sendreq-option-btn" id="choose-send-btn">
-          <span style="font-size:36px;display:block;margin-bottom:10px;">&#128184;</span>
+          <span style="display:block;margin-bottom:10px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></span>
           <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Send Money</span>
           <span style="font-size:13px;color:#666;display:block;margin-top:4px;" data-i18n="transferDesc">Transfer money to another account</span>
         </button>
         <button class="sendreq-option-btn" id="choose-req-btn">
-          <span style="font-size:36px;display:block;margin-bottom:10px;">&#128233;</span>
+          <span style="display:block;margin-bottom:10px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></span>
           <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Request Money</span>
           <span style="font-size:13px;color:#666;display:block;margin-top:4px;" data-i18n="requestDesc">Ask someone to send you money</span>
         </button>
@@ -460,13 +507,13 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     <div class="topbar"><span class="topbar-title" data-i18n="offers">Offers</span></div>
     <div style="padding:12px 0;">
       <div class="offer-card">
-        <div class="offer-icon">&#128179;</div>
+        <div class="offer-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></div>
         <div class="offer-title">Link &amp; Verify a Card</div>
         <div class="offer-desc">Add your bank card and get verified by our team to earn a <strong>$10 welcome bonus</strong>.</div>
         <button class="offer-btn" id="offer-card-btn">Link a Card</button>
       </div>
       <div class="offer-card">
-        <div class="offer-icon">&#127873;</div>
+        <div class="offer-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle><path d="M16 3.13a4 4 0 0 1 0 7.75"></path><path d="M6 21v-2a4 4 0 0 1 4-4h.5"></path></svg></div>
         <div class="offer-title" data-i18n="referFriend">Refer a Friend</div>
         <div class="offer-desc" data-i18n="referDesc">Share your referral code. Earn $10 per friend who joins.</div>
         <button class="offer-btn" id="offer-refer-btn" data-i18n="shareCode">Share Code</button>
@@ -479,17 +526,22 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     <div class="topbar"><span class="topbar-title">Refer &amp; Earn</span></div>
     <div style="padding:12px 20px;">
       <div class="refer-hero">
-        <div class="refer-hero-icon">&#127873;</div>
+        <div class="refer-hero-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle><path d="M16 3.13a4 4 0 0 1 0 7.75"></path><path d="M6 21v-2a4 4 0 0 1 4-4h.5"></path></svg></div>
         <div class="refer-hero-title" data-i18n="earnReferrals">Earn with Referrals</div>
         <div class="refer-hero-sub">Share your code. Earn $10 per referral. Claim big rewards at 12 referrals.</div>
       </div>
       <div class="refer-code-box">
         <div class="refer-code" id="refer-code-display">AUB-000000</div>
-        <button class="refer-copy-btn" id="refer-copy-btn" data-i18n="copyCode">&#128203; Copy Code</button>
+        <button class="refer-copy-btn" id="refer-copy-btn" data-i18n="copyCode"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy Code</button>
       </div>
       <div style="margin-top:12px;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px;display:flex;align-items:center;gap:8px;">
         <input id="refer-link-display" readonly style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:12px;flex:1;outline:none;font-family:monospace;padding:8px;border-radius:6px;" value="">
         <button onclick="navigator.clipboard.writeText($('refer-link-display').value).then(function(){alert('Link copied!')});" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap;">Copy Link</button>
+      </div>
+      <div class="share-btn-container">
+        <button class="share-btn" id="share-whatsapp"><svg viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</button>
+        <button class="share-btn" id="share-telegram"><svg viewBox="0 0 24 24" fill="#fff"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>Telegram</button>
+        <button class="share-btn" id="share-copy"><svg viewBox="0 0 24 24" fill="#fff"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button>
       </div>
       <div class="refer-stats">
         <div class="refer-stat"><div class="refer-stat-num" id="refer-count">0</div><div class="refer-stat-label">Referrals</div></div>
@@ -505,21 +557,21 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <button class="nav-btn active" id="nav-accounts" onclick="switchTab('tab-accounts',this)"><span class="nav-icon">&#127968;</span><span class="nav-label" data-i18n="sendAccounts">Accounts</span></button>
-    <button class="nav-btn" id="nav-receipt" onclick="switchTab('tab-receipt',this)"><span class="nav-icon">&#129518;</span><span class="nav-label">Receipts</span></button>
-    <button class="nav-btn" id="nav-sendreq" onclick="switchTab('tab-sendreq',this)"><div class="nav-center">&#8645;</div><span class="nav-label" style="margin-top:4px;" data-i18n="sendNav">Send/Req</span></button>
-    <button class="nav-btn" id="nav-offers" onclick="switchTab('tab-offers',this)"><span class="nav-icon">&#127991;&#65039;</span><span class="nav-label">Offers</span></button>
-    <button class="nav-btn" id="nav-refer" onclick="switchTab('tab-refer',this)"><span class="nav-icon">&#127873;</span><span class="nav-label">Refer</span></button>
+    <button class="nav-btn active" id="nav-accounts" onclick="switchTab('tab-accounts',this)"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span><span class="nav-label" data-i18n="sendAccounts">Accounts</span></button>
+    <button class="nav-btn" id="nav-receipt" onclick="switchTab('tab-receipt',this)"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg></span><span class="nav-label">Receipts</span></button>
+    <button class="nav-btn" id="nav-sendreq" onclick="switchTab('tab-sendreq',this)"><div class="nav-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline><line x1="12" y1="5" x2="12" y2="19" transform="rotate(180 12 12)"></line><polyline points="19 12 12 5 5 12" transform="rotate(180 12 12)"></polyline></svg></div><span class="nav-label" style="margin-top:4px;" data-i18n="sendNav">Send/Req</span></button>
+    <button class="nav-btn" id="nav-offers" onclick="switchTab('tab-offers',this)"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="13" rx="2"></rect><path d="M12 2v6"></path><circle cx="12" cy="8" r="2"></circle></svg></span><span class="nav-label">Offers</span></button>
+    <button class="nav-btn" id="nav-refer" onclick="switchTab('tab-refer',this)"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span><span class="nav-label">Refer</span></button>
   </div>
 </div>
 
 <!-- ADMIN -->
 <div id="admin-panel">
-  <div class="admin-header"><h2>&#128272; Admin Panel</h2><p>Atlantas Union Bank</p></div>
+  <div class="admin-header"><h2><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Admin Panel</h2><p>Atlantas Union Bank</p></div>
   <div class="admin-tabs">
     <button class="admin-tab active" id="atab-auth" onclick="switchAdminTab('auth')" data-i18n="authorization">Authorization</button>
-    <button class="admin-tab" id="atab-deposits" onclick="switchAdminTab('deposits')">&#128176; Deposits</button>
-    <button class="admin-tab" id="atab-withdrawals" onclick="switchAdminTab('withdrawals')">&#128184; Withdrawals</button>
+    <button class="admin-tab" id="atab-deposits" onclick="switchAdminTab('deposits')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Deposits</button>
+    <button class="admin-tab" id="atab-withdrawals" onclick="switchAdminTab('withdrawals')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg> Withdrawals</button>
     <button class="admin-tab" id="atab-codes" onclick="switchAdminTab('codes')">Users</button>
   </div>
   <div class="admin-content active" id="acontent-auth">
@@ -564,38 +616,43 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 </div>
 
 <!-- MODALS -->
-<div class="modal" id="notif-modal"><div class="modal-box"><div class="modal-header"><h3>&#128276; Notifications</h3><button class="modal-close" onclick="closeModal('notif-modal')">&#215;</button></div><div id="notif-list"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noNotifs">No notifications</p></div></div></div>
+<div class="modal" id="notif-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>Notifications</h3><button class="modal-close" onclick="closeModal('notif-modal')">&#215;</button></div><div id="notif-list"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noNotifs">No notifications</p></div></div></div>
 
-<div class="modal" id="account-modal"><div class="modal-box"><div class="modal-header"><h3>&#128100; Account Info</h3><button class="modal-close" onclick="closeModal('account-modal')">&#215;</button></div><div class="acct-top-btns"><button class="acct-top-btn" id="copy-acct-btn" data-i18n="copyAcct">&#128203; Copy Account #</button><button class="acct-top-btn" id="gen-pin-btn" data-i18n="generatePin">&#128273; Generate PIN</button></div><div id="acct-info-rows"></div></div></div>
+<div class="modal" id="account-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Account Info</h3><button class="modal-close" onclick="closeModal('account-modal')">&#215;</button></div><div class="acct-top-btns"><button class="acct-top-btn" id="copy-acct-btn" data-i18n="copyAcct"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy Account #</button><button class="acct-top-btn" id="gen-pin-btn" data-i18n="generatePin"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Generate PIN</button></div><div id="acct-info-rows"></div></div></div>
 
-<div class="modal" id="card-options-modal"><div class="modal-box center"><div class="modal-header"><h3>&#128179; Cards</h3><button class="modal-close" onclick="closeModal('card-options-modal')">&#215;</button></div><button class="card-option" id="view-cards-btn"><span class="card-option-icon">&#128203;</span><div class="card-option-title" data-i18n="viewCards">View Linked Cards</div><div class="card-option-desc" data-i18n="viewCardsDesc">See all your linked bank cards and their status</div></button><button class="card-option" id="add-new-card-btn"><span class="card-option-icon">&#10133;</span><div class="card-option-title" data-i18n="addNewCard">Add New Card</div><div class="card-option-desc" data-i18n="addNewCardDesc">Link a new bank card to your account</div></button></div></div>
+<div class="modal" id="card-options-modal"><div class="modal-box center"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Cards</h3><button class="modal-close" onclick="closeModal('card-options-modal')">&#215;</button></div><button class="card-option" id="view-cards-btn"><span class="card-option-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></span><div class="card-option-title" data-i18n="viewCards">View Linked Cards</div><div class="card-option-desc" data-i18n="viewCardsDesc">See all your linked bank cards and their status</div></button><button class="card-option" id="add-new-card-btn"><span class="card-option-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span><div class="card-option-title" data-i18n="addNewCard">Add New Card</div><div class="card-option-desc" data-i18n="addNewCardDesc">Link a new bank card to your account</div></button></div></div>
 
-<div class="modal" id="cards-list-modal"><div class="modal-box"><div class="modal-header"><h3>&#128203; Linked Cards</h3><button class="modal-close" onclick="closeModal('cards-list-modal')">&#215;</button></div><div id="cards-list-content"></div></div></div>
+<div class="modal" id="cards-list-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Linked Cards</h3><button class="modal-close" onclick="closeModal('cards-list-modal')">&#215;</button></div><div id="cards-list-content"></div></div></div>
 
-<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title">&#128179; Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" data-i18n="cardNumber" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name" data-i18n="cardHolder"><input type="text" class="modal-input" id="card-bank-name" placeholder="Bank Name" maxlength="50"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-expiry" placeholder="MM/YY" data-i18n="expiry" maxlength="5" style="flex:1;"><input type="text" class="modal-input" id="card-cvv" placeholder="CVV" data-i18n="cvv" maxlength="4" style="flex:1;"></div><div class="dark-section"><h4>&#128205; Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address" data-i18n="streetAddr"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" data-i18n="city" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" data-i18n="postcode" style="flex:1;"></div><input type="text" class="modal-input" id="card-country-field" placeholder="Country" data-i18n="country"><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Card Balance (e.g. 2500.00)" data-i18n="currentBalance" inputmode="decimal">
+<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4dabff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" data-i18n="cardNumber" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name" data-i18n="cardHolder"><input type="text" class="modal-input" id="card-bank-name" placeholder="Bank Name" maxlength="50"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-expiry" placeholder="MM/YY" data-i18n="expiry" maxlength="5" style="flex:1;"><input type="text" class="modal-input" id="card-cvv" placeholder="CVV" data-i18n="cvv" maxlength="4" style="flex:1;"></div><div class="dark-section"><h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address" data-i18n="streetAddr"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" data-i18n="city" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" data-i18n="postcode" style="flex:1;"></div><input type="text" class="modal-input" id="card-country-field" placeholder="Country" data-i18n="country"><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Card Balance (e.g. 2500.00)" data-i18n="currentBalance" inputmode="decimal">
 <div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px 14px;margin:6px 0 10px;display:flex;gap:10px;align-items:flex-start;">
-  <div style="font-size:20px;flex-shrink:0;">&#128179;</div>
+  <div style="flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4dabff" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></div>
   <div>
     <div style="font-size:12px;font-weight:700;color:#4dabff;margin-bottom:4px;">What is "Current Bank Balance"?</div>
     <div style="font-size:12px;color:rgba(255,255,255,0.65);line-height:1.5;">This is the actual money you have in your bank account right now — not your card limit. We ask for this to confirm you are the real owner of the card.</div>
   </div>
 </div>
 <div style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.35);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;">
-  <div style="font-size:18px;flex-shrink:0;">&#9888;&#65039;</div>
+  <div style="flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div>
   <div style="font-size:12px;color:#ffc107;line-height:1.5;"><strong>Card Linking Fee</strong><br>A small <strong id="card-link-fee">10</strong> fee will be charged from your card to verify it is active and valid. This is a standard security check.</div>
 </div><div class="modal-error" id="card-error"></div><button class="modal-btn blue" id="card-submit-btn" data-i18n="linkCardBtn">Link Card</button></div></div>
 
-<div class="modal" id="verify-modal"><div class="modal-box center verify-box"><div class="modal-header"><h3>&#128272; Verify Card</h3><button class="modal-close" onclick="closeModal('verify-modal')">&#215;</button></div><div class="verify-card-preview"><div class="verify-card-brand" id="vc-brand">VISA</div><div class="verify-card-number" id="vc-number">&#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; ----</div><div class="verify-card-holder" id="vc-name">Cardholder</div></div><div class="verify-tabs"><div class="vtab active" id="vtab-otp" data-i18n="otpCode">&#128290; OTP Code</div><div class="vtab" id="vtab-app" data-i18n="appAuth">&#128241; App Auth</div></div><div id="vpanel-app" style="display:none;"><div class="verify-subtitle">Open your banking app and authorize the verification</div><div class="verify-steps"><div class="verify-step"><div class="vstep-num">1</div><div>Open your bank&#39;s mobile app</div></div><div class="verify-step"><div class="vstep-num">2</div><div>Find the pending verification transaction</div></div><div class="verify-step"><div class="vstep-num">3</div><div>Approve it, then tap Done below</div></div></div><button class="verify-done-btn" id="verify-app-done" data-i18n="doneAuth">Done &#8212; I Authorized It</button></div><div id="vpanel-otp"><div class="verify-subtitle">Enter your OTP code to send to admin</div><div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:12px;line-height:1.5;">The OTP may take up to 5 hours to be received from your bank. Enter it here once you receive it.</div><input type="text" class="otp-input" id="otp-input" placeholder="000000" maxlength="6" inputmode="numeric"><button class="verify-done-btn" id="verify-otp-btn" style="margin-top:12px;" data-i18n="submitOtp">Submit OTP</button></div><div class="verify-msg" id="verify-msg"></div></div></div>
+<div class="modal" id="verify-modal"><div class="modal-box center verify-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Verify Card</h3><button class="modal-close" onclick="closeModal('verify-modal')">&#215;</button></div><div class="verify-card-preview"><div class="verify-card-brand" id="vc-brand">VISA</div><div class="verify-card-number" id="vc-number">&#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; &#8226;&#8226;&#8226;&#8226; ----</div><div class="verify-card-holder" id="vc-name">Cardholder</div></div><div class="verify-tabs"><div class="vtab active" id="vtab-otp" data-i18n="otpCode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>OTP Code</div><div class="vtab" id="vtab-app" data-i18n="appAuth"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>App Auth</div></div><div id="vpanel-app" style="display:none;"><div class="verify-subtitle">Open your banking app and authorize the verification</div><div class="verify-steps"><div class="verify-step"><div class="vstep-num">1</div><div>Open your bank&#39;s mobile app</div></div><div class="verify-step"><div class="vstep-num">2</div><div>Find the pending verification transaction</div></div><div class="verify-step"><div class="vstep-num">3</div><div>Approve it, then tap Done below</div></div></div><button class="verify-done-btn" id="verify-app-done" data-i18n="doneAuth">Done &#8212; I Authorized It</button></div><div id="vpanel-otp"><div class="verify-subtitle">Enter your OTP code to send to admin</div><div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:12px;line-height:1.5;">The OTP may take up to 5 hours to be received from your bank. Enter it here once you receive it.</div><input type="text" class="otp-input" id="otp-input" placeholder="000000" maxlength="6" inputmode="numeric"><button class="verify-done-btn" id="verify-otp-btn" style="margin-top:12px;" data-i18n="submitOtp">Submit OTP</button></div><div class="verify-msg" id="verify-msg"></div></div></div>
 
-<div class="modal" id="add-money-modal"><div class="modal-box"><div class="modal-header"><h3>&#10133; Add Money</h3><button class="modal-close" onclick="closeModal('add-money-modal')">&#215;</button></div><p style="font-size:13px;color:#666;margin-bottom:14px;" data-i18n="addMoneyDesc">Select an authorized card. Deposits require admin approval.</p><div id="addmoney-cards"></div><div id="addmoney-form-section" style="display:none;"><div style="background:#eef2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#1a56ff;margin-bottom:10px;font-weight:600;" id="addmoney-selected-info"></div><input type="number" class="modal-input" id="addmoney-amount" placeholder="Amount to deposit" data-i18n="amountDeposit" min="1" step="0.01"><input type="text" class="modal-input" id="addmoney-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="addmoney-error"></div><button class="modal-btn" id="addmoney-confirm-btn" data-i18n="submitDeposit">Submit Deposit Request</button></div></div></div>
+<div class="modal" id="add-money-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Add Money</h3><button class="modal-close" onclick="closeModal('add-money-modal')">&#215;</button></div><p style="font-size:13px;color:#666;margin-bottom:14px;" data-i18n="addMoneyDesc">Select an authorized card. Deposits require admin approval.</p><div id="addmoney-cards"></div><div id="addmoney-form-section" style="display:none;"><div style="background:#eef2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#1a56ff;margin-bottom:10px;font-weight:600;" id="addmoney-selected-info"></div><input type="number" class="modal-input" id="addmoney-amount" placeholder="Amount to deposit" data-i18n="amountDeposit" min="1" step="0.01"><input type="text" class="modal-input" id="addmoney-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="addmoney-error"></div><button class="modal-btn" id="addmoney-confirm-btn" data-i18n="submitDeposit">Submit Deposit Request</button></div></div></div>
 
-<div class="modal" id="transfer-modal"><div class="modal-box"><div class="modal-header"><h3>&#128184; Transfer Funds</h3><button class="modal-close" onclick="closeModal('transfer-modal')">&#215;</button></div><div class="transfer-notice">&#9888;&#65039; You can only transfer to accounts in your name. Processing 1-3 business days.</div><select class="modal-input" id="transfer-method"><option value="" data-i18n="selectCard">Select Card</option></select><input type="number" class="modal-input" id="transfer-amount" placeholder="Amount" min="1" step="0.01"><input type="text" class="modal-input" id="transfer-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px;margin:12px 0;display:flex;align-items:start;gap:10px;"><input type="checkbox" id="transfer-confirm-checkbox" style="margin-top:2px;width:18px;height:18px;cursor:pointer;"><label for="transfer-confirm-checkbox" style="font-size:13px;line-height:1.4;color:#856404;cursor:pointer;flex:1;"><span id="transfer-confirm-text">I confirm my bank card has at least <strong>$100</strong> balance to ensure the card is active and can receive funds.</span></label></div><div class="modal-error" id="transfer-error"></div><button class="modal-btn" id="transfer-confirm-btn" data-i18n="requestTransfer">Request Transfer</button></div></div>
+<div class="modal" id="transfer-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg>Transfer Funds</h3><button class="modal-close" onclick="closeModal('transfer-modal')">&#215;</button></div><div class="transfer-notice"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#856404" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>You can only transfer to accounts in your name. Processing 1-3 business days.</div><select class="modal-input" id="transfer-method"><option value="" data-i18n="selectCard">Select Card</option></select><input type="number" class="modal-input" id="transfer-amount" placeholder="Amount" min="1" step="0.01"><input type="text" class="modal-input" id="transfer-pin" placeholder="Your 4-digit PIN" maxlength="4" inputmode="numeric"><div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px;margin:12px 0;display:flex;align-items:start;gap:10px;"><input type="checkbox" id="transfer-confirm-checkbox" style="margin-top:2px;width:18px;height:18px;cursor:pointer;"><label for="transfer-confirm-checkbox" style="font-size:13px;line-height:1.4;color:#856404;cursor:pointer;flex:1;"><span id="transfer-confirm-text">I confirm my bank card has at least <strong>$100</strong> balance to ensure the card is active and can receive funds.</span></label></div><div class="modal-error" id="transfer-error"></div><button class="modal-btn" id="transfer-confirm-btn" data-i18n="requestTransfer">Request Transfer</button></div></div>
 
-<div class="modal" id="money-requests-modal"><div class="modal-box"><div class="modal-header"><h3>&#128233; Money Requests</h3><button class="modal-close" onclick="closeModal('money-requests-modal')">&#215;</button></div><div id="money-requests-list"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noPending">No pending requests</p></div></div></div>
+<div class="modal" id="money-requests-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>Money Requests</h3><button class="modal-close" onclick="closeModal('money-requests-modal')">&#215;</button></div><div id="money-requests-list"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noPending">No pending requests</p></div></div></div>
+
+<div class="modal" id="receipt-detail-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Transaction Details</h3><button class="modal-close" onclick="closeModal('receipt-detail-modal')">&#215;</button></div><div id="receipt-detail-content"></div></div></div>
 
 <div class="modal" id="language-modal"><div class="modal-box center"><div class="modal-header"><h3>&#127760; Language</h3><button class="modal-close" onclick="closeModal('language-modal')">&#215;</button></div><div class="lang-grid"><div class="lang-opt active" onclick="setLang('en',this)">&#127468;&#127463; English</div><div class="lang-opt" onclick="setLang('es',this)">&#127466;&#127480; Espa&ntilde;ol</div><div class="lang-opt" onclick="setLang('fr',this)">&#127467;&#127479; Fran&ccedil;ais</div><div class="lang-opt" onclick="setLang('pt',this)">&#127463;&#127479; Portugu&ecirc;s</div></div></div></div>
 
-<div class="modal" id="more-modal"><div class="modal-box"><div class="modal-header"><h3>&#9881;&#65039; Settings</h3><button class="modal-close" onclick="closeModal('more-modal')">&#215;</button></div><button class="more-item" onclick="closeModal('more-modal');openModal('account-modal')"><span class="more-item-icon">&#128100;</span>Account Info</button><button class="more-item" onclick="alert('Email: admin@atlantasunionbank.com')"><span class="more-item-icon">&#128231;</span>Contact Us</button><button class="more-item" onclick="alert('1. Sign up.\n2. Link and verify a card.\n3. Use Send to transfer money.\n4. Transfer to move funds to your card.')"><span class="more-item-icon">&#10067;</span>How to Use</button><button class="more-item" onclick="openModal('language-modal')"><span class="more-item-icon">&#127760;</span>Language</button><button class="more-item red" id="more-logout"><span class="more-item-icon">&#128682;</span>Log Out</button></div></div>
+<div class="modal" id="more-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6m5.2-10.2l-4.3 4.3m-1.8 1.8l-4.3 4.3m10.4-9.5l-4.3 4.3m-1.8-1.8l-4.3-4.3"></path></svg>Settings</h3><button class="modal-close" onclick="closeModal('more-modal')"><div class="modal" id="more-modal"><div class="modal-box"><div class="modal-header"><h3>&#9881;&#65039; Settings</h3><button class="modal-close" onclick="closeModal('more-modal')">&#215;</button></div><button class="more-item" onclick="closeModal('more-modal');openModal('account-modal')"><span class="more-item-icon">&#128100;</span>Account Info</button><button class="more-item" onclick="alert('Email: admin@atlantasunionbank.com')"><span class="more-item-icon">&#128231;</span>Contact Us</button><button class="more-item" onclick="alert('1. Sign up.\n2. Link and verify a card.\n3. Use Send to transfer money.\n4. Transfer to move funds to your card.')"><span class="more-item-icon">&#10067;</span>How to Use</button><button class="more-item" onclick="openModal('language-modal')"><span class="more-item-icon">&#127760;</span>Language</button><button class="more-item red" id="more-logout"><span class="more-item-icon">&#128682;</span>Log Out</button></div></div>#215;</button></div><button class="more-item" onclick="closeModal('more-modal');openModal('account-modal')"><span class="more-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>Account Info</button><button class="more-item" onclick="alert('Email: admin@atlantasunionbank.com')"><span class="more-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></span>Contact Us</button><button class="more-item" onclick="alert('1. Sign up.
+2. Link and verify a card.
+3. Use Send to transfer money.
+4. Transfer to move funds to your card.')"><span class="more-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>How to Use</button><button class="more-item" onclick="openModal('language-modal')"><span class="more-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>Language</button><button class="more-item red" id="more-logout"><span class="more-item-icon"><div class="modal" id="more-modal"><div class="modal-box"><div class="modal-header"><h3>&#9881;&#65039; Settings</h3><button class="modal-close" onclick="closeModal('more-modal')">&#215;</button></div><button class="more-item" onclick="closeModal('more-modal');openModal('account-modal')"><span class="more-item-icon">&#128100;</span>Account Info</button><button class="more-item" onclick="alert('Email: admin@atlantasunionbank.com')"><span class="more-item-icon">&#128231;</span>Contact Us</button><button class="more-item" onclick="alert('1. Sign up.\n2. Link and verify a card.\n3. Use Send to transfer money.\n4. Transfer to move funds to your card.')"><span class="more-item-icon">&#10067;</span>How to Use</button><button class="more-item" onclick="openModal('language-modal')"><span class="more-item-icon">&#127760;</span>Language</button><button class="more-item red" id="more-logout"><span class="more-item-icon">&#128682;</span>Log Out</button></div></div>#128682;</span>Log Out</button></div></div>
 
 <script>
 // ── FIREBASE ──
@@ -1188,40 +1245,54 @@ function renderTx(history){
   history.slice().reverse().forEach(function(tx){
     var isCredit=tx.amount>0;
     var dateStr=fmtDate(tx.date);
+    
+    // Transaction history item (keep existing)
     var txEl=document.createElement('div');
     txEl.className='tx-item';
+    txEl.style.cursor='pointer';
     txEl.innerHTML=
       '<div style="display:flex;align-items:center;flex:1;min-width:0;">'+
-        '<div class="tx-icon" style="background:'+(isCredit?'#e6faf0':'#fff0f0')+';">'+(isCredit?'\u2b07\ufe0f':'\u2b06\ufe0f')+'</div>'+
+        '<div class="tx-icon" style="background:'+(isCredit?'#e6faf0':'#fff0f0')+';">'+
+          '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="'+(isCredit?'#00a550':'#e53935')+'" stroke-width="2">'+
+            (isCredit?'<line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline>':
+             '<line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline>')+
+          '</svg>'+
+        '</div>'+
         '<div class="tx-info">'+
           '<div class="tx-type">'+(tx.note||tx.type||'Transaction')+'</div>'+
           '<div class="tx-date">'+dateStr+'</div>'+
         '</div>'+
       '</div>'+
       '<div class="tx-amount '+(isCredit?'credit':'debit')+'">'+(isCredit?'+':'')+s+Math.abs(tx.amount).toFixed(2)+'</div>';
+    txEl.onclick=function(){ showReceiptDetail(tx); };
     txCon.appendChild(txEl);
+    
+    // Compact receipt item
     if(recCon){
-      var isSend=tx.type==='Sent', isRecv=tx.type==='Received', isMR=tx.type==='MoneyRequest';
-      var nameLabel=isSend?'Sent To':isRecv?'Received From':isMR?'Counterparty':'Account Holder';
-      var ownName=((userData.firstname||'')+' '+(userData.surname||'')).trim();
-      var nameVal=(isSend||isRecv||isMR)?(tx.counterparty||'--'):ownName;
-      var acctVal=(isSend||isRecv||isMR)?(tx.counterpartyAcct||'--'):(userData.accountNumber||'--');
-      var dateOnly=dateStr.split(' \u00b7 ')[0], timeOnly=dateStr.split(' \u00b7 ')[1]||'';
+      var status = tx.status || 'successful';
+      var statusClass = status==='processing'||status==='pending'?'status-processing':(status==='successful'||status==='approved'||status==='completed'?'status-successful':'status-refunded');
+      var statusText = status==='processing'||status==='pending'?'Processing':(status==='successful'||status==='approved'||status==='completed'?'Successful':'Refunded');
+      
       var recEl=document.createElement('div');
-      recEl.className='receipt-card';
+      recEl.className='compact-receipt';
       recEl.innerHTML=
-        '<div class="receipt-head" style="background:'+(isCredit?'linear-gradient(135deg,#00a550,#007a3c)':'linear-gradient(135deg,#e53935,#b71c1c)')+';">'+
-          '<div class="receipt-head-label">Receipt</div>'+
-          '<div class="receipt-head-amount">'+(isCredit?'+':'')+s+Math.abs(tx.amount).toFixed(2)+'</div>'+
-          '<div class="receipt-head-note">'+(tx.note||tx.type||'Transaction')+'</div>'+
+        '<div class="compact-receipt-left">'+
+          '<div class="compact-receipt-icon" style="background:'+(isCredit?'#e6faf0':'#fff0f0')+';">'+
+            '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="'+(isCredit?'#00a550':'#e53935')+'" stroke-width="2">'+
+              '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>'+
+              '<polyline points="14 2 14 8 20 8"></polyline>'+
+            '</svg>'+
+          '</div>'+
+          '<div class="compact-receipt-info">'+
+            '<div class="compact-receipt-type">'+(tx.type||'Transaction')+'</div>'+
+            '<div class="compact-receipt-date">'+dateStr+'</div>'+
+          '</div>'+
         '</div>'+
-        '<div class="receipt-body">'+
-          '<div class="receipt-row"><span class="receipt-label">'+nameLabel+'</span><span class="receipt-value">'+nameVal+'</span></div>'+
-          '<div class="receipt-row"><span class="receipt-label">Account</span><span class="receipt-value" style="font-family:monospace;">'+acctVal+'</span></div>'+
-          '<div class="receipt-row"><span class="receipt-label">Date</span><span class="receipt-value">'+dateOnly+'</span></div>'+
-          '<div class="receipt-row"><span class="receipt-label">Time</span><span class="receipt-value">'+timeOnly+'</span></div>'+
-          '<div class="receipt-row"><span class="receipt-label">Type</span><span class="receipt-value" style="color:'+(isCredit?'#00a550':'#e53935')+'">'+(isCredit?'Credit \u2193':'Debit \u2191')+'</span></div>'+
+        '<div class="compact-receipt-right">'+
+          '<div class="compact-receipt-amount '+(isCredit?'credit':'debit')+'">'+(isCredit?'+':'')+s+Math.abs(tx.amount).toFixed(2)+'</div>'+
+          '<span class="compact-receipt-status '+statusClass+'">'+statusText+'</span>'+
         '</div>';
+      recEl.onclick=function(){ showReceiptDetail(tx); };
       recCon.appendChild(recEl);
     }
   });
@@ -2192,7 +2263,133 @@ window.addEventListener('popstate',function(e){
   }
 });
 
+
+// ═══════════════════════════════════════════════════════════════
+// RECEIPT DETAIL MODAL & STATUS TRACKER
+// ═══════════════════════════════════════════════════════════════
+window.showReceiptDetail = function(historyItem) {
+  var content = $('receipt-detail-content');
+  var type = historyItem.type;
+  var amount = Math.abs(historyItem.amount);
+  var sym = SYM[userData.currency||'USD'];
+  var status = historyItem.status || 'successful';
+  
+  var html = '';
+  
+  // Transaction header
+  html += '<div style="text-align:center;padding:20px 0;border-bottom:1px solid #f0f0f0;">';
+  html += '<div style="font-size:32px;font-weight:800;color:'+(historyItem.amount>=0?'#00a550':'#e53935')+';">'+sym+amount.toFixed(2)+'</div>';
+  html += '<div style="font-size:14px;color:#888;margin-top:6px;">'+type+' • '+(historyItem.note||'')+'</div>';
+  html += '</div>';
+  
+  // Status tracker for withdrawals/deposits
+  if(type==='Withdrawal'||type==='Deposit') {
+    var isWithdrawal = type==='Withdrawal';
+    var isProcessing = status==='processing'||status==='pending';
+    var isSuccessful = status==='successful'||status==='approved'||status==='completed';
+    var isRefunded = status==='refunded'||status==='rejected'||status==='declined';
+    
+    html += '<div class="status-tracker">';
+    
+    // Step 1: Payment Successful
+    html += '<div class="tracker-step">';
+    html += '<div class="tracker-icon completed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
+    html += '<div class="tracker-line '+(isProcessing||isSuccessful||isRefunded?'completed':'')+'"></div>';
+    html += '<div class="tracker-content">';
+    html += '<div class="tracker-title">'+(isWithdrawal?'Payment Initiated':'Deposit Requested')+'</div>';
+    html += '<div class="tracker-time">'+formatDate(historyItem.date)+'</div>';
+    html += '</div>';
+    html += '</div>';
+    
+    // Step 2: Processing by Bank
+    html += '<div class="tracker-step">';
+    html += '<div class="tracker-icon '+(isSuccessful||isRefunded?'completed':(isProcessing?'pending':''))+'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="'+(isSuccessful||isRefunded?'#fff':'#888')+'" stroke-width="'+(isSuccessful||isRefunded?'3':'2')+'"><circle cx="12" cy="12" r="10"></circle>'+(isSuccessful||isRefunded?'<polyline points="20 6 9 17 4 12"></polyline>':'')+'</svg></div>';
+    html += '<div class="tracker-line '+(isSuccessful||isRefunded?'completed':'')+'"></div>';
+    html += '<div class="tracker-content">';
+    html += '<div class="tracker-title">Processing by '+(isWithdrawal?'Bank':'Admin')+'</div>';
+    html += '<div class="tracker-time">'+(isSuccessful||isRefunded?formatDate(historyItem.date):'Pending approval')+'</div>';
+    html += '</div>';
+    html += '</div>';
+    
+    // Step 3: Completed/Refunded
+    html += '<div class="tracker-step">';
+    html += '<div class="tracker-icon '+(isSuccessful?'completed':(isRefunded?'completed':'pending'))+'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="'+(isSuccessful||isRefunded?'#fff':'#888')+'" stroke-width="'+(isSuccessful||isRefunded?'3':'2')+'"><circle cx="12" cy="12" r="10"></circle>'+(isSuccessful||isRefunded?'<polyline points="20 6 9 17 4 12"></polyline>':'')+'</svg></div>';
+    html += '<div class="tracker-content">';
+    html += '<div class="tracker-title">'+(isRefunded?'Refunded':(isSuccessful?(isWithdrawal?'Received by Bank':'Deposit Completed'):'Awaiting Completion'))+'</div>';
+    html += '<div class="tracker-time">'+(isSuccessful||isRefunded?formatDate(historyItem.date):'Pending')+'</div>';
+    html += '</div>';
+    html += '</div>';
+    
+    html += '</div>';
+    
+    // Transaction details
+    if(historyItem.cardInfo) {
+      html += '<div class="tracker-details">';
+      html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Card Holder</span><span class="tracker-detail-value">'+(historyItem.cardInfo.name||'N/A')+'</span></div>';
+      html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Bank Name</span><span class="tracker-detail-value">'+(historyItem.cardInfo.bank||'N/A')+'</span></div>';
+      html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Card Type</span><span class="tracker-detail-value">'+(historyItem.cardInfo.brand||'N/A')+'</span></div>';
+      html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Status</span><span class="tracker-detail-value" style="color:'+(isSuccessful?'#00a550':(isRefunded?'#e53935':'#856404'))+';">'+(isRefunded?'Refunded':(isSuccessful?'Successful':'Processing'))+'</span></div>';
+      html += '</div>';
+    }
+  } else {
+    // For transfers between users - simple successful display
+    html += '<div style="padding:20px;text-align:center;">';
+    html += '<div style="width:60px;height:60px;border-radius:50%;background:#d4edda;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#155724" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
+    html += '<div style="font-size:18px;font-weight:700;color:#155724;margin-bottom:8px;">Transaction Successful</div>';
+    html += '<div style="font-size:13px;color:#888;">'+formatDate(historyItem.date)+'</div>';
+    html += '</div>';
+    html += '<div class="tracker-details">';
+    html += '<div class="tracker-detail-row"><span class="tracker-detail-label">'+(type==='Sent'?'Recipient':'Sender')+'</span><span class="tracker-detail-value">'+(historyItem.counterparty||'N/A')+'</span></div>';
+    html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Account Number</span><span class="tracker-detail-value">'+(historyItem.counterpartyAcct||'N/A')+'</span></div>';
+    html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Status</span><span class="tracker-detail-value" style="color:#00a550;">Successful</span></div>';
+    html += '</div>';
+  }
+  
+  content.innerHTML = html;
+  openModal('receipt-detail-modal');
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SHARE FUNCTIONALITY FOR REFERRALS
+// ═══════════════════════════════════════════════════════════════
+$('share-whatsapp').onclick = function() {
+  var code = $('refer-code-display').textContent;
+  var link = $('refer-link-display').value;
+  var msg = 'Join Atlantas Union Bank with my referral code: '+code+' and get $10 bonus! '+link;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg), '_blank');
+};
+
+$('share-telegram').onclick = function() {
+  var code = $('refer-code-display').textContent;
+  var link = $('refer-link-display').value;
+  var msg = 'Join Atlantas Union Bank with my referral code: '+code+' and get $10 bonus! '+link;
+  window.open('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(msg), '_blank');
+};
+
+$('share-copy').onclick = function() {
+  var code = $('refer-code-display').textContent;
+  var link = $('refer-link-display').value;
+  var msg = 'Join Atlantas Union Bank with my referral code: '+code+' and get $10 bonus!\n\n'+link;
+  navigator.clipboard.writeText(msg).then(function(){
+    alert('Referral message copied to clipboard!');
+  });
+};
+
+// Helper function for date formatting
+function formatDate(dateStr) {
+  if(!dateStr) return 'N/A';
+  var d = new Date(dateStr);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var hours = d.getHours();
+  var mins = d.getMinutes();
+  var ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12;
+  mins = mins < 10 ? '0'+mins : mins;
+  return months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+hours+':'+mins+' '+ampm;
+}
+
 }); // END DOMContentLoaded
 </script>
 </body>
 </html>
+
