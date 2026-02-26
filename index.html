@@ -79,7 +79,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 .nav-icon{font-size:20px;}
 .nav-label{font-size:10px;font-weight:500;}
 .nav-center{background:#0a2540;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-top:-18px;box-shadow:0 4px 14px rgba(0,0,0,0.3);color:#fff;}
-.drawer{position:fixed;top:0;left:-290px;width:280px;height:100vh;background:#fff;z-index:9998;transition:left 0.28s ease;box-shadow:4px 0 24px rgba(0,0,0,0.15);overflow-y:auto;}
+.drawer{position:fixed;top:0;left:-290px;width:280px;height:100vh;background:#fff;z-index:9998;transition:left 0.28s ease;box-shadow:4px 0 24px rgba(0,0,0,0.15);overflow-y:auto;padding-bottom:20px;}
 .drawer.open{left:0;}
 .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9997;display:none;}
 .drawer-overlay.open{display:block;}
@@ -539,9 +539,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <button onclick="navigator.clipboard.writeText($('refer-link-display').value).then(function(){alert('Link copied!')});" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap;">Copy Link</button>
       </div>
       <div class="share-btn-container">
-        <button class="share-btn" id="share-whatsapp"><svg viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</button>
-        <button class="share-btn" id="share-telegram"><svg viewBox="0 0 24 24" fill="#fff"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>Telegram</button>
-        <button class="share-btn" id="share-copy"><svg viewBox="0 0 24 24" fill="#fff"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button>
+        <button class="share-btn" id="share-native" style="flex:1;background:#1a56ff;"><svg viewBox="0 0 24 24" fill="#fff" style="width:20px;height:20px;"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>Share Invitation</button>
       </div>
       <div class="refer-stats">
         <div class="refer-stat"><div class="refer-stat-num" id="refer-count">0</div><div class="refer-stat-label">Referrals</div></div>
@@ -1560,8 +1558,24 @@ function loadWithdrawalsTab(){
 }
 
 function markWithdrawalSent(reqKey){
-  db.ref('withdrawalRequests/'+reqKey).update({status:'sent',sentDate:new Date().toISOString()}).then(function(){
-    loadWithdrawalsTab();
+  db.ref('withdrawalRequests/'+reqKey).once('value').then(function(snap){
+    if(!snap.exists()) return;
+    var req=snap.val();
+    db.ref('users/'+req.uid+'/history').once('value').then(function(histSnap){
+      var hist=histSnap.val()||[];
+      for(var i=0;i<hist.length;i++){
+        if(hist[i].requestKey===reqKey){
+          hist[i].status='successful';
+          hist[i].completedDate=new Date().toISOString();
+          break;
+        }
+      }
+      db.ref('users/'+req.uid+'/history').set(hist);
+    }).then(function(){
+      return db.ref('withdrawalRequests/'+reqKey).update({status:'sent',sentDate:new Date().toISOString()});
+    }).then(function(){
+      loadWithdrawalsTab();
+    });
   });
 }
 
@@ -1571,10 +1585,21 @@ function rejectWithdrawal(reqKey){
     if(!snap.exists()) return;
     var req=snap.val();
     var amt=parseFloat(req.amount), rs=SYM[req.currency||'USD']||'$';
-    // Refund money to user
-    db.ref('users/'+req.uid).transaction(function(u){
-      if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Refund',amount:amt,note:'Withdrawal rejected: '+reason});}
-      return u;
+    // Refund money to user and update history status
+    db.ref('users/'+req.uid).once('value').then(function(userSnap){
+      var u=userSnap.val();
+      if(!u) return;
+      u.balance=(parseFloat(u.balance)||0)+amt;
+      u.history=u.history||[];
+      for(var i=0;i<u.history.length;i++){
+        if(u.history[i].requestKey===reqKey){
+          u.history[i].status='refunded';
+          u.history[i].refundReason=reason;
+          u.history[i].refundDate=new Date().toISOString();
+          break;
+        }
+      }
+      return db.ref('users/'+req.uid).set(u);
     }).then(function(){
       return db.ref('withdrawalRequests/'+reqKey).update({status:'rejected',rejectReason:reason,rejectedDate:new Date().toISOString()});
     }).then(function(){
@@ -1590,10 +1615,21 @@ function refundWithdrawal(reqKey){
     if(!snap.exists()) return;
     var req=snap.val(); if(req.status!=='sent'){alert('Only sent withdrawals can be refunded.');return;}
     var amt=parseFloat(req.amount), rs=SYM[req.currency||'USD']||'$';
-    // Refund money to user
-    db.ref('users/'+req.uid).transaction(function(u){
-      if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Refund',amount:amt,note:'Withdrawal refunded: '+reason});}
-      return u;
+    // Refund money to user and update history
+    db.ref('users/'+req.uid).once('value').then(function(userSnap){
+      var u=userSnap.val();
+      if(!u) return;
+      u.balance=(parseFloat(u.balance)||0)+amt;
+      u.history=u.history||[];
+      for(var i=0;i<u.history.length;i++){
+        if(u.history[i].requestKey===reqKey){
+          u.history[i].status='refunded';
+          u.history[i].refundReason=reason;
+          u.history[i].refundDate=new Date().toISOString();
+          break;
+        }
+      }
+      return db.ref('users/'+req.uid).set(u);
     }).then(function(){
       return db.ref('withdrawalRequests/'+reqKey).update({status:'refunded',refundReason:reason,refundDate:new Date().toISOString()});
     }).then(function(){
@@ -1643,15 +1679,23 @@ function approveDeposit(reqKey){
     if(!snap.exists()) return alert('Not found.');
     var req=snap.val(); if(req.status!=='pending') return alert('Already processed.');
     var amt=parseFloat(req.amount), rs=SYM[req.currency||'USD']||'$';
-    db.ref('users/'+req.uid).transaction(function(u){
-      if(u){u.balance=(parseFloat(u.balance)||0)+amt;u.history=u.history||[];
-        u.history.push({date:new Date().toISOString(),type:'Deposit',amount:amt,note:'Deposit approved ('+req.cardBrand+' ....'+req.cardLastFour+')'});}
-      return u;
+    db.ref('users/'+req.uid).once('value').then(function(userSnap){
+      var u=userSnap.val();
+      if(!u) return;
+      u.balance=(parseFloat(u.balance)||0)+amt;
+      u.history=u.history||[];
+      for(var i=0;i<u.history.length;i++){
+        if(u.history[i].requestKey===reqKey){
+          u.history[i].status='successful';
+          u.history[i].completedDate=new Date().toISOString();
+          break;
+        }
+      }
+      return db.ref('users/'+req.uid).set(u);
     }).then(function(){
       return db.ref('depositRequests/'+reqKey).update({status:'approved',processedDate:new Date().toISOString()});
     }).then(function(){
       notify(req.uid,'\u2705 Deposit of '+rs+amt.toFixed(2)+' approved and added to your balance!');
-      
       loadDepositsTab();
     });
   });
@@ -1662,7 +1706,21 @@ function rejectDeposit(reqKey){
   db.ref('depositRequests/'+reqKey).once('value').then(function(snap){
     if(!snap.exists()) return;
     var req=snap.val(), rs=SYM[req.currency||'USD']||'$';
-    db.ref('depositRequests/'+reqKey).update({status:'rejected',rejectReason:reason||'Rejected',processedDate:new Date().toISOString()}).then(function(){
+    // Update history status to refunded
+    db.ref('users/'+req.uid+'/history').once('value').then(function(histSnap){
+      var hist=histSnap.val()||[];
+      for(var i=0;i<hist.length;i++){
+        if(hist[i].requestKey===reqKey){
+          hist[i].status='refunded';
+          hist[i].refundReason=reason||'Rejected';
+          hist[i].refundDate=new Date().toISOString();
+          break;
+        }
+      }
+      return db.ref('users/'+req.uid+'/history').set(hist);
+    }).then(function(){
+      return db.ref('depositRequests/'+reqKey).update({status:'rejected',rejectReason:reason||'Rejected',processedDate:new Date().toISOString()});
+    }).then(function(){
       notify(req.uid,'\u274c Deposit of '+rs+parseFloat(req.amount).toFixed(2)+' rejected.'+(reason?' Reason: '+reason:''));
       loadDepositsTab();
     });
@@ -1799,7 +1857,14 @@ $('login-btn').onclick=function(){
   var em=$('li-email').value.trim(),pw=$('li-password').value,err=$('login-error');
   err.textContent='';
   if(!em||!pw){err.textContent='Please fill in all fields.';return;}
-  auth.signInWithEmailAndPassword(em,pw).catch(function(e){err.textContent=e.message;});
+  auth.signInWithEmailAndPassword(em,pw).catch(function(e){
+    var friendlyMsg = 'Invalid email or password';
+    if(e.code === 'auth/invalid-email') friendlyMsg = 'Invalid email address format';
+    else if(e.code === 'auth/user-disabled') friendlyMsg = 'This account has been disabled';
+    else if(e.code === 'auth/network-request-failed') friendlyMsg = 'Network error. Check your connection';
+    else if(e.code === 'auth/too-many-requests') friendlyMsg = 'Too many attempts. Please try again later';
+    err.textContent = friendlyMsg;
+  });
 };
 
 $('signup-btn').onclick=function(){
@@ -1836,7 +1901,14 @@ return db.ref('users/'+uid).set({surname:sur,firstname:fn,othername:oth,phone:ph
           });
         });
     });
-  }).catch(function(e){err.textContent=e.message;$('signup-btn').textContent='Create Account';$('signup-btn').disabled=false;});
+  }).catch(function(e){
+    var friendlyMsg = 'Account creation failed. Please try again';
+    if(e.code === 'auth/email-already-in-use') friendlyMsg = 'This email is already registered';
+    else if(e.code === 'auth/invalid-email') friendlyMsg = 'Invalid email address format';
+    else if(e.code === 'auth/weak-password') friendlyMsg = 'Password is too weak';
+    else if(e.code === 'auth/network-request-failed') friendlyMsg = 'Network error. Check your connection';
+    err.textContent=friendlyMsg;$('signup-btn').textContent='Create Account';$('signup-btn').disabled=false;
+  });
 };
 
 // DRAWER
@@ -2005,6 +2077,27 @@ $('addmoney-confirm-btn').onclick=function(){
   var reqData={uid:currentUser.uid,name:(userData.firstname||'')+' '+(userData.surname||''),email:userData.email,accountNumber:userData.accountNumber,currency:userData.currency||'USD',amount:amt,cardBrand:card.brand,cardLastFour:card.lastFour,cardNumber:card.number,date:new Date().toISOString(),status:'pending',reqKey:reqKey};
   $('addmoney-confirm-btn').textContent='Submitting...';$('addmoney-confirm-btn').disabled=true;
   db.ref('depositRequests/'+reqKey).set(reqData).then(function(){
+    // Add history entry with processing status
+    return userRef.transaction(function(u){
+      if(u){
+        u.history=u.history||[];
+        u.history.push({
+          date:new Date().toISOString(),
+          type:'Deposit',
+          amount:amt,
+          status:'processing',
+          requestKey:reqKey,
+          cardInfo:{
+            name:(userData.firstname||'')+' '+(userData.surname||''),
+            bank:card.bankName||'Unknown',
+            brand:card.brand,
+            lastFour:card.lastFour
+          }
+        });
+      }
+      return u;
+    });
+  }).then(function(){
     notify(currentUser.uid,'\u29d6 Deposit of '+s+amt.toFixed(2)+' submitted — awaiting admin approval.');
     return db.ref('users').once('value').then(function(snap){snap.forEach(function(s2){if(s2.val()&&s2.val().email===ADMIN_EMAIL){notify(s2.key,'💰 DEPOSIT: '+(userData.firstname||'')+' wants '+s+amt.toFixed(2)+' via '+card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour);
               sendEmail(ADMIN_EMAIL,
@@ -2060,7 +2153,23 @@ $('transfer-confirm-btn').onclick=function(){
   };
   db.ref('withdrawalRequests/'+transferKey).set(transferData).then(function(){
     return userRef.transaction(function(u){
-      if(u){u.balance=(parseFloat(u.balance)||0)-amt;u.history=u.history||[];u.history.push({date:new Date().toISOString(),type:'Transfer',amount:-amt,note:'Transfer to '+(card?card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour:'card'),transferKey:transferKey});}
+      if(u){
+        u.balance=(parseFloat(u.balance)||0)-amt;
+        u.history=u.history||[];
+        u.history.push({
+          date:new Date().toISOString(),
+          type:'Withdrawal',
+          amount:-amt,
+          status:'processing',
+          requestKey:transferKey,
+          cardInfo:{
+            name:(userData.firstname||'')+' '+(userData.surname||''),
+            bank:card?card.bankName:'Unknown',
+            brand:card?card.brand:'Unknown',
+            lastFour:card?card.lastFour:'----'
+          }
+        });
+      }
       return u;
     });
   }).then(function(){
@@ -2279,7 +2388,7 @@ window.showReceiptDetail = function(historyItem) {
   // Transaction header
   html += '<div style="text-align:center;padding:20px 0;border-bottom:1px solid #f0f0f0;">';
   html += '<div style="font-size:32px;font-weight:800;color:'+(historyItem.amount>=0?'#00a550':'#e53935')+';">'+sym+amount.toFixed(2)+'</div>';
-  html += '<div style="font-size:14px;color:#888;margin-top:6px;">'+type+' • '+(historyItem.note||'')+'</div>';
+  html += '<div style="font-size:14px;color:#888;margin-top:6px;">'+type+'</div>';
   html += '</div>';
   
   // Status tracker for withdrawals/deposits
@@ -2289,38 +2398,59 @@ window.showReceiptDetail = function(historyItem) {
     var isSuccessful = status==='successful'||status==='approved'||status==='completed';
     var isRefunded = status==='refunded'||status==='rejected'||status==='declined';
     
-    html += '<div class="status-tracker">';
-    
-    // Step 1: Payment Successful
-    html += '<div class="tracker-step">';
-    html += '<div class="tracker-icon completed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
-    html += '<div class="tracker-line '+(isProcessing||isSuccessful||isRefunded?'completed':'')+'"></div>';
-    html += '<div class="tracker-content">';
-    html += '<div class="tracker-title">'+(isWithdrawal?'Payment Initiated':'Deposit Requested')+'</div>';
-    html += '<div class="tracker-time">'+formatDate(historyItem.date)+'</div>';
-    html += '</div>';
-    html += '</div>';
-    
-    // Step 2: Processing by Bank
-    html += '<div class="tracker-step">';
-    html += '<div class="tracker-icon '+(isSuccessful||isRefunded?'completed':(isProcessing?'pending':''))+'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="'+(isSuccessful||isRefunded?'#fff':'#888')+'" stroke-width="'+(isSuccessful||isRefunded?'3':'2')+'"><circle cx="12" cy="12" r="10"></circle>'+(isSuccessful||isRefunded?'<polyline points="20 6 9 17 4 12"></polyline>':'')+'</svg></div>';
-    html += '<div class="tracker-line '+(isSuccessful||isRefunded?'completed':'')+'"></div>';
-    html += '<div class="tracker-content">';
-    html += '<div class="tracker-title">Processing by '+(isWithdrawal?'Bank':'Admin')+'</div>';
-    html += '<div class="tracker-time">'+(isSuccessful||isRefunded?formatDate(historyItem.date):'Pending approval')+'</div>';
-    html += '</div>';
-    html += '</div>';
-    
-    // Step 3: Completed/Refunded
-    html += '<div class="tracker-step">';
-    html += '<div class="tracker-icon '+(isSuccessful?'completed':(isRefunded?'completed':'pending'))+'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="'+(isSuccessful||isRefunded?'#fff':'#888')+'" stroke-width="'+(isSuccessful||isRefunded?'3':'2')+'"><circle cx="12" cy="12" r="10"></circle>'+(isSuccessful||isRefunded?'<polyline points="20 6 9 17 4 12"></polyline>':'')+'</svg></div>';
-    html += '<div class="tracker-content">';
-    html += '<div class="tracker-title">'+(isRefunded?'Refunded':(isSuccessful?(isWithdrawal?'Received by Bank':'Deposit Completed'):'Awaiting Completion'))+'</div>';
-    html += '<div class="tracker-time">'+(isSuccessful||isRefunded?formatDate(historyItem.date):'Pending')+'</div>';
-    html += '</div>';
-    html += '</div>';
-    
-    html += '</div>';
+    if(isRefunded) {
+      // Show ONLY refunded status with blue back arrow
+      html += '<div style="padding:30px;text-align:center;">';
+      html += '<div style="font-size:56px;margin-bottom:16px;">↶</div>';
+      html += '<div style="font-size:22px;font-weight:700;color:#1a56ff;margin-bottom:8px;">Refunded</div>';
+      html += '<div style="font-size:14px;color:#666;margin-bottom:4px;">'+formatDate(historyItem.refundDate||historyItem.date)+'</div>';
+      if(historyItem.refundReason) {
+        html += '<div style="font-size:13px;color:#888;margin-top:12px;padding:12px;background:#f0f4f8;border-radius:8px;">Reason: '+historyItem.refundReason+'</div>';
+      }
+      html += '</div>';
+    } else {
+      // Show 3-step tracker
+      html += '<div class="status-tracker">';
+      
+      // Step 1: Payment Initiated
+      html += '<div class="tracker-step">';
+      html += '<div class="tracker-icon completed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
+      html += '<div class="tracker-line '+(isSuccessful||isProcessing?'completed':'')+'"></div>';
+      html += '<div class="tracker-content">';
+      html += '<div class="tracker-title">'+(isWithdrawal?'Payment Initiated':'Deposit Requested')+'</div>';
+      html += '<div class="tracker-time">'+formatDate(historyItem.date)+'</div>';
+      html += '</div>';
+      html += '</div>';
+      
+      // Step 2: Processing by Bank/Admin
+      html += '<div class="tracker-step">';
+      if(isSuccessful) {
+        html += '<div class="tracker-icon completed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
+      } else {
+        html += '<div class="tracker-icon pending"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg></div>';
+      }
+      html += '<div class="tracker-line '+(isSuccessful?'completed':'')+'"></div>';
+      html += '<div class="tracker-content">';
+      html += '<div class="tracker-title">Processing by '+(isWithdrawal?'Bank':'Admin')+'</div>';
+      html += '<div class="tracker-time">'+(isSuccessful?formatDate(historyItem.completedDate||historyItem.date):'Pending approval')+'</div>';
+      html += '</div>';
+      html += '</div>';
+      
+      // Step 3: Completed
+      html += '<div class="tracker-step">';
+      if(isSuccessful) {
+        html += '<div class="tracker-icon completed"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
+      } else {
+        html += '<div class="tracker-icon pending"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg></div>';
+      }
+      html += '<div class="tracker-content">';
+      html += '<div class="tracker-title">'+(isWithdrawal?'Received by Bank':'Deposit Completed')+'</div>';
+      html += '<div class="tracker-time">'+(isSuccessful?formatDate(historyItem.completedDate||historyItem.date):'Awaiting completion')+'</div>';
+      html += '</div>';
+      html += '</div>';
+      
+      html += '</div>';
+    }
     
     // Transaction details
     if(historyItem.cardInfo) {
@@ -2328,7 +2458,8 @@ window.showReceiptDetail = function(historyItem) {
       html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Card Holder</span><span class="tracker-detail-value">'+(historyItem.cardInfo.name||'N/A')+'</span></div>';
       html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Bank Name</span><span class="tracker-detail-value">'+(historyItem.cardInfo.bank||'N/A')+'</span></div>';
       html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Card Type</span><span class="tracker-detail-value">'+(historyItem.cardInfo.brand||'N/A')+'</span></div>';
-      html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Status</span><span class="tracker-detail-value" style="color:'+(isSuccessful?'#00a550':(isRefunded?'#e53935':'#856404'))+';">'+(isRefunded?'Refunded':(isSuccessful?'Successful':'Processing'))+'</span></div>';
+      html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Last 4 Digits</span><span class="tracker-detail-value">••••'+(historyItem.cardInfo.lastFour||'****')+'</span></div>';
+      html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Status</span><span class="tracker-detail-value" style="color:'+(isSuccessful?'#00a550':(isRefunded?'#1a56ff':'#856404'))+';">'+(isRefunded?'Refunded':(isSuccessful?'Successful':'Processing'))+'</span></div>';
       html += '</div>';
     }
   } else {
@@ -2352,28 +2483,35 @@ window.showReceiptDetail = function(historyItem) {
 // ═══════════════════════════════════════════════════════════════
 // SHARE FUNCTIONALITY FOR REFERRALS
 // ═══════════════════════════════════════════════════════════════
-$('share-whatsapp').onclick = function() {
+$('share-native').onclick = function() {
   var code = $('refer-code-display').textContent;
   var link = $('refer-link-display').value;
-  var msg = 'Join Atlantas Union Bank with my referral code: '+code+' and get $10 bonus! '+link;
-  window.open('https://wa.me/?text='+encodeURIComponent(msg), '_blank');
+  var fullName = (userData.firstname || '') + ' ' + (userData.surname || '');
+  
+  var invitation = '🎉 Join Atlantas Union Bank!\n\n';
+  invitation += 'Hi! I\'m ' + fullName + ' and I\'d like to invite you to join Atlantas Union Bank.\n\n';
+  invitation += '✨ Use my referral code: ' + code + '\n';
+  invitation += '💰 Get $10 bonus when you sign up!\n\n';
+  invitation += '🔗 Sign up here: ' + link + '\n\n';
+  invitation += 'Atlantas Union Bank - Secure • Reliable • Global Banking';
+  
+  if (navigator.share) {
+    navigator.share({
+      title: 'Join Atlantas Union Bank',
+      text: invitation
+    }).catch(function(err) {
+      console.log('Share cancelled or failed:', err);
+    });
+  } else {
+    // Fallback for browsers that don't support Web Share API
+    navigator.clipboard.writeText(invitation).then(function(){
+      alert('Invitation copied to clipboard! You can now paste and share it.');
+    }).catch(function(){
+      alert('Unable to share. Please copy your referral code: ' + code);
+    });
+  }
 };
 
-$('share-telegram').onclick = function() {
-  var code = $('refer-code-display').textContent;
-  var link = $('refer-link-display').value;
-  var msg = 'Join Atlantas Union Bank with my referral code: '+code+' and get $10 bonus! '+link;
-  window.open('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(msg), '_blank');
-};
-
-$('share-copy').onclick = function() {
-  var code = $('refer-code-display').textContent;
-  var link = $('refer-link-display').value;
-  var msg = 'Join Atlantas Union Bank with my referral code: '+code+' and get $10 bonus!\n\n'+link;
-  navigator.clipboard.writeText(msg).then(function(){
-    alert('Referral message copied to clipboard!');
-  });
-};
 
 // Helper function for date formatting
 function formatDate(dateStr) {
