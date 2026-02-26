@@ -346,7 +346,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     </div>
     <div class="drawer-item" onclick="openModal('account-modal')"><span class="drawer-item-icon">&#128100;</span data-i18n="accountInfo">Account Info</div>
     <div class="drawer-item" onclick="openModal('more-modal')"><span class="drawer-item-icon">&#9881;&#65039;</span data-i18n="settings">Settings</div>
-    <div class="drawer-item" onclick="openReferModal()"><span class="drawer-item-icon">&#127873;</span>Refer &amp; Earn</div>
+    <div class="drawer-item" onclick="openReferModal()"><span class="drawer-item-icon" style="background:#e3f2fd;color:#1976d2;border-radius:8px;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;">🎁</span>Refer &amp; Earn</div>
     <div class="drawer-item red" id="drawer-logout"><span class="drawer-item-icon">&#128682;</span data-i18n="logOut">Log Out</div>
   </div>
 
@@ -355,8 +355,13 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     <div class="topbar">
       <button class="topbar-menu" id="menu-btn">&#9776;</button>
       <div class="topbar-center">
-        <span class="topbar-greeting" data-i18n="goodDay">Good day,</span>
-        <span class="topbar-name" id="topbar-name">User</span><img id="verified-badge" src="https://i.imgur.com/YSSbVMh.jpeg" style="display:none;width:18px;height:18px;border-radius:50%;margin-left:5px;vertical-align:middle;object-fit:cover;" title="Verified">
+        <img src="https://i.imgur.com/iN8T10D.jpeg" style="width:32px;height:32px;object-fit:contain;margin-right:8px;">
+        <div style="display:flex;flex-direction:column;align-items:flex-start;">
+          <span class="topbar-greeting" data-i18n="goodDay" style="font-size:11px;line-height:1;">Good day,</span>
+          <div style="display:flex;align-items:center;">
+            <span class="topbar-name" id="topbar-name" style="font-size:14px;">User</span><img id="verified-badge" src="https://i.imgur.com/YSSbVMh.jpeg" style="display:none;width:16px;height:16px;border-radius:50%;margin-left:4px;object-fit:cover;" title="Verified">
+          </div>
+        </div>
       </div>
       <div class="topbar-right">
         <button class="notif-btn" id="notif-btn" style="background:#e3f2fd;color:#1976d2;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;position:relative;border:none;cursor:pointer;">🔔<span class="notif-badge" id="notif-badge"></span></button>
@@ -409,12 +414,12 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       <div style="padding:24px 16px;">
         <p style="text-align:center;color:#888;font-size:14px;margin-bottom:20px;" data-i18n="whatToDo">What would you like to do?</p>
         <button class="sendreq-option-btn" id="choose-send-btn" onclick="chooseSendMoney()">
-          <span style="font-size:36px;display:block;margin-bottom:10px;">&#128184;</span>
+          <span style="font-size:36px;display:block;margin-bottom:10px;background:#e3f2fd;color:#1976d2;border-radius:12px;width:64px;height:64px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">💸</span>
           <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Send Money</span>
           <span style="font-size:13px;color:#666;display:block;margin-top:4px;" data-i18n="transferDesc">Transfer money to another account</span>
         </button>
         <button class="sendreq-option-btn" id="choose-req-btn" onclick="chooseRequestMoney()">
-          <span style="font-size:36px;display:block;margin-bottom:10px;">&#128233;</span>
+          <span style="font-size:36px;display:block;margin-bottom:10px;background:#e3f2fd;color:#1976d2;border-radius:12px;width:64px;height:64px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">📬</span>
           <span style="font-size:17px;font-weight:700;color:#0a2540;display:block;">Request Money</span>
           <span style="font-size:13px;color:#666;display:block;margin-top:4px;" data-i18n="requestDesc">Ask someone to send you money</span>
         </button>
@@ -1199,6 +1204,7 @@ function renderCards(cards){
     var isTop=idx===valid.length-1;
     var sc=card.status==='authorized'?'rgba(52,211,153,0.3)':card.status==='rejected'?'rgba(255,92,92,0.3)':'rgba(255,193,7,0.3)';
     var st=card.status==='authorized'?'\u2713 Authorized':card.status==='rejected'?'\u2717 Rejected':'\u29d6 Pending';
+    var brandColor=card.brand==='VISA'?'#1A1F71':card.brand==='MASTERCARD'?'#EB001B':'#333';
     var sclr=card.status==='authorized'?'#34d399':card.status==='rejected'?'#ff5c5c':'#ffc107';
     var tile=document.createElement('div');
     tile.className='card-tile';
@@ -1403,7 +1409,7 @@ function renderTx(history){
     }
     txEl.innerHTML=
       '<div style="display:flex;align-items:center;flex:1;min-width:0;">'+
-        '<div class="tx-icon" style="background:'+(isCredit?'#e6faf0':'#fff0f0')+';">'+(isCredit?'\u2b07\ufe0f':'\u2b06\ufe0f')+'</div>'+
+        '<div class="tx-icon" style="background:'+(isCredit?'#e8f5e9':'#ffebee')+';color:'+(isCredit?'#2e7d32':'#c62828')+';border-radius:12px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;">'+(isCredit?'↓':'↑')+'</div>'+
         '<div class="tx-info">'+
           '<div class="tx-type">'+(tx.note||tx.type||'Transaction')+'</div>'+
           '<div class="tx-date">'+dateStr+'</div>'+
