@@ -2420,24 +2420,7 @@ window.showSendReqChooser=function(){
   if(ss)ss.style.display='none';
   if(sr)sr.style.display='none';
 };
-var csb=$('choose-send-btn');console.log('Setting choose-send-btn handler',csb);if(csb)csb.onclick=function(){
-  var sc=$('sendreq-chooser'),ss=$('sendreq-send'),sr=$('sendreq-request');
-  if(sc)sc.style.display='none';
-  if(ss)ss.style.display='block';
-  if(sr)sr.style.display='none';
-  var sa=$('send-acct'),sam=$('send-amount'),sp=$('send-pin'),sai=$('send-acct-info'),se=$('send-error');
-  if(sa)sa.value=''; if(sam)sam.value=''; if(sp)sp.value='';
-  if(sai)sai.style.display='none'; if(se)se.textContent='';
-};
-var crb=$('choose-req-btn');console.log('Setting choose-req-btn handler',crb);if(crb)crb.onclick=function(){
-  var sc=$('sendreq-chooser'),ss=$('sendreq-send'),sr=$('sendreq-request');
-  if(sc)sc.style.display='none';
-  if(sr)sr.style.display='block';
-  if(ss)ss.style.display='none';
-  var ra=$('req-acct'),ram=$('req-amount'),rn=$('req-note'),rai=$('req-acct-info'),re=$('req-error');
-  if(ra)ra.value=''; if(ram)ram.value=''; if(rn)rn.value='';
-  if(rai)rai.style.display='none'; if(re)re.textContent='';
-};
+// Chooser button handlers already defined in HTML via onclick attributes (chooseSendMoney, chooseRequestMoney)
 // Reset to chooser when leaving the Send/Request tab
 var _origSwitchTab=switchTab;
 switchTab=function(tabId,btn){
@@ -2478,21 +2461,6 @@ window.addEventListener('popstate',function(e){
     auth.signOut();
   }
 });
-
-}); 
-// Retry setting Send/Request handlers in case DOM wasn't ready
-setTimeout(function(){
-  var csb=document.getElementById('choose-send-btn');
-  var crb=document.getElementById('choose-req-btn');
-  if(csb && !csb.onclick){
-    csb.onclick=function(){chooseSendMoney();};
-    console.log('Set choose-send-btn via retry');
-  }
-  if(crb && !crb.onclick){
-    crb.onclick=function(){chooseRequestMoney();};
-    console.log('Set choose-req-btn via retry');
-  }
-},1000);
 
 // END DOMContentLoaded
 </script>
