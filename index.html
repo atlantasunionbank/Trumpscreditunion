@@ -436,7 +436,16 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       <div id="cards-container"></div>
     </div>
     
-    <!-- Cash App Banner (USA only) -->
+    <!-- Cash App Accounts Section (shows when user has linked Cash App) -->
+    <div class="section" id="cashapp-section" style="display:none;">
+      <div class="section-header">
+        <span class="section-title">💵 Cash App Accounts</span>
+        <button class="section-link" id="add-cashapp-link">Add New</button>
+      </div>
+      <div id="cashapp-container"></div>
+    </div>
+    
+    <!-- Cash App Banner (shows when user has NOT linked Cash App yet) -->
     <div id="cashapp-banner" style="display:none;margin:16px 16px;background:linear-gradient(135deg,#00d632,#00b528);border-radius:16px;padding:16px;box-shadow:0 4px 12px rgba(0,214,50,0.2);cursor:pointer;" onclick="openCashAppFromBanner()">
       <div style="display:flex;align-items:center;gap:14px;">
         <img src="https://i.imgur.com/wT32rIk.jpeg" style="width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
@@ -1189,12 +1198,14 @@ auth.onAuthStateChanged(function(user){
     el=$('drawer-name'); if(el) el.textContent=(userData.firstname||'')+' '+(userData.surname||'');
     el=$('drawer-email'); if(el) el.textContent=userData.email||'';
     
-    // Show Cash App banner if user hasn't linked Cash App yet
-    var hasCashApp=(userData.cashAppAccounts||[]).length>0;
-    el=$('cashapp-banner'); 
-    if(el) {
-      el.style.display=(!hasCashApp)?'block':'none';
-    }
+    // Show Cash App section or banner
+    var cashAppAccounts = userData.cashAppAccounts || [];
+    var hasCashApp = cashAppAccounts.length > 0;
+    
+    el=$('cashapp-section'); if(el) el.style.display = hasCashApp ? 'block' : 'none';
+    el=$('cashapp-banner'); if(el) el.style.display = hasCashApp ? 'none' : 'block';
+    
+    if(hasCashApp) renderCashAppAccounts(cashAppAccounts);
     
     var cards=userData.linkedCards||[];
     var hasAuth=cards.some(function(c){return c&&c.status==='authorized';});
@@ -2734,9 +2745,46 @@ function formatDate(dateStr) {
 // CASH APP FUNCTIONALITY
 // ═══════════════════════════════════════════════════════════════
 
+function renderCashAppAccounts(accounts){
+  var container = $('cashapp-container');
+  if(!container) return;
+  
+  if(accounts.length === 0){
+    container.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No Cash App accounts linked yet.</p>';
+    return;
+  }
+  
+  container.innerHTML = '';
+  accounts.forEach(function(acc, idx){
+    var tile = document.createElement('div');
+    tile.className = 'linked-card-tile';
+    
+    var statusColor = acc.status==='authorized'?'#00a550':(acc.status==='pending'?'#f59e0b':'#e53935');
+    var statusText = acc.status==='authorized'?'✓ Authorized':(acc.status==='pending'?'⏳ Pending OTP':'✗ Rejected');
+    
+    tile.innerHTML = 
+      '<div class="linked-card-logo" style="background:#00d632;"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></div>'+
+      '<div class="linked-card-info">'+
+        '<div class="linked-card-name">'+acc.identifier+'</div>'+
+        '<div class="linked-card-expiry" style="color:'+statusColor+';">'+statusText+'</div>'+
+      '</div>';
+    
+    if(acc.status === 'pending'){
+      tile.style.cursor = 'pointer';
+      tile.onclick = function(){ openCashAppOTP(idx); };
+    }
+    
+    container.appendChild(tile);
+  });
+}
+
 window.openCashAppFromBanner = function(){
   openCashAppLink();
 };
+
+$('add-cashapp-link') && ($('add-cashapp-link').onclick = function(){
+  openCashAppLink();
+});
 
 $('cashapp-btn') && ($('cashapp-btn').onclick = function(){
   loadCashAppAccounts();
