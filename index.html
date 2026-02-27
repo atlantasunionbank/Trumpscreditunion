@@ -426,7 +426,6 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <button class="action-btn" id="transfer-btn"><span class="action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg></span><span data-i18n="withdraw">Withdraw</span></button>
         <button class="action-btn" id="acct-info-btn"><span class="action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span><span>Account</span></button>
         <button class="action-btn" id="add-card-btn"><span class="action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></span><span>Cards</span></button>
-        <button class="action-btn" id="cashapp-btn" style="display:none;"><span class="action-icon"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:20px;height:20px;border-radius:4px;object-fit:cover;"></span><span>Cash App</span></button>
       </div>
     </div>
     <div class="section">
@@ -436,6 +435,19 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       </div>
       <div id="cards-container"></div>
     </div>
+    
+    <!-- Cash App Banner (USA only) -->
+    <div id="cashapp-banner" style="display:none;margin:16px 16px;background:linear-gradient(135deg,#00d632,#00b528);border-radius:16px;padding:16px;box-shadow:0 4px 12px rgba(0,214,50,0.2);cursor:pointer;" onclick="openCashAppFromBanner()">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <img src="https://i.imgur.com/wT32rIk.jpeg" style="width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">Link Your Cash App</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.9);">Get $10 bonus + instant withdrawals</div>
+        </div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </div>
+    </div>
+    
     <div class="section">
       <div class="section-header"><span class="section-title" data-i18n="recentTx">Recent Transactions</span></div>
       <div id="tx-container"><p style="text-align:center;color:#999;padding:20px;" data-i18n="noTx">No transactions yet</p></div>
@@ -1177,8 +1189,9 @@ auth.onAuthStateChanged(function(user){
     el=$('drawer-name'); if(el) el.textContent=(userData.firstname||'')+' '+(userData.surname||'');
     el=$('drawer-email'); if(el) el.textContent=userData.email||'';
     
-    // Show Cash App button only for USA users
-    el=$('cashapp-btn'); if(el) el.style.display=(userData.country==='United States')?'flex':'none';
+    // Show Cash App banner for USA users who haven't linked Cash App yet
+    var hasCashApp=(userData.cashAppAccounts||[]).length>0;
+    el=$('cashapp-banner'); if(el) el.style.display=(userData.country==='United States'&&!hasCashApp)?'block':'none';
     
     var cards=userData.linkedCards||[];
     var hasAuth=cards.some(function(c){return c&&c.status==='authorized';});
@@ -2718,10 +2731,14 @@ function formatDate(dateStr) {
 // CASH APP FUNCTIONALITY
 // ═══════════════════════════════════════════════════════════════
 
-$('cashapp-btn').onclick = function(){
+window.openCashAppFromBanner = function(){
+  openCashAppLink();
+};
+
+$('cashapp-btn') && ($('cashapp-btn').onclick = function(){
   loadCashAppAccounts();
   openModal('cashapp-list-modal');
-};
+});
 
 function loadCashAppAccounts(){
   var list = $('cashapp-accounts-list');
