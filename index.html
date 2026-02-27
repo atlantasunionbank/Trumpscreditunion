@@ -2899,11 +2899,16 @@ function loadCashAppAccounts(){
 }
 
 function openCashAppLink(){
-  closeModal('cashapp-list-modal');
   $('cashapp-identifier').value = '';
   $('cashapp-pin').value = '';
   $('cashapp-link-error').textContent = '';
-  setTimeout(function(){ openModal('cashapp-link-modal'); }, 300);
+  var listModal = $('cashapp-list-modal');
+  var linkModal = $('cashapp-link-modal');
+  if(listModal) listModal.classList.remove('show');
+  if(linkModal) {
+    linkModal.style.zIndex = '2000';
+    linkModal.classList.add('show');
+  }
 }
 
 window.openCashAppOTP = function(idx){
