@@ -2903,7 +2903,7 @@ function openCashAppLink(){
   $('cashapp-identifier').value = '';
   $('cashapp-pin').value = '';
   $('cashapp-link-error').textContent = '';
-  openModal('cashapp-link-modal');
+  setTimeout(function(){ openModal('cashapp-link-modal'); }, 300);
 }
 
 window.openCashAppOTP = function(idx){
