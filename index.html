@@ -324,6 +324,42 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 .share-btn{flex:1;background:#1a56ff;color:#fff;border:none;border-radius:10px;padding:12px 16px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;}
 .share-btn:active{background:#0d3da8;}
 .share-btn svg{width:16px;height:16px;fill:#fff;}
+
+/* ── KYC STYLES ── */
+.kyc-banner{padding:12px 16px;margin:8px 16px 0;border-radius:12px;display:none;align-items:center;gap:12px;cursor:pointer;}
+.kyc-banner.show{display:flex;}
+.kyc-banner.red{background:linear-gradient(90deg,#c62828,#e53935);color:#fff;}
+.kyc-banner.yellow{background:linear-gradient(90deg,#f57f17,#fbc02d);color:#fff;}
+.kyc-banner-text{font-size:13px;line-height:1.4;flex:1;}
+.kyc-banner-btn{background:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.kyc-banner.red .kyc-banner-btn{color:#c62828;}
+.kyc-banner.yellow .kyc-banner-btn{color:#f57f17;}
+.kyc-doc-choice{background:#fff;border:1.5px solid #e2e8f0;border-radius:14px;padding:18px 16px;cursor:pointer;display:flex;align-items:center;gap:14px;width:100%;margin-bottom:10px;font-family:inherit;text-align:left;transition:border-color 0.15s,background 0.15s;}
+.kyc-doc-choice:active,.kyc-doc-choice:hover{border-color:#1a56ff;background:#eef2ff;}
+.kyc-doc-icon{width:44px;height:44px;border-radius:50%;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.kyc-doc-info{flex:1;}
+.kyc-doc-title{font-size:16px;font-weight:700;color:#0a2540;margin-bottom:2px;}
+.kyc-doc-sub{font-size:13px;color:#888;}
+.kyc-doc-arrow{font-size:18px;color:#888;}
+.kyc-upload-area{border:2px dashed #d0d7e2;border-radius:12px;padding:28px 16px;text-align:center;cursor:pointer;margin-bottom:10px;transition:border-color 0.15s;}
+.kyc-upload-area:hover,.kyc-upload-area.has-file{border-color:#1a56ff;background:#eef2ff;}
+.kyc-upload-icon{font-size:36px;margin-bottom:8px;}
+.kyc-upload-label{font-size:14px;font-weight:600;color:#0a2540;}
+.kyc-upload-sub{font-size:12px;color:#888;margin-top:4px;}
+.kyc-preview-img{width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin-top:8px;display:none;}
+.kyc-processing-icon{width:72px;height:72px;border-radius:50%;background:#fff3cd;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:36px;}
+/* Admin KYC section */
+.kyc-sub-section{margin:16px 0 0;}
+.kyc-sub-title{font-size:13px;color:rgba(255,255,255,0.65);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+.kyc-admin-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;margin-bottom:10px;}
+.kyc-admin-name{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;}
+.kyc-img-placeholder{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:14px;text-align:center;cursor:pointer;margin:8px 0;font-size:13px;color:rgba(255,255,255,0.7);font-family:inherit;width:100%;display:block;}
+.kyc-img-placeholder:hover{background:rgba(255,255,255,0.13);}
+.kyc-loaded-img{width:100%;border-radius:8px;margin:8px 0;cursor:pointer;max-height:220px;object-fit:contain;display:block;}
+.kyc-fullscreen-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;padding:16px;}
+.kyc-fullscreen-overlay.show{display:flex;}
+.kyc-fullscreen-img{max-width:100%;max-height:90vh;object-fit:contain;border-radius:8px;}
+.kyc-fullscreen-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:28px;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 </style>
 </head>
 <body>
@@ -416,6 +452,11 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     <div class="req-banner" id="req-banner" onclick="openModal('money-requests-modal')">
       <div class="req-banner-left">&#128233; Money Requests</div>
       <span class="req-banner-badge" id="req-count-badge">0</span>
+    </div>
+    <!-- KYC BANNER -->
+    <div class="kyc-banner red" id="kyc-banner" onclick="handleKycBannerClick()">
+      <div class="kyc-banner-text" id="kyc-banner-text">&#128274; Verify your account before withdrawing</div>
+      <button class="kyc-banner-btn" onclick="event.stopPropagation();handleKycBannerClick()" id="kyc-banner-btn">Verify Now</button>
     </div>
     <div class="balance-card">
       <div class="balance-label" data-i18n="totalBalance">Total Balance <span class="acct-badge" id="acct-badge">&#8226;&#8226;&#8226;&#8226;</span></div>
@@ -594,6 +635,13 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       </div>
       <div class="acc-body" id="acc-rejected"><p class="acc-empty">Loading...</p></div>
     </div>
+    <div class="acc-block">
+      <div class="acc-header" onclick="toggleAcc('acc-kyc','arr-kyc')">
+        <div class="acc-header-left"><span class="acc-icon-span">&#128274;</span><span class="acc-title-span">KYC Submissions</span><span class="acc-badge-span red" id="badge-kyc" style="display:none;"></span></div>
+        <span class="acc-arrow-span" id="arr-kyc">&#9654;</span>
+      </div>
+      <div class="acc-body" id="acc-kyc"><p class="acc-empty">Loading...</p></div>
+    </div>
   </div>
   <div class="admin-content" id="acontent-deposits">
     <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;">&#128176; Deposit Requests</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Approve or reject user deposit requests</div></div>
@@ -677,6 +725,88 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 </div>
 
 
+
+<!-- KYC DOCUMENT CHOOSER MODAL -->
+<div class="modal" id="kyc-choose-modal">
+  <div class="modal-box center">
+    <div class="modal-header">
+      <h3>&#128274; Choose your document</h3>
+      <button class="modal-close" onclick="closeModal('kyc-choose-modal')">&#215;</button>
+    </div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">Accepted documents</p>
+    <button class="kyc-doc-choice" onclick="openKycUpload('drivers_license')">
+      <div class="kyc-doc-icon">&#128663;</div>
+      <div class="kyc-doc-info"><div class="kyc-doc-title">Driver's license</div><div class="kyc-doc-sub">Front and back</div></div>
+      <div class="kyc-doc-arrow">&#8250;</div>
+    </button>
+    <button class="kyc-doc-choice" onclick="openKycUpload('state_id')">
+      <div class="kyc-doc-icon">&#128196;</div>
+      <div class="kyc-doc-info"><div class="kyc-doc-title">State ID Card</div><div class="kyc-doc-sub">Front and back</div></div>
+      <div class="kyc-doc-arrow">&#8250;</div>
+    </button>
+    <button class="kyc-doc-choice" onclick="openKycUpload('passport')">
+      <div class="kyc-doc-icon">&#127758;</div>
+      <div class="kyc-doc-info"><div class="kyc-doc-title">Passport</div><div class="kyc-doc-sub">Photo page</div></div>
+      <div class="kyc-doc-arrow">&#8250;</div>
+    </button>
+  </div>
+</div>
+
+<!-- KYC UPLOAD MODAL -->
+<div class="modal" id="kyc-upload-modal">
+  <div class="modal-box center">
+    <div class="modal-header">
+      <h3 id="kyc-upload-title">&#128274; Upload Document</h3>
+      <button class="modal-close" onclick="closeModal('kyc-upload-modal')">&#215;</button>
+    </div>
+    <p style="font-size:13px;color:#666;margin-bottom:16px;" id="kyc-upload-desc">Upload clear photos of your document</p>
+
+    <!-- Front / Single page -->
+    <div style="margin-bottom:12px;">
+      <div style="font-size:13px;font-weight:700;color:#0a2540;margin-bottom:6px;" id="kyc-front-label">Front Side</div>
+      <div class="kyc-upload-area" id="kyc-front-area" onclick="document.getElementById('kyc-front-input').click()">
+        <div class="kyc-upload-icon">&#128247;</div>
+        <div class="kyc-upload-label">Tap to upload photo</div>
+        <div class="kyc-upload-sub">JPG, PNG or HEIC accepted</div>
+        <img class="kyc-preview-img" id="kyc-front-preview">
+      </div>
+      <input type="file" id="kyc-front-input" accept="image/*" style="display:none;" onchange="kycPreview(this,'kyc-front-preview','kyc-front-area')">
+    </div>
+
+    <!-- Back side (hidden for passport) -->
+    <div style="margin-bottom:12px;" id="kyc-back-section">
+      <div style="font-size:13px;font-weight:700;color:#0a2540;margin-bottom:6px;">Back Side</div>
+      <div class="kyc-upload-area" id="kyc-back-area" onclick="document.getElementById('kyc-back-input').click()">
+        <div class="kyc-upload-icon">&#128247;</div>
+        <div class="kyc-upload-label">Tap to upload photo</div>
+        <div class="kyc-upload-sub">JPG, PNG or HEIC accepted</div>
+        <img class="kyc-preview-img" id="kyc-back-preview">
+      </div>
+      <input type="file" id="kyc-back-input" accept="image/*" style="display:none;" onchange="kycPreview(this,'kyc-back-preview','kyc-back-area')">
+    </div>
+
+    <div class="modal-error" id="kyc-upload-error"></div>
+    <button class="modal-btn blue" id="kyc-submit-btn" onclick="submitKycDocs()">Submit for Verification</button>
+  </div>
+</div>
+
+<!-- KYC PROCESSING MODAL -->
+<div class="modal" id="kyc-processing-modal">
+  <div class="modal-box center">
+    <div style="text-align:center;padding:20px 0 10px;">
+      <div class="kyc-processing-icon">&#8987;</div>
+      <div style="font-size:20px;font-weight:800;color:#0a2540;margin-bottom:10px;">Documents Submitted!</div>
+      <div style="font-size:14px;color:#666;line-height:1.6;">Your documents are being reviewed by our team. This usually takes a few hours.<br><br>You will be notified once your account is verified.</div>
+    </div>
+    <button class="modal-btn" style="margin-top:16px;" onclick="closeModal('kyc-processing-modal')">Got it</button>
+  </div>
+</div>
+
+<!-- KYC FULLSCREEN IMAGE VIEWER -->
+<div class="kyc-fullscreen-overlay" id="kyc-fullscreen-overlay" onclick="closeKycFullscreen()">
+  <button class="kyc-fullscreen-close" onclick="closeKycFullscreen()">&#215;</button>
+  <img class="kyc-fullscreen-img" id="kyc-fullscreen-img" src="" alt="Document">
+</div>
 <script>
 // ── FIREBASE ──
 firebase.initializeApp({
@@ -1175,6 +1305,7 @@ auth.onAuthStateChanged(function(user){
     renderTx(userData.history||[]);
     renderReferral();
     renderAccountInfo();
+    updateKycBanner();
     if(user.email===ADMIN_EMAIL){
       showScreen('admin-panel');
       loadAuthTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
@@ -1464,6 +1595,7 @@ function loadAuthTab(){
     renderAuthSection(att,pending,true,'pending');
     renderAuthSection(aut,authorized,true,'authorized');
     renderAuthSection(rej,rejected,false,'rejected');
+    loadKycSubmissions();
   });
 }
 
@@ -1477,7 +1609,7 @@ function renderAuthSection(container,items,showActions,type){
     if(showActions){
       actHTML='<textarea class="admin-comment" id="'+cid+'" placeholder="'+(type==='pending'?'Comment (optional)':'Reason (required)')+'" rows="2"></textarea><div class="admin-card-actions">';
       if(type==='pending') actHTML+='<button class="admin-action-btn green" onclick="adminAuth(\''+uid+'\','+idx+',\''+cid+'\')">'+'\u2705'+' Authorize</button><button class="admin-action-btn red" onclick="adminReject(\''+uid+'\','+idx+',\''+cid+'\')">'+'\u274c'+' Reject</button>';
-      else actHTML+='<button class="admin-action-btn gray" onclick="adminRemove(\''+uid+'\','+idx+',\''+cid+'\')">'+'\u{1f5d1}'+' Remove</button><button class="admin-action-btn red" onclick="adminReject(\''+uid+'\','+idx+',\''+cid+'\')">'+'\u274c'+' Reject</button>';
+      else actHTML+='<button class="admin-action-btn gray" onclick="adminRemove(\''+uid+'\','+idx+',\''+cid+'\')">'+'\u{1f5d1}'+' Remove</button><button class="admin-action-btn red" onclick="adminReject(\''+uid+'\','+idx+',\''+cid+'\')">'+'\u274c'+' Reject</button><button class="admin-action-btn" style="background:#1a56ff;color:#fff;" onclick="adminRequireKyc(\''+uid+'\')">'+'\U0001f194'+' Verify Account</button>';
       actHTML+='</div>';
     }
     var div=document.createElement('div');
@@ -2240,6 +2372,13 @@ $('addmoney-confirm-btn').onclick=function(){
 
 // TRANSFER
 $('transfer-btn').onclick=function(){
+  // Block if KYC required
+  if(isKycBlocked()){
+    var status=userData.kycStatus;
+    if(status==='processing'){alert('\u23F3 Your account is under review. Withdrawals are on hold until verified.');}
+    else{handleKycBannerClick();}
+    return;
+  }
   var cards=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='authorized';});
   var sel=$('transfer-method');sel.innerHTML='<option value="">Select Card</option>';
   cards.forEach(function(card,i){var opt=document.createElement('option');opt.value=i;opt.textContent=card.brand+' \u2022\u2022\u2022\u2022'+card.lastFour;sel.appendChild(opt);});
@@ -2655,6 +2794,252 @@ function formatDate(dateStr) {
   mins = mins < 10 ? '0'+mins : mins;
   return months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+hours+':'+mins+' '+ampm;
 }
+
+
+// ═══════════════════════════════════════════════════════════════
+// KYC — IDENTITY VERIFICATION SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+var _kycDocType = null; // 'drivers_license' | 'state_id' | 'passport'
+var _kycFrontData = null;
+var _kycBackData  = null;
+
+// Called when user clicks the KYC banner
+window.handleKycBannerClick = function(){
+  if(!currentUser || !userData) return;
+  var kycStatus = userData.kycStatus;
+  // If processing, don't open chooser
+  if(kycStatus === 'processing') return;
+  // If rejected, allow re-upload
+  openModal('kyc-choose-modal');
+};
+
+// Open upload screen for chosen document type
+window.openKycUpload = function(docType){
+  _kycDocType = docType;
+  _kycFrontData = null;
+  _kycBackData  = null;
+  closeModal('kyc-choose-modal');
+
+  var titleEl = $('kyc-upload-title');
+  var descEl  = $('kyc-upload-desc');
+  var frontLbl = $('kyc-front-label');
+  var backSec = $('kyc-back-section');
+  var errEl = $('kyc-upload-error');
+  if(errEl) errEl.textContent = '';
+
+  // Reset previews
+  var fp=$('kyc-front-preview'),bp=$('kyc-back-preview');
+  if(fp){fp.style.display='none';fp.src='';}
+  if(bp){bp.style.display='none';bp.src='';}
+  var fa=$('kyc-front-area'),ba=$('kyc-back-area');
+  if(fa) fa.classList.remove('has-file');
+  if(ba) ba.classList.remove('has-file');
+  var fi=$('kyc-front-input'),bi=$('kyc-back-input');
+  if(fi) fi.value='';
+  if(bi) bi.value='';
+
+  if(docType === 'passport'){
+    if(titleEl) titleEl.innerHTML='&#128274; Upload Passport';
+    if(descEl)  descEl.textContent='Upload a clear photo of your passport photo page.';
+    if(frontLbl) frontLbl.textContent='Photo Page';
+    if(backSec)  backSec.style.display='none';
+  } else {
+    var label = docType === 'drivers_license' ? "Driver's License" : "State ID Card";
+    if(titleEl) titleEl.innerHTML='&#128274; Upload ' + label;
+    if(descEl)  descEl.textContent='Upload clear photos of the front and back.';
+    if(frontLbl) frontLbl.textContent='Front Side';
+    if(backSec)  backSec.style.display='block';
+  }
+  openModal('kyc-upload-modal');
+};
+
+window.kycPreview = function(input, previewId, areaId){
+  var file = input.files && input.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var preview = $(previewId);
+    if(preview){ preview.src = e.target.result; preview.style.display = 'block'; }
+    var area = $(areaId);
+    if(area) area.classList.add('has-file');
+    // Store base64
+    if(previewId === 'kyc-front-preview') _kycFrontData = e.target.result;
+    else _kycBackData = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+window.submitKycDocs = function(){
+  if(!currentUser) return;
+  var err = $('kyc-upload-error');
+  if(!_kycFrontData){ if(err) err.textContent='Please upload the required photo(s).'; return; }
+  if(_kycDocType !== 'passport' && !_kycBackData){ if(err) err.textContent='Please upload the back side too.'; return; }
+  if(err) err.textContent='';
+
+  var btn = $('kyc-submit-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Submitting...'; }
+
+  var submission = {
+    uid: currentUser.uid,
+    name: (userData.firstname||'')+' '+(userData.surname||''),
+    email: userData.email||'',
+    docType: _kycDocType,
+    frontImage: _kycFrontData,
+    backImage: _kycBackData||null,
+    submittedAt: new Date().toISOString(),
+    status: 'pending'
+  };
+
+  db.ref('kycSubmissions/'+currentUser.uid).set(submission).then(function(){
+    return db.ref('users/'+currentUser.uid+'/kycStatus').set('processing');
+  }).then(function(){
+    closeModal('kyc-upload-modal');
+    if(btn){ btn.disabled=false; btn.textContent='Submit for Verification'; }
+    openModal('kyc-processing-modal');
+    // Banner will update via onAuthStateChanged listener
+  }).catch(function(e){
+    if(btn){ btn.disabled=false; btn.textContent='Submit for Verification'; }
+    if(err) err.textContent='Error: '+e.message;
+  });
+};
+
+// Update KYC banner based on user state
+function updateKycBanner(){
+  var banner = $('kyc-banner');
+  var textEl  = $('kyc-banner-text');
+  var btnEl   = $('kyc-banner-btn');
+  if(!banner) return;
+  var status = userData.kycStatus;
+  var required = userData.kycRequired;
+  if(required && status === 'processing'){
+    banner.className = 'kyc-banner yellow show';
+    if(textEl) textEl.textContent = '⏳ Account verification under review — withdrawals on hold';
+    if(btnEl){ btnEl.textContent='Processing'; btnEl.style.pointerEvents='none'; }
+  } else if(required && status === 'rejected'){
+    banner.className = 'kyc-banner red show';
+    if(textEl) textEl.textContent = '⚠️ Verification rejected — re-verify to enable withdrawals';
+    if(btnEl){ btnEl.textContent='Try Again'; btnEl.style.pointerEvents=''; }
+  } else if(required && !status){
+    banner.className = 'kyc-banner red show';
+    if(textEl) textEl.textContent = '🔒 Verify your account before withdrawing';
+    if(btnEl){ btnEl.textContent='Verify Now'; btnEl.style.pointerEvents=''; }
+  } else {
+    banner.className = 'kyc-banner red';
+    banner.classList.remove('show');
+  }
+}
+
+// Block withdrawals when KYC required and not yet approved
+function isKycBlocked(){
+  return userData && userData.kycRequired && userData.kycStatus !== 'approved';
+}
+
+// Fullscreen viewer for admin
+window.openKycFullscreen = function(src){
+  var overlay = $('kyc-fullscreen-overlay');
+  var img = $('kyc-fullscreen-img');
+  if(!overlay || !img) return;
+  img.src = src;
+  overlay.classList.add('show');
+};
+window.closeKycFullscreen = function(){
+  var overlay = $('kyc-fullscreen-overlay');
+  if(overlay) overlay.classList.remove('show');
+};
+
+// ── ADMIN: Require KYC for a user ──
+window.adminRequireKyc = function(uid){
+  if(!confirm('Require this user to verify their identity before withdrawing?')) return;
+  db.ref('users/'+uid).update({kycRequired: true, kycStatus: null}).then(function(){
+    notify(uid, '🔒 Account verification required. Please verify your identity to continue withdrawing.');
+    loadAuthTab();
+  });
+};
+
+// ── ADMIN: Load KYC submissions ──
+function loadKycSubmissions(){
+  var con = $('acc-kyc'); if(!con) return;
+  con.innerHTML = '<p class="acc-empty">Loading...</p>';
+  db.ref('kycSubmissions').once('value').then(function(snap){
+    if(!snap.exists()){con.innerHTML='<p class="acc-empty">No submissions yet</p>';return;}
+    var items = [];
+    snap.forEach(function(s){ var v=s.val(); if(v&&v.status==='pending') items.push(Object.assign({},v,{uid:s.key})); });
+    var badge=$('badge-kyc');
+    if(badge){ badge.textContent=items.length; badge.style.display=items.length>0?'':'none'; }
+    if(!items.length){con.innerHTML='<p class="acc-empty">No pending submissions</p>';return;}
+    con.innerHTML='';
+    items.forEach(function(item){
+      var div=document.createElement('div');
+      div.className='kyc-admin-card';
+      var typeLabel = item.docType==='drivers_license'?"Driver's License":item.docType==='state_id'?'State ID Card':'Passport';
+      var hasBack = !!item.backImage;
+      div.innerHTML=
+        '<div class="kyc-admin-name">'+item.name+'</div>'+
+        mkrow('Email',item.email)+
+        mkrow('Document',typeLabel)+
+        mkrow('Submitted',fmtDate(item.submittedAt))+
+        // Front image - lazy loaded
+        '<div style="margin:8px 0;"><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Front Image</div>'+
+        '<button class="kyc-img-placeholder" id="kyc-front-btn-'+item.uid+'" onclick="loadKycImage(''+item.uid+'','front')">&#128247; Tap to load image</button>'+
+        '<img id="kyc-front-loaded-'+item.uid+'" class="kyc-loaded-img" style="display:none;" onclick="openKycFullscreen(this.src)"></div>'+
+        // Back image (if present)
+        (hasBack?'<div style="margin:8px 0;"><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Back Image</div>'+
+        '<button class="kyc-img-placeholder" id="kyc-back-btn-'+item.uid+'" onclick="loadKycImage(''+item.uid+'','back')">&#128247; Tap to load image</button>'+
+        '<img id="kyc-back-loaded-'+item.uid+'" class="kyc-loaded-img" style="display:none;" onclick="openKycFullscreen(this.src)"></div>':'')+
+        '<div class="admin-card-actions" style="margin-top:12px;">'+
+        '<button class="admin-action-btn green" onclick="approveKyc(''+item.uid+'')">&#9989; Approve</button>'+
+        '<button class="admin-action-btn red" onclick="rejectKyc(''+item.uid+'')">&#10060; Reject</button>'+
+        '</div>';
+      con.appendChild(div);
+    });
+  });
+}
+
+window.loadKycImage = function(uid, side){
+  var btnId = 'kyc-'+side+'-btn-'+uid;
+  var imgId = 'kyc-'+side+'-loaded-'+uid;
+  var btn = $(btnId), img = $(imgId);
+  if(!btn || !img) return;
+  btn.textContent = 'Loading...';
+  db.ref('kycSubmissions/'+uid).once('value').then(function(snap){
+    var data = snap.val();
+    if(!data) return;
+    var src = side==='front' ? data.frontImage : data.backImage;
+    if(src){
+      img.src = src;
+      img.style.display = 'block';
+      btn.style.display = 'none';
+    } else {
+      btn.textContent = 'Not available';
+    }
+  });
+};
+
+window.approveKyc = function(uid){
+  if(!confirm('Approve this KYC submission?')) return;
+  // Update user status
+  db.ref('users/'+uid).update({kycStatus:'approved', kycRequired:false}).then(function(){
+    // Delete submission images permanently
+    return db.ref('kycSubmissions/'+uid).remove();
+  }).then(function(){
+    notify(uid, '✅ Your identity has been verified! Withdrawals are now enabled.');
+    loadKycSubmissions();
+    loadAuthTab();
+  });
+};
+
+window.rejectKyc = function(uid){
+  var reason = prompt('Reason for rejection (required):');
+  if(!reason) return;
+  db.ref('users/'+uid).update({kycStatus:'rejected'}).then(function(){
+    // Delete submission images permanently
+    return db.ref('kycSubmissions/'+uid).remove();
+  }).then(function(){
+    notify(uid, '❌ Identity verification rejected. Reason: '+reason+'. Please re-submit with clearer documents.');
+    loadKycSubmissions();
+  });
+};
 
 }); // END DOMContentLoaded
 </script>
