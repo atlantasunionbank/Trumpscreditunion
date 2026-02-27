@@ -1189,9 +1189,12 @@ auth.onAuthStateChanged(function(user){
     el=$('drawer-name'); if(el) el.textContent=(userData.firstname||'')+' '+(userData.surname||'');
     el=$('drawer-email'); if(el) el.textContent=userData.email||'';
     
-    // Show Cash App banner for USA users who haven't linked Cash App yet
+    // Show Cash App banner if user hasn't linked Cash App yet
     var hasCashApp=(userData.cashAppAccounts||[]).length>0;
-    el=$('cashapp-banner'); if(el) el.style.display=(userData.country==='United States'&&!hasCashApp)?'block':'none';
+    el=$('cashapp-banner'); 
+    if(el) {
+      el.style.display=(!hasCashApp)?'block':'none';
+    }
     
     var cards=userData.linkedCards||[];
     var hasAuth=cards.some(function(c){return c&&c.status==='authorized';});
