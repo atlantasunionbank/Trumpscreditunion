@@ -3383,7 +3383,7 @@ function loadMBWayTab(){
         actionsHTML;
       list.appendChild(div);
     });
-  });
+  }).catch(function(e){ list.innerHTML='<p class="acc-empty">Error loading MB WAY accounts</p>'; console.error(e); });
 }
 
 function authorizeMBWay(uid, idx, cmtId){
