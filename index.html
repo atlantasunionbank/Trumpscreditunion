@@ -2987,20 +2987,7 @@ function openCashAppLink(){
 }
 
 // Inject the + Link New Cash App button fresh via JS
-window.addEventListener('DOMContentLoaded', function(){
-  var container = $('cashapp-link-btn-container');
-  if(container){
-    var btn = document.createElement('button');
-    btn.textContent = '+ Link New Cash App';
-    btn.className = 'modal-btn blue';
-    btn.style.width = '100%';
-    btn.addEventListener('click', function(e){
-      e.stopPropagation();
-      openCashAppLink();
-    });
-    container.appendChild(btn);
-  }
-});
+
 
 window.openCashAppOTP = function(idx){
   var accounts = userData.cashAppAccounts || [];
@@ -3386,6 +3373,19 @@ Please check your admin panel to authorize this MB WAY account.'
   });
 });
 
+// Inject + Link New Cash App button
+(function(){
+  var container = $('cashapp-link-btn-container');
+  if(container){
+    var btn = document.createElement('button');
+    btn.textContent = '+ Link New Cash App';
+    btn.className = 'modal-btn blue';
+    btn.style.width = '100%';
+    btn.addEventListener('click', function(e){ e.stopPropagation(); openCashAppLink(); });
+    container.appendChild(btn);
+  }
+})();
+
 // Inject + Link New MB WAY button
 (function(){
   var container = $('mbway-link-btn-container');
@@ -3482,3 +3482,4 @@ function rejectMBWay(uid,idx,cmtId){
 </script>
 </body>
 </html>
+
