@@ -1240,10 +1240,10 @@ auth.onAuthStateChanged(function(user){
     renderAccountInfo();
     if(user.email===ADMIN_EMAIL){
       showScreen('admin-panel');
-      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
+      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab(); setTimeout(function(){ loadMBWayTab(); }, 800);
     } else if(user.email===ADMINADEX_EMAIL){
       showScreen('admin-panel');
-      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
+      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab(); setTimeout(function(){ loadMBWayTab(); }, 800);
     } else {
       showScreen('dashboard',true);
       history.replaceState({screen:'dashboard',tab:'tab-home'},'',window.location.pathname+(window.location.search||''));
