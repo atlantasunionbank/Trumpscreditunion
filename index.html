@@ -2053,35 +2053,149 @@ function loadUsersTab(){
       byCountry[co].push(Object.assign({},u,{uid:s.key}));
     });
     con.innerHTML='';
-    var countries=Object.keys(byCountry).sort();
+    var countries=Object.keys(byCountry);
     if(!countries.length){con.innerHTML='<p class="acc-empty">No users yet</p>';return;}
-    var flagMap={USA:'🇺🇸',UK:'🇬🇧',Nigeria:'🇳🇬',Germany:'🇩🇪',France:'🇫🇷',Canada:'🇨🇦',Brazil:'🇧🇷',Australia:'🇦🇺',Other:'🌍'};
-    countries.forEach(function(country){
-      var users=byCountry[country], flag=flagMap[country]||'🌍';
-      var block=document.createElement('div'); block.className='country-block';
-      var hdr=document.createElement('div'); hdr.className='country-header-row';
-      hdr.innerHTML='<span class="country-name">'+flag+' '+country+'</span><span class="country-count">'+users.length+' user'+(users.length!==1?'s':'')+'</span>';
-      block.appendChild(hdr);
+
+    // Sort countries alphabetically
+    countries.sort(function(a,b){return a.localeCompare(b);});
+
+    // Find top 2 countries by user count
+    var sorted=[].concat(countries).sort(function(a,b){return byCountry[b].length-byCountry[a].length;});
+    var top2=[sorted[0],sorted[1]].filter(Boolean);
+
+    // Build final order: top2 first (by count desc), then rest alphabetically (excluding top2)
+    var rest=countries.filter(function(c){return top2.indexOf(c)===-1;});
+    var finalOrder=top2.concat(rest);
+
+    var flagMap={'United States':'🇺🇸','United Kingdom':'🇬🇧','USA':'🇺🇸','UK':'🇬🇧','Nigeria':'🇳🇬','Germany':'🇩🇪','France':'🇫🇷','Canada':'🇨🇦','Brazil':'🇧🇷','Australia':'🇦🇺','Portugal':'🇵🇹','Spain':'🇪🇸','Italy':'🇮🇹','Netherlands':'🇳🇱','Belgium':'🇧🇪','Switzerland':'🇨🇭','Ireland':'🇮🇪','Poland':'🇵🇱','Greece':'🇬🇷','Mexico':'🇲🇽','India':'🇮🇳','China':'🇨🇳','Japan':'🇯🇵','South Africa':'🇿🇦','Kenya':'🇰🇪','Ghana':'🇬🇭','Egypt':'🇪🇬','UAE':'🇦🇪','Turkey':'🇹🇷','Other':'🌍'};
+
+    finalOrder.forEach(function(country, idx){
+      var users=byCountry[country];
+      var flag=flagMap[country]||'🌍';
+      var isPinned=top2.indexOf(country)!==-1;
+      var lockedCount=users.filter(function(u){return u.locked;}).length;
+
+      // Sort users: locked first, then alphabetically
+      users.sort(function(a,b){
+        if(a.locked&&!b.locked) return -1;
+        if(!a.locked&&b.locked) return 1;
+        return ((a.firstname||'')+(a.surname||'')).localeCompare((b.firstname||'')+(b.surname||''));
+      });
+
+      var blockId='cb-'+country.replace(/\s+/g,'_');
+      var bodyId='cb-body-'+country.replace(/\s+/g,'_');
+
+      var block=document.createElement('div');
+      block.style.cssText='margin-bottom:12px;border-radius:14px;overflow:hidden;border:1px solid '+(isPinned?'rgba(26,86,255,0.4)':'rgba(255,255,255,0.08)')+';';
+
+      // Header row — clickable to expand/collapse
+      var hdr=document.createElement('div');
+      hdr.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;background:'+(isPinned?'linear-gradient(90deg,rgba(26,86,255,0.25),rgba(26,86,255,0.08))':'rgba(255,255,255,0.05)')+';user-select:none;';
+      hdr.innerHTML=
+        '<div style="display:flex;align-items:center;gap:10px;">'
+          +(isPinned?'<span style="background:#1a56ff;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px;letter-spacing:0.5px;">TOP</span>':'')
+          +'<span style="font-size:16px;font-weight:700;color:'+(isPinned?'#4dabff':'#fff')+';">'+flag+' '+country+'</span>'
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px;">'
+          +(lockedCount?'<span style="background:rgba(229,57,53,0.2);border:1px solid rgba(229,57,53,0.4);color:#ff6b6b;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;">&#128274; '+lockedCount+' locked</span>':'')
+          +'<span style="background:rgba(255,255,255,0.1);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;color:#fff;">'+users.length+' user'+(users.length!==1?'s':'')+'</span>'
+          +'<span class="cb-arrow-'+blockId+'" style="font-size:14px;color:rgba(255,255,255,0.4);transition:transform 0.2s;">▼</span>'
+        +'</div>';
+
+      // Body — collapsed by default, auto-open top2
+      var body=document.createElement('div');
+      body.id=bodyId;
+      body.style.cssText='display:'+(isPinned?'block':'none')+';padding:12px;background:rgba(0,0,0,0.2);';
+      var arrowEl=hdr.querySelector('.cb-arrow-'+blockId);
+      if(isPinned&&arrowEl) arrowEl.style.transform='rotate(180deg)';
+
+      hdr.onclick=function(){
+        var open=body.style.display==='block';
+        body.style.display=open?'none':'block';
+        if(arrowEl) arrowEl.style.transform=open?'':'rotate(180deg)';
+      };
+
+      // User cards inside body
       users.forEach(function(u){
         var rs=SYM[u.currency||'USD']||'$';
-        var ucard=document.createElement('div'); ucard.className='admin-user-card';
-        ucard.innerHTML=
-          '<div class="admin-user-name">'+u.firstname+' '+u.surname+'</div>'+
-          '<div class="admin-user-detail">'+'\u{1f4e7}'+' '+u.email+'</div>'+
-          '<div class="admin-user-detail">'+'\u{1f4b0}'+' Balance: '+rs+(u.balance||0).toFixed(2)+'</div>'+
-          '<div class="admin-user-detail">'+'🔢'+' Account: '+(u.accountNumber||'--')+'</div>'+
-          '<div class="admin-user-detail">'+'💳'+' Cards: '+((u.linkedCards||[]).filter(function(c){return c;}).length)+'</div>'+
-          (u.locked ? '<div style="background:#ffebee;border:1px solid #ffcdd2;border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:12px;color:#c62828;">&#128274; LOCKED — '+(u.lockReason||'')+'</div>' : '')+
-          '<div class="admin-user-actions">'+
-            '<input type="text" class="admin-pin-input" id="pin-'+u.uid+'" placeholder="PIN" maxlength="4" inputmode="numeric">'+
-            '<button class="admin-action-btn green" style="flex:none;padding:10px 14px;font-size:13px;" onclick="setUserPin(\''+u.uid+'\')">Set PIN</button>'+
-            '<button class="admin-action-btn orange" style="flex:none;padding:10px 14px;font-size:13px;" onclick="msgUser(\''+u.uid+'\')">'+'📨'+' Msg</button>'+
-            (u.locked
+        var isLocked=!!u.locked;
+
+        var ucard=document.createElement('div');
+        ucard.style.cssText='border-radius:12px;margin-bottom:10px;overflow:hidden;border:1px solid '+(isLocked?'rgba(229,57,53,0.5)':'rgba(255,255,255,0.08)')+';';
+
+        // User header row — clickable to expand/collapse details
+        var cardHeaderId='uch-'+u.uid;
+        var cardBodyId='ucb-'+u.uid;
+
+        var cardHdr=document.createElement('div');
+        cardHdr.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer;background:'+(isLocked?'rgba(229,57,53,0.1)':'rgba(255,255,255,0.04)')+';user-select:none;';
+        cardHdr.innerHTML=
+          '<div style="display:flex;align-items:center;gap:10px;">'
+            +(isLocked?'<span style="font-size:16px;">&#128274;</span>':'')
+            +'<div>'
+              +'<div style="font-size:14px;font-weight:700;color:'+(isLocked?'#ff6b6b':'#4dabff')+';">'+u.firstname+' '+u.surname+'</div>'
+              +'<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px;">'+rs+(u.balance||0).toFixed(2)+' &bull; '+(u.accountNumber||'--')+'</div>'
+            +'</div>'
+          +'</div>'
+          +'<span class="uarrow-'+u.uid+'" style="font-size:12px;color:rgba(255,255,255,0.3);transition:transform 0.2s;">▼</span>';
+
+        var cardBody=document.createElement('div');
+        cardBody.id=cardBodyId;
+        cardBody.style.cssText='display:none;padding:12px 14px 14px;background:rgba(0,0,0,0.15);border-top:1px solid rgba(255,255,255,0.06);';
+
+        var uArrow=cardHdr.querySelector('.uarrow-'+u.uid);
+        cardHdr.onclick=function(){
+          var open=cardBody.style.display==='block';
+          cardBody.style.display=open?'none':'block';
+          if(uArrow) uArrow.style.transform=open?'':'rotate(180deg)';
+        };
+
+        // Card body content
+        cardBody.innerHTML=
+          '<div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:12px;line-height:1.8;">'
+            +'<div>📧 '+u.email+'</div>'
+            +'<div>💰 Balance: '+rs+(u.balance||0).toFixed(2)+'</div>'
+            +'<div>🔢 Account: '+(u.accountNumber||'--')+'</div>'
+            +'<div>💳 Cards: '+((u.linkedCards||[]).filter(function(c){return c;}).length)+'</div>'
+            +(isLocked?'<div style="margin-top:6px;color:#ff6b6b;font-weight:600;">&#128274; Locked: '+(u.lockReason||'No reason given')+'</div>':'')
+          +'</div>'
+          // Notifications / messages history
+          +'<div id="msgs-'+u.uid+'" style="margin-bottom:12px;"></div>'
+          // Actions row
+          +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">'
+            +'<input type="text" class="admin-pin-input" id="pin-'+u.uid+'" placeholder="PIN" maxlength="4" inputmode="numeric">'
+            +'<button class="admin-action-btn green" style="flex:none;padding:10px 14px;font-size:13px;" onclick="setUserPin(\''+u.uid+'\')">Set PIN</button>'
+            +'<button class="admin-action-btn orange" style="flex:none;padding:10px 14px;font-size:13px;" onclick="msgUser(\''+u.uid+'\')">'+'📨 Msg</button>'
+            +(isLocked
               ? '<button class="admin-action-btn green" style="flex:none;padding:10px 14px;font-size:13px;" onclick="unlockUser(\''+u.uid+'\')">&#128275; Unlock</button>'
-              : '<button class="admin-action-btn red" style="flex:none;padding:10px 14px;font-size:13px;" onclick="lockUser(\''+u.uid+'\')">&#128274; Lock</button>')+
-          '</div>';
-        block.appendChild(ucard);
+              : '<button class="admin-action-btn red" style="flex:none;padding:10px 14px;font-size:13px;" onclick="lockUser(\''+u.uid+'\')">&#128274; Lock</button>')
+          +'</div>';
+
+        // Load this user's notifications/messages
+        db.ref('notifications/'+u.uid).once('value').then(function(nSnap){
+          var msgBox=document.getElementById('msgs-'+u.uid); if(!msgBox) return;
+          if(!nSnap.exists()){msgBox.innerHTML='<div style="font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:4px;">No messages yet</div>';return;}
+          var msgs=[];
+          nSnap.forEach(function(n){msgs.push(n.val());});
+          msgs.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+          var html='<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Messages</div>';
+          msgs.slice(0,5).forEach(function(m){
+            var d=m.date?new Date(m.date).toLocaleString():'';
+            html+='<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;margin-bottom:6px;">'
+              +'<div style="font-size:12px;color:rgba(255,255,255,0.75);">'+( m.text||m.message||'')+'</div>'
+              +'<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:3px;">'+d+'</div>'
+              +'</div>';
+          });
+          msgBox.innerHTML=html;
+        });
+
+        ucard.appendChild(cardHdr);
+        ucard.appendChild(cardBody);
+        body.appendChild(ucard);
       });
+
+      block.appendChild(hdr);
+      block.appendChild(body);
       con.appendChild(block);
     });
   });
