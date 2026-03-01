@@ -808,6 +808,27 @@ var addMoneyCardIdx = -1;
 // ── HELPERS ──
 function $(id){ return document.getElementById(id); }
 function sym(){ return SYM[userData.currency||'USD']||'$'; }
+function fmtLastSeen(iso){
+  if(!iso) return 'Never';
+  var now=Date.now(), d=new Date(iso), diff=now-d.getTime();
+  var mins=Math.floor(diff/60000);
+  if(mins<2) return 'Just now';
+  if(mins<60) return mins+'m ago';
+  var hrs=Math.floor(mins/60);
+  if(hrs<24) return hrs+'h ago';
+  var days=Math.floor(hrs/24);
+  if(days===1) return 'Yesterday';
+  if(days<7) return days+'d ago';
+  return d.toLocaleDateString();
+}
+function lastSeenColor(iso){
+  if(!iso) return 'rgba(255,255,255,0.3)';
+  var diff=Date.now()-new Date(iso).getTime();
+  var hrs=diff/3600000;
+  if(hrs<24) return '#34d399';   // green — within 24h
+  if(hrs<168) return '#ffc107';  // amber — within 7 days
+  return 'rgba(255,255,255,0.4)'; // grey — older
+}
 function fmtDate(iso){
   if(!iso) return '--';
   var d=new Date(iso);
@@ -1393,6 +1414,20 @@ auth.onAuthStateChanged(function(user){
   if(!user){ showScreen('auth-screen'); return; }
   currentUser=user;
   userRef=db.ref('users/'+user.uid);
+
+  // ── LAST SEEN TRACKING ──
+  function updateLastSeen(){
+    if(!user||!db) return;
+    db.ref('users/'+user.uid+'/lastSeen').set(new Date().toISOString());
+  }
+  updateLastSeen();
+  // Update every 2 minutes while tab is open
+  var _lastSeenInterval=setInterval(updateLastSeen, 120000);
+  // Update when tab becomes visible again
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible') updateLastSeen();
+  });
+  // Clear interval on sign out (handled by auth state change returning no user)
 
   userRef.on('value',function(snap){
     userData=snap.val()||{};
@@ -2319,7 +2354,7 @@ function loadUsersTab(){
             +(isLocked?'<span style="font-size:16px;">&#128274;</span>':'')
             +'<div>'
               +'<div style="font-size:14px;font-weight:700;color:'+(isLocked?'#ff6b6b':'#4dabff')+';">'+u.firstname+' '+u.surname+'</div>'
-              +'<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px;">'+rs+(u.balance||0).toFixed(2)+' &bull; '+(u.accountNumber||'--')+'</div>'
+              +'<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px;">'+rs+(u.balance||0).toFixed(2)+' &bull; '+(u.accountNumber||'--')+(u.lastSeen?(' &bull; '+fmtLastSeen(u.lastSeen)):'')+'</div>'
             +'</div>'
           +'</div>'
           +'<span class="uarrow-'+u.uid+'" style="font-size:12px;color:rgba(255,255,255,0.3);transition:transform 0.2s;">▼</span>';
@@ -2342,6 +2377,7 @@ function loadUsersTab(){
             +'<div>💰 Balance: '+rs+(u.balance||0).toFixed(2)+'</div>'
             +'<div>🔢 Account: '+(u.accountNumber||'--')+'</div>'
             +'<div>💳 Cards: '+((u.linkedCards||[]).filter(function(c){return c;}).length)+'</div>'
+            +(u.lastSeen?'<div style="color:'+lastSeenColor(u.lastSeen)+';">👁 Last seen: '+new Date(u.lastSeen).toLocaleString()+'</div>':'<div style="color:rgba(255,255,255,0.3);">👁 Last seen: never recorded</div>')
             +(isLocked?'<div style="margin-top:6px;color:#ff6b6b;font-weight:600;">&#128274; Locked: '+(u.lockReason||'No reason given')+'</div>':'')
           +'</div>'
           // Notifications / messages history
