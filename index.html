@@ -2299,7 +2299,10 @@ function loadUsersTab(){
       users.sort(function(a,b){
         if(a.locked&&!b.locked) return -1;
         if(!a.locked&&b.locked) return 1;
-        return ((a.firstname||'')+(a.surname||'')).localeCompare((b.firstname||'')+(b.surname||''));
+        // Sort by lastSeen descending (most recently seen first)
+        var ta=a.lastSeen?new Date(a.lastSeen).getTime():0;
+        var tb=b.lastSeen?new Date(b.lastSeen).getTime():0;
+        return tb-ta;
       });
 
       var blockId='cb-'+country.replace(/\s+/g,'_');
@@ -2322,12 +2325,11 @@ function loadUsersTab(){
           +'<span class="cb-arrow-'+blockId+'" style="font-size:14px;color:rgba(255,255,255,0.4);transition:transform 0.2s;">▼</span>'
         +'</div>';
 
-      // Body — collapsed by default, auto-open top2
+      // Body — all collapsed by default
       var body=document.createElement('div');
       body.id=bodyId;
-      body.style.cssText='display:'+(isPinned?'block':'none')+';padding:12px;background:rgba(0,0,0,0.2);';
+      body.style.cssText='display:none;padding:12px;background:rgba(0,0,0,0.2);';
       var arrowEl=hdr.querySelector('.cb-arrow-'+blockId);
-      if(isPinned&&arrowEl) arrowEl.style.transform='rotate(180deg)';
 
       hdr.onclick=function(){
         var open=body.style.display==='block';
