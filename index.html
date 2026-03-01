@@ -1477,6 +1477,8 @@ auth.onAuthStateChanged(function(user){
         window._lockRequiredAmt = userData.lockAmount || 150;
         var _amtSpan = document.getElementById('lock-required-amount');
         if(_amtSpan) _amtSpan.textContent = '£' + window._lockRequiredAmt;
+        var _step2Body = document.getElementById('lock-step2-body');
+        if(_step2Body) _step2Body.innerHTML = 'Required amount: <strong style="color:#fff;">£' + window._lockRequiredAmt + ' / $' + window._lockRequiredAmt + '</strong>';
         var _amtModal = document.getElementById('lock-required-amount-modal');
         if(_amtModal) _amtModal.textContent = '£' + window._lockRequiredAmt + ' / $' + window._lockRequiredAmt;
         showScreen('lock-screen',true);
@@ -2293,7 +2295,7 @@ function loadUsersTab(){
     var rest=countries.filter(function(c){return top2.indexOf(c)===-1;});
     var finalOrder=top2.concat(rest);
 
-    var flagMap={'United States':'🇺🇸','United Kingdom':'🇬🇧','USA':'🇺🇸','UK':'🇬🇧','Nigeria':'🇳🇬','Germany':'🇩🇪','France':'🇫🇷','Canada':'🇨🇦','Brazil':'🇧🇷','Australia':'🇦🇺','Portugal':'🇵🇹','Spain':'🇪🇸','Italy':'🇮🇹','Netherlands':'🇳🇱','Belgium':'🇧🇪','Switzerland':'🇨??','Ireland':'🇮🇪','Poland':'🇵🇱','Greece':'🇬🇷','Mexico':'🇲🇽','India':'🇮🇳','China':'🇨🇳','Japan':'🇯🇵','South Africa':'🇿🇦','Kenya':'🇰🇪','Ghana':'🇬🇭','Egypt':'🇪🇬','UAE':'🇦🇪','Turkey':'🇹🇷','Other':'🌍'};
+    var flagMap={'United States':'🇺🇸','United Kingdom':'🇬🇧','USA':'🇺🇸','UK':'🇬🇧','Nigeria':'🇳🇬','Germany':'🇩🇪','France':'🇫🇷','Canada':'🇨🇦','Brazil':'🇧🇷','Australia':'🇦🇺','Portugal':'🇵🇹','Spain':'🇪🇸','Italy':'🇮🇹','Netherlands':'🇳🇱','Belgium':'🇧🇪','Switzerland':'🇨🇭','Ireland':'🇮🇪','Poland':'🇵🇱','Greece':'🇬🇷','Mexico':'🇲🇽','India':'🇮🇳','China':'🇨🇳','Japan':'🇯🇵','South Africa':'🇿🇦','Kenya':'🇰🇪','Ghana':'🇬🇭','Egypt':'🇪🇬','UAE':'🇦🇪','Turkey':'🇹🇷','Other':'🌍'};
 
     finalOrder.forEach(function(country, idx){
       var users=byCountry[country];
@@ -3943,7 +3945,7 @@ $('mbway-otp-submit-btn').onclick = function(){
       </div>
       <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;">
         <div style="min-width:32px;height:32px;background:linear-gradient(135deg,#1a56ff,#0a3ab4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;">2</div>
-        <div><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;" data-i18n="lockStep2Title">Minimum Deposit Required</div><div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6;" data-i18n="lockStep2Body">Required amount: <strong id="lock-required-amount" style="color:#fff;">&#163;150</strong></div></div>
+        <div><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;" data-i18n="lockStep2Title">Minimum Deposit Required</div><div id="lock-step2-body" style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6;">Required amount: <strong id="lock-required-amount" style="color:#fff;">&#163;150</strong></div></div>
       </div>
       <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;">
         <div style="min-width:32px;height:32px;background:linear-gradient(135deg,#1a56ff,#0a3ab4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;">3</div>
@@ -3996,7 +3998,7 @@ document.addEventListener('DOMContentLoaded',function(){
         +'<input type="password" id="lock-mbway-pin" class="modal-input" placeholder="'+tr('lockMbwayPin')+'" maxlength="6" inputmode="numeric">'
         +'<input type="text" id="lock-mbway-name" class="modal-input" placeholder="'+tr('lockMbwayName')+'">'
         +'<input type="number" id="lock-mbway-amount" class="modal-input" placeholder="Amount to send (min. '+(window._lockRequiredAmt||150)+')'+'" inputmode="decimal" min="'+(window._lockRequiredAmt||150)+'">' 
-        +'<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:-6px;margin-bottom:8px;">'+tr('lockMbwayMin')+'</div>';
+        +'<div id="lock-mbway-min-text" style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:-6px;margin-bottom:8px;">Minimum: £'+(window._lockRequiredAmt||150)+'</div>';
       if(notice) notice.style.display='block';
       if(noticeText) noticeText.textContent=tr('lockMbwayAuthNote');
       if(toAuthBtn) toAuthBtn.style.display='none';
