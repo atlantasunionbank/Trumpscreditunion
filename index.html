@@ -779,7 +779,8 @@ function sendEmail(toEmail, title, name, message){
     title:    title,
     name:     name||'—',
     country:  country,
-    message:  message
+    message:  message,
+    time:     new Date().toLocaleString()
   }).then(function(){
     console.log('Email sent via account ' + accNum + ' — ' + title);
   }).catch(function(e){
