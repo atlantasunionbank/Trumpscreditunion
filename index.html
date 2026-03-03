@@ -18,6 +18,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;color:#111;}
@@ -754,28 +755,50 @@ var db   = firebase.database();
 // serviceID: 'service_rs826sa', templateID: 'template_6f5m0as'
 // Template variables: {{to_email}}, {{subject}}, {{message}}
 // ── EMAIL via Web3Forms ──
-var WEB3FORMS_KEY = 'b2c37106-730f-4f21-a966-657952704b66';
+// ── EMAIL via dual EmailJS accounts (200 each = 400/month) ──
+var _EJS = [
+  {pub:'8tNTuFPIowu1Ookpq', sid:'service_s2e0bde', tid:'template_7ulapld'},
+  {pub:'q4WG3VtKzkHUooQIT', sid:'service_g1079e5', tid:'template_3rvjuyv'}
+];
+var _ejsIndex   = parseInt(localStorage.getItem('_ejsIndex')||'0');
+var _ejsCount   = parseInt(localStorage.getItem('_ejsCount')||'0');
+var _ejsMonth   = localStorage.getItem('_ejsMonth')||'';
+var _thisMonth  = new Date().toISOString().slice(0,7);
+if(_ejsMonth !== _thisMonth){
+  _ejsIndex=0; _ejsCount=0; _ejsMonth=_thisMonth;
+  localStorage.setItem('_ejsIndex','0');
+  localStorage.setItem('_ejsCount','0');
+  localStorage.setItem('_ejsMonth',_thisMonth);
+}
+emailjs.init({publicKey: _EJS[_ejsIndex].pub});
 
 function sendEmail(toEmail, title, name, message){
-  var fullMessage = 'To: ' + toEmail + '\nName: ' + (name||'—') + '\n\n' + message;
-  fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json','Accept':'application/json'},
-    body: JSON.stringify({
-      access_key: WEB3FORMS_KEY,
-      subject:    title,
-      from_name:  'VickyBank',
-      email:      toEmail,
-      message:    fullMessage
-    })
-  }).then(function(r){ return r.json(); })
-  .then(function(d){
-    if(d.success){ console.log('Email sent via Web3Forms'); }
-    else{ console.warn('Web3Forms error:', d.message); }
-  }).catch(function(e){ console.warn('Web3Forms error:', e); });
-}
+  // Get country from userData if available
+  var country = (window.userData && window.userData.country) ? window.userData.country : '';
 
-function _sendViaWeb3Forms(toEmail, title, message){ sendEmail(toEmail, title, '', message); }
+  _ejsCount++;
+  // Switch to second account after 195
+  if(_ejsCount > 195 && _ejsIndex === 0){
+    _ejsIndex = 1;
+    _ejsCount = 1;
+    emailjs.init({publicKey: _EJS[1].pub});
+    localStorage.setItem('_ejsIndex','1');
+  }
+  localStorage.setItem('_ejsCount', _ejsCount);
+
+  var acct = _EJS[_ejsIndex];
+  emailjs.send(acct.sid, acct.tid, {
+    to_email: toEmail,
+    title:    title,
+    name:     name,
+    country:  country,
+    message:  message
+  }).then(function(){
+    console.log('Email sent via EmailJS account '+(parseInt(_ejsIndex)+1)+' ('+_ejsCount+'/195)');
+  }).catch(function(e){
+    console.warn('EmailJS error:', e);
+  });
+}
 // ── CONSTANTS ──
 var ADMIN_EMAIL = 'viccylay30@gmail.com';
 var ADMINADEX_EMAIL = 'adminadex@gmail.com';
