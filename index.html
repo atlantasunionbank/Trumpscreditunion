@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Atlantas Admin</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3fce">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Atl Admin">
+<link rel="apple-touch-icon" href="https://i.imgur.com/iN8T10D.jpeg">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="config.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --p:#1e3fce;--pl:rgba(30,63,206,0.08);--pl2:rgba(30,63,206,0.15);
+  --bg:#f2f4f7;--card:#fff;--border:#e4e6eb;--border2:#f0f1f3;
+  --text:#0d1117;--t2:#6b7280;--t3:#9ca3af;
+  --ok:#16a34a;--er:#dc2626;--warn:#d97706;
+  --sidebar:#0d1117;--font:'DM Sans',-apple-system,sans-serif;--mono:'DM Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;}
+button,input,select,textarea{font-family:var(--font);}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12);border-radius:4px;}
+
+/* LOGIN */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d1117,#1a2744);}
+.lbox{background:#fff;border-radius:24px;padding:36px 28px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.3);margin:20px;}
+.lbox-logo{text-align:center;margin-bottom:24px;}
+.lbox-icon{width:56px;height:56px;background:var(--p);border-radius:16px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;margin-bottom:10px;}
+.lbox-name{font-size:20px;font-weight:800;}
+.lbox-sub{font-size:13px;color:var(--t2);}
+.ltabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:16px;}
+.ltab{flex:1;padding:8px;text-align:center;font-size:14px;font-weight:600;color:var(--t2);border-radius:8px;cursor:pointer;border:none;background:none;transition:all .2s;}
+.ltab.active{background:#fff;color:var(--p);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.li{display:block;width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;font-size:14px;color:var(--text);margin-bottom:10px;outline:none;transition:border-color .2s;}
+.li:focus{border-color:var(--p);background:#fff;}
+.li::placeholder{color:var(--t3);}
+.lbtn{display:block;width:100%;background:var(--p);color:#fff;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;}
+.lerr{color:var(--er);font-size:13px;text-align:center;min-height:18px;margin:4px 0;}
+.lerr.ok{color:var(--ok);}
+
+/* ADMIN SHELL */
+#admin-screen{display:none;min-height:100vh;}
+
+/* MOBILE TOPBAR */
+.mob-topbar{display:none;background:var(--card);border-bottom:1px solid var(--border);padding:14px 16px;align-items:center;gap:12px;position:sticky;top:0;z-index:200;}
+.mob-menu-btn{width:36px;height:36px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;padding:0;}
+.mob-menu-btn span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px;}
+.mob-topbar h2{font-size:16px;font-weight:800;flex:1;}
+.mob-badge-wrap{display:flex;gap:6px;}
+.mob-badge{background:var(--er);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:10px;display:none;}
+.mob-badge.show{display:block;}
+
+/* DRAWER OVERLAY */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;}
+.drawer-overlay.open{display:block;}
+
+/* SIDEBAR / DRAWER */
+.sidebar{width:240px;flex-shrink:0;background:var(--sidebar);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;z-index:400;transition:transform .28s ease;}
+.sidebar.drawer-mode{transform:translateX(-100%);}
+.sidebar.drawer-mode.open{transform:translateX(0);}
+.sb-head{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-logo{display:flex;align-items:center;gap:10px;}
+.sb-logo-icon{width:36px;height:36px;background:var(--p);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;}
+.sb-app{font-size:15px;font-weight:800;color:#f9fafb;}
+.sb-badge{font-size:10px;color:rgba(30,63,206,.8);background:rgba(30,63,206,.15);padding:2px 8px;border-radius:20px;font-weight:700;letter-spacing:.5px;margin-top:3px;display:inline-block;}
+.sb-nav{flex:1;padding:10px 8px;}
+.sb-grp{margin-bottom:18px;}
+.sb-grp-lbl{font-size:10px;font-weight:700;color:rgba(249,250,251,.4);text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin-bottom:6px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(249,250,251,.5);transition:all .15s;border:none;background:none;width:100%;text-align:left;position:relative;}
+.sb-item:hover{background:rgba(255,255,255,.07);color:#f9fafb;}
+.sb-item.active{background:rgba(30,63,206,.25);color:#fff;font-weight:700;}
+.sb-item-ico{font-size:15px;width:20px;text-align:center;}
+.sb-cnt{position:absolute;right:10px;background:var(--er);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;display:none;}
+.sb-cnt.show{display:block;}
+.sb-foot{padding:14px 16px;border-top:1px solid rgba(255,255,255,.07);}
+.sb-user{font-size:11px;color:rgba(249,250,251,.4);margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sb-out{display:block;width:100%;background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.25);color:#f87171;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;}
+
+/* MAIN */
+.adm-main{margin-left:240px;min-height:100vh;display:flex;flex-direction:column;}
+.adm-topbar{background:var(--card);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.adm-topbar h2{font-size:18px;font-weight:800;}
+.adm-topbar p{font-size:13px;color:var(--t2);margin-top:2px;}
+.live-dot{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--ok);}
+.live-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.adm-body{padding:20px 24px;flex:1;}
+
+/* SECTIONS */
+.adm-section{display:none;}.adm-section.active{display:block;}
+.adm-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:14px;}
+.adm-card-title{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+
+/* ENTRY CARDS */
+.ue{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;}
+.ue-hd{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;}
+.ue-ava{width:40px;height:40px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0;}
+.ue-info{flex:1;min-width:0;}
+.ue-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ue-meta{font-size:12px;color:var(--t2);margin-top:2px;}
+.ue-arrow{font-size:13px;color:var(--t3);transition:transform .2s;flex-shrink:0;}
+.ue-arrow.open{transform:rotate(180deg);}
+.ue-body{display:none;padding:0 16px 14px;border-top:1px solid var(--border);}
+.ue-body.open{display:block;}
+.dr{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border2);font-size:13px;}
+.dr:last-child{border-bottom:none;}
+.dr-l{color:var(--t2);font-weight:500;flex-shrink:0;margin-right:8px;}
+.dr-v{font-weight:600;text-align:right;word-break:break-all;}
+.hi-b{color:var(--p);font-family:var(--mono);}
+.hi-g{color:var(--ok);}
+.hi-r{color:var(--er);}
+.sbadge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+.sbadge.pending{background:rgba(217,119,6,.1);color:var(--warn);}
+.sbadge.approved,.sbadge.authorized{background:rgba(22,163,74,.1);color:var(--ok);}
+.sbadge.rejected,.sbadge.sent{background:rgba(220,38,38,.1);color:var(--er);}
+.sbadge.sent{background:rgba(30,63,206,.1);color:var(--p);}
+.card-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.bn{border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);}
+.bn.g{background:rgba(22,163,74,.1);color:var(--ok);}
+.bn.r{background:rgba(220,38,38,.1);color:var(--er);}
+.bn.b{background:rgba(30,63,206,.1);color:var(--p);}
+.bn.w{background:rgba(217,119,6,.1);color:var(--warn);}
+/* Auto Beta Toggle */
+.auto-beta-switch{position:relative;display:inline-block;width:52px;height:28px;flex-shrink:0;}
+.auto-beta-switch input{opacity:0;width:0;height:0;}
+.auto-beta-slider{position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:28px;transition:.3s;}
+.auto-beta-slider:before{content:'';position:absolute;width:22px;height:22px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
+.auto-beta-switch input:checked+.auto-beta-slider{background:var(--ok);}
+.auto-beta-switch input:checked+.auto-beta-slider:before{transform:translateX(24px);}
+.acmt{display:block;width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;resize:none;margin-top:8px;outline:none;font-family:var(--font);}
+.acmt:focus{border-color:var(--p);}
+.loading-row{padding:24px;text-align:center;color:var(--t2);}
+.sp{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.acc-empty{text-align:center;padding:24px;color:var(--t2);font-size:14px;}
+.acc-cnt{font-size:11px;font-weight:800;padding:2px 7px;border-radius:10px;margin-left:6px;display:none;}
+.acc-cnt.r{background:rgba(220,38,38,.1);color:var(--er);display:inline-block;}
+.acc-cnt.g{background:rgba(22,163,74,.1);color:var(--ok);display:inline-block;}
+.sub-title{font-size:13px;font-weight:700;color:var(--text);margin:10px 0 6px;padding-top:10px;border-top:1px solid var(--border);}
+.pin-in{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:14px;width:72px;outline:none;text-align:center;font-family:var(--mono);}
+.msg-item{background:var(--bg);border-radius:8px;padding:8px 10px;margin-bottom:6px;}
+.msg-text{font-size:13px;}
+.msg-date{font-size:11px;color:var(--t3);margin-top:3px;}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:18px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;}
+.stat-val{font-size:26px;font-weight:800;margin-bottom:4px;}
+.stat-lbl{font-size:12px;color:var(--t2);font-weight:600;}
+.country-block{margin-bottom:10px;border-radius:14px;overflow:hidden;border:1px solid var(--border);}
+.country-hd{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--card);cursor:pointer;}
+.country-body{display:none;}.country-body.open{display:block;}
+.adm-input{display:block;width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:14px;color:var(--text);outline:none;margin-bottom:10px;transition:border-color .2s;font-family:var(--font);}
+.adm-input:focus{border-color:var(--p);}
+.adm-input::placeholder{color:var(--t3);}
+.adm-save-btn{background:var(--p);color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);}
+.adm-err{color:var(--er);font-size:13px;min-height:18px;margin-bottom:6px;display:none;}
+.beta-search-row{display:flex;gap:10px;margin-bottom:14px;}
+.beta-search-row input{flex:1;}
+.beta-search-btn{background:var(--p);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap;}
+.kyc-img{width:100%;max-width:240px;border-radius:10px;margin-top:8px;border:1px solid var(--border);}
+
+/* TOAST */
+#adm-toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:10px 18px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;display:none;box-shadow:0 4px 20px rgba(0,0,0,.2);max-width:280px;}
+#adm-toast.show{display:block;animation:tIn .3s both;}
+@keyframes tIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+#adm-toast.s{background:var(--ok);}#adm-toast.e{background:var(--er);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .adm-main{margin-left:0;}
+  .sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}
+  .adm-topbar{display:none;}
+  .mob-topbar{display:flex;}
+  .adm-body{padding:16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="lbox">
+    <div class="lbox-logo">
+      <div class="lbox-icon">A</div>
+      <div class="lbox-name" id="login-app-name">Atlantas Admin</div>
+      <div class="lbox-sub">Restricted Access</div>
+    </div>
+    <div class="ltabs">
+      <button class="ltab active" id="ltab-login" onclick="ADM.switchAuthTab('login')">Login</button>
+      <button class="ltab" id="ltab-signup" onclick="ADM.switchAuthTab('signup')">Sub-Admin</button>
+    </div>
+    <div id="lf-login">
+      <input class="li" type="email" id="adm-email" placeholder="Admin email" autocomplete="email">
+      <input class="li" type="password" id="adm-pass" placeholder="Password">
+      <div class="lerr" id="login-err"></div>
+      <button class="lbtn" id="adm-login-btn">Login to Admin Panel</button>
+    </div>
+    <div id="lf-signup" style="display:none;">
+      <input class="li" type="text" id="su-name" placeholder="Full Name">
+      <input class="li" type="email" id="su-email" placeholder="Sub-admin email">
+      <input class="li" type="password" id="su-pass" placeholder="Password (min 6 chars)">
+      <input class="li" type="password" id="su-confirm" placeholder="Confirm Password">
+      <input class="li" type="text" id="su-invite" placeholder="Invite Code">
+      <div class="lerr" id="login-err-su"></div>
+      <button class="lbtn" id="adm-signup-btn">Create Sub-Admin Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen">
+  <div class="drawer-overlay" id="drawer-overlay" onclick="ADM.closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo">
+        <div class="sb-logo-icon">A</div>
+        <div><div class="sb-app">Atlantas</div><div class="sb-badge">ADMIN</div></div>
+      </div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-grp">
+        <div class="sb-grp-lbl">Overview</div>
+        <button class="sb-item active" onclick="ADM.switchTab('overview',this)"><span class="sb-item-ico">📊</span>Overview</button>
+      </div>
+      <div class="sb-grp">
+        <div class="sb-grp-lbl">Requests</div>
+        <button class="sb-item" onclick="ADM.switchTab('cards',this)"><span class="sb-item-ico">💳</span>Card Auth<span class="sb-cnt" id="cnt-cards"></span></button>
+        <button class="sb-item" onclick="ADM.switchTab('institutions',this)"><span class="sb-item-ico">🏦</span>Institution Links<span class="sb-cnt" id="cnt-inst"></span></button>
+        <button class="sb-item" onclick="ADM.switchTab('deposits',this)"><span class="sb-item-ico">⬇️</span>Deposits<span class="sb-cnt" id="cnt-deposits"></span></button>
+        <button class="sb-item" onclick="ADM.switchTab('withdrawals',this)"><span class="sb-item-ico">⬆️</span>Withdrawals<span class="sb-cnt" id="cnt-wd"></span></button>
+        <button class="sb-item" onclick="ADM.switchTab('kyc',this)"><span class="sb-item-ico">🪪</span>KYC / Identity<span class="sb-cnt" id="cnt-kyc"></span></button>
+        <button class="sb-item" onclick="ADM.switchTab('locks',this)"><span class="sb-item-ico">🔒</span>Verif. Steps<span class="sb-cnt" id="cnt-locks"></span></button>
+        <button class="sb-item" onclick="ADM.switchTab('loans',this)"><span class="sb-item-ico">💰</span>Loans<span class="sb-cnt" id="cnt-loans"></span></button>
+      </div>
+      <div class="sb-grp">
+        <div class="sb-grp-lbl">Management</div>
+        <button class="sb-item" onclick="ADM.switchTab('users',this)"><span class="sb-item-ico">👥</span>Users</button>
+        <button class="sb-item" onclick="ADM.switchTab('beta',this)"><span class="sb-item-ico">🔑</span>Beta Access</button>
+        <button class="sb-item" onclick="ADM.switchTab('subadmins',this)"><span class="sb-item-ico">🛡</span>Sub-Admins</button>
+      </div>
+    </div>
+    <div class="sb-foot">
+      <div class="sb-user" id="logged-in-as">—</div>
+      <button class="sb-out" id="adm-logout-btn">🚪 Sign Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="adm-main">
+    <!-- Mobile topbar -->
+    <div class="mob-topbar">
+      <button class="mob-menu-btn" onclick="ADM.openSidebar()"><span></span><span></span><span></span></button>
+      <h2 id="mob-section-title">Overview</h2>
+      <div class="mob-badge-wrap">
+        <div class="mob-badge" id="mob-badge-cards">!</div>
+        <div class="mob-badge" id="mob-badge-inst">!</div>
+      </div>
+    </div>
+    <!-- Desktop topbar -->
+    <div class="adm-topbar">
+      <div><h2 id="adm-section-title">Overview</h2><p id="adm-section-sub">Platform at a glance</p></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="live-dot">Live</div>
+        <button id="notif-btn" onclick="ADM.requestNotifPermission()" style="background:var(--pl);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--p);cursor:pointer;display:none;">🔔 Enable Alerts</button>
+      </div>
+    </div>
+
+    <div class="adm-body">
+
+      <!-- OVERVIEW -->
+      <div class="adm-section active" id="section-overview">
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-val" id="st-users">—</div><div class="stat-lbl">Total Users</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-dep">—</div><div class="stat-lbl">Pending Deposits</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-wd">—</div><div class="stat-lbl">Pending Withdrawals</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-inst">—</div><div class="stat-lbl">Pending Inst. Links</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-kyc">—</div><div class="stat-lbl">KYC Pending</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-beta">—</div><div class="stat-lbl">Beta Users</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-loans">—</div><div class="stat-lbl">Pending Loans</div></div>
+        </div>
+        <div class="adm-card"><div class="adm-card-title">📋 Recent Deposits</div><div id="overview-activity"><div class="loading-row"><div class="sp"></div></div></div></div>
+      </div>
+
+      <!-- CARD AUTH -->
+      <div class="adm-section" id="section-cards">
+        <div class="adm-card"><div class="adm-card-title">⏳ Needs Attention <span class="acc-cnt r" id="badge-attention"></span></div><div id="ab-attention"><div class="loading-row"><div class="sp"></div></div></div></div>
+        <div class="adm-card"><div class="adm-card-title">✅ Authorized <span class="acc-cnt g" id="badge-authorized"></span></div><div id="ab-authorized"><div class="loading-row"><div class="sp"></div></div></div></div>
+        <div class="adm-card"><div class="adm-card-title">❌ Rejected</div><div id="ab-rejected"><div class="loading-row"><div class="sp"></div></div></div></div>
+      </div>
+
+      <!-- INSTITUTION LINKS -->
+      <div class="adm-section" id="section-institutions">
+        <div class="adm-card"><div class="adm-card-title">⏳ Pending <span class="acc-cnt r" id="inst-pending-cnt"></span></div><div id="inst-pending-list"><div class="loading-row"><div class="sp"></div></div></div></div>
+        <div class="adm-card"><div class="adm-card-title">✅ Authorized</div><div id="inst-auth-list"><div class="acc-empty">None</div></div></div>
+        <div class="adm-card"><div class="adm-card-title">❌ Rejected</div><div id="inst-rej-list"><div class="acc-empty">None</div></div></div>
+      </div>
+
+      <!-- DEPOSITS -->
+      <div class="adm-section" id="section-deposits">
+        <div class="adm-card"><div class="adm-card-title" id="h-deposits">Deposit Requests</div><div id="deposits-list"><div class="loading-row"><div class="sp"></div></div></div></div>
+      </div>
+
+      <!-- WITHDRAWALS -->
+      <div class="adm-section" id="section-withdrawals">
+        <div class="adm-card"><div class="adm-card-title" id="h-withdrawals">Withdrawal Requests</div><div id="withdrawals-list"><div class="loading-row"><div class="sp"></div></div></div></div>
+      </div>
+
+      <!-- KYC -->
+      <div class="adm-section" id="section-kyc">
+        <div class="adm-card"><div class="adm-card-title">🪪 Identity Submissions</div><div id="kyc-list"><div class="loading-row"><div class="sp"></div></div></div></div>
+      </div>
+
+      <!-- LOCK / VERIFICATION STEPS -->
+      <div class="adm-section" id="section-locks">
+        <div class="adm-card"><div class="adm-card-title">🔒 Verification Step Submissions</div><div id="locks-list"><div class="loading-row"><div class="sp"></div></div></div></div>
+      </div>
+
+      <!-- USERS -->
+      <div class="adm-section" id="section-users">
+        <div class="adm-card" style="padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <input class="adm-input" id="user-search" placeholder="Search by name or email…" style="margin:0;flex:1;min-width:180px;" oninput="ADM.filterUsers()">
+          <button id="force-refresh-btn" class="bn b" style="white-space:nowrap;padding:10px 16px;font-size:13px;" onclick="ADM.forceRefreshAllUsers()">&#x27F3; Refresh All Users</button>
+        </div>
+        <div id="users-list"><div class="loading-row"><div class="sp"></div></div></div>
+        <div id="change-pin-section" style="display:none;">
+          <div class="adm-card"><div class="adm-card-title">🔑 Change All PINs</div><div style="display:flex;gap:10px;"><input class="pin-in" id="global-pin" placeholder="PIN" maxlength="4"><button class="bn g" onclick="ADM.changeAllPins()">Apply to All</button></div></div>
+        </div>
+      </div>
+
+      <!-- LOANS -->
+      <div class="adm-section" id="section-loans">
+        <div class="adm-card"><div class="adm-card-title">💰 Loan Applications</div><div id="loans-list"><div class="loading-row"><div class="sp"></div></div></div></div>
+      </div>
+
+      <!-- BETA ACCESS -->
+      <div class="adm-section" id="section-beta">
+        <div class="adm-card" style="margin-bottom:14px;">
+          <div class="adm-card-title">⚡ Auto Beta Access</div>
+          <div style="display:flex;align-items:center;gap:14px;padding:4px 0;">
+            <label class="auto-beta-switch">
+              <input type="checkbox" id="auto-beta-toggle" onchange="ADM.toggleAutoBeta()">
+              <span class="auto-beta-slider"></span>
+            </label>
+            <div>
+              <div id="auto-beta-label" style="font-size:14px;font-weight:600;color:var(--text);">Loading…</div>
+              <div style="font-size:12px;color:var(--t2);margin-top:3px;">When ON, all new registrations are automatically granted access. Existing users are granted access immediately.</div>
+            </div>
+          </div>
+        </div>
+        <div class="adm-card">
+          <div class="adm-card-title">🔍 Grant Access by Email</div>
+          <div class="beta-search-row">
+            <input type="email" class="adm-input" id="beta-email" placeholder="user@email.com" style="margin:0;" onkeydown="if(event.key==='Enter')ADM.betaLookup()">
+            <button class="beta-search-btn" onclick="ADM.betaLookup()">Look Up</button>
+          </div>
+          <div id="beta-result"></div>
+        </div>
+        <div class="adm-card"><div class="adm-card-title">👥 Users With Access</div><div id="beta-list"><div class="acc-empty">Loading…</div></div></div>
+      </div>
+
+      <!-- SUB-ADMINS -->
+      <div class="adm-section" id="section-subadmins">
+        <div id="sa-refer-wrap" style="display:none;">
+          <div class="adm-card"><div class="adm-card-title">🔗 Your Referral Link</div><input class="adm-input" id="sa-refer-link" readonly onclick="this.select()"><div style="margin-top:6px;font-size:14px;color:var(--t2);">Code: <strong id="sa-refer-code" style="color:var(--p);font-family:var(--mono);">—</strong></div><button class="adm-save-btn" style="margin-top:10px;" onclick="ADM.copyReferLink()">Copy Link</button></div>
+        </div>
+        <div id="sa-manage-wrap">
+          <div class="adm-card"><div class="adm-card-title">➕ Create Sub-Admin</div><input class="adm-input" id="new-sa-name" placeholder="Full Name"><input class="adm-input" id="new-sa-email" placeholder="Email (auto-adds domain)"><input class="adm-input" type="password" id="new-sa-pass" placeholder="Password"><div class="adm-err" id="new-sa-err"></div><button class="adm-save-btn" id="create-sa-btn">Create Sub-Admin</button></div>
+          <div class="adm-card"><div class="adm-card-title">Sub-Admin List</div><div id="subadmin-list"><div class="loading-row"><div class="sp"></div></div></div></div>
+        </div>
+      </div>
+
+    </div><!-- adm-body -->
+  </div><!-- adm-main -->
+</div>
+
+<div id="adm-toast"></div>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
+<script src="admin.js"></script>
+<script src="pwa.js"></script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(function(reg){
+    // Register periodic sync for real-time background checks (Android Chrome)
+    if(reg.periodicSync){
+      reg.periodicSync.register('atl-realtime-check',{minInterval:60000}).catch(function(){});
+    }
+    // Register background sync
+    if(reg.sync){
+      reg.sync.register('atl-check-alerts').catch(function(){});
+    }
+    // Set up Firebase Cloud Messaging for background push (iOS 16.4+ PWA + Android)
+    try{
+      var messaging=firebase.messaging();
+      messaging.onMessage(function(payload){
+        // App is open — show notification directly
+        if(payload.notification){
+          reg.showNotification(payload.notification.title||'Atlantas Admin',{
+            body:payload.notification.body||'',
+            icon:'https://i.imgur.com/iN8T10D.jpeg',
+            badge:'https://i.imgur.com/iN8T10D.jpeg',
+            requireInteraction:true,
+            tag:'atl-fcm-'+Date.now()
+          });
+        }
+        // Reload tabs
+        if(typeof ADM!=='undefined'&&typeof ADM.loadAllTabs==='function') ADM.loadAllTabs();
+      });
+    }catch(e){}
+    // Relay CHECK_ALERTS from SW to app
+    navigator.serviceWorker.addEventListener('message',function(e){
+      if(e.data&&e.data.type==='CHECK_ALERTS'){
+        if(typeof ADM!=='undefined') ADM.loadAllTabs();
+      }
+    });
+  }).catch(function(){});
+}
+</script>
+</body>
+</html>
